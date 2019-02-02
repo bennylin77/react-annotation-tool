@@ -123,11 +123,47 @@ class List extends Component {
     this.setState({modal: !this.state.modal, checkbox: false, modalShowHideData: null, modalDeleteName: "", modalSplitName: "", modalMessage: "", modalTitle: ""});
   }
 
+	findAnnotation = label =>{
+		const {annotations, entities} = this.props;
+		return annotations.find( ann=> entities.annotations[ann].label === label );
+	}
+
+	getSubAnnotations = i =>{
+		const {annotations, entities} = this.props;
+		const result = [];
+		const queue = [];
+		const id = this.findAnnotation(`${i}`);
+		if(id){
+			queue.push(id);
+			result.push(id);
+		}
+		while(queue.length>0){
+			const ann = queue.shift();
+			for( let c of entities.annotations[ann].children ){
+					result.push(c);
+					queue.push(c);
+			}
+		}
+		return result;
+	}
+	sortAnnotations = () =>{
+		const {annotations, entities} = this.props;
+		let sortedAnnotations = [];
+		let i = 1;
+		while(sortedAnnotations.length < annotations.length && i <= annotations.length){
+			const subAnnotations = this.getSubAnnotations(i);
+			sortedAnnotations = subAnnotations.concat(sortedAnnotations);
+			i++;
+		}
+		return sortedAnnotations;
+	}
+
   render() {
 		const { objects, duration, played, focusing, height, entities, annotations, trajectoryCollapses } = this.props;
 		const items = [];
-
-		annotations.forEach( ann =>{
+		const sortedAnn = this.sortAnnotations();
+		//console.log(sortedAnn)
+		sortedAnn.forEach( ann =>{
 			const trajectories = entities.annotations[ann].trajectories;
 			const trajectoryItems = []
 			//const id = entities.annotations[ann].id;
@@ -180,7 +216,7 @@ class List extends Component {
 
 
 			if(name === focusing){
-				items.unshift(<ListGroupItem className="video-ann video-ann-highlight" key={name} name={name} style={{borderColor: color.replace(/,1\)/, ",.3)")}}>
+				items.push(<ListGroupItem className="video-ann video-ann-highlight" key={name} name={name} style={{borderColor: color.replace(/,1\)/, ",.3)")}}>
 														 <div className="d-flex align-items-center mb-2">
 																<div className="video-ann-title mr-auto"><strong>{label}</strong></div>
 																{split}
@@ -199,7 +235,7 @@ class List extends Component {
 															</Collapse>
 											</ListGroupItem>)
 			}else
-				items.unshift(<ListGroupItem className="video-ann" key={name} name={name} onClick={()=>this.handleAnnotationClick(name)} action>
+				items.push(<ListGroupItem className="video-ann" key={name} name={name} onClick={()=>this.handleAnnotationClick(name)} action>
 													 <div className="d-flex w-100 justify-content-between align-items-center">
 															<div>{label}</div>
 													 </div>

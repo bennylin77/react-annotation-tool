@@ -43,14 +43,8 @@ class Canvas extends Component {
 		this.props.onCanvasGroupDragStart(e);
 	}
 	handleGroupDragMove = e => {
-
-
 		if(e.target.getClassName() !== 'Group')
 			return;
-
-
-
-
 		const group = e.target;
 		const {width, height} = this.props
 		const topLeft = group.get('.topLeft')[0], topRight = group.get('.topRight')[0], bottomRight = group.get('.bottomRight')[0], bottomLeft = group.get('.bottomLeft')[0];
