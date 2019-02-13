@@ -98,7 +98,7 @@ class List extends Component {
 	handleDeleteModal = (name) => {
 		const {disableDeleteModal} = this.state
 		if(!disableDeleteModal)
-			this.setState({ modalDeleteName: name, modal: true, modalMessage: "Is this a extra annotation and you want to delete it?", modalTitle: "Delete this annotation"}, this.props.onListVideoPause())
+			this.setState({ modalDeleteName: name, modal: true, modalMessage: "Is this an extra annotation and you want to delete it?", modalTitle: "Delete this annotation"}, this.props.onListVideoPause())
 		else
 			this.props.onListAnnotationDelete(name)
 	}
@@ -323,7 +323,7 @@ class List extends Component {
 
 
 		if(items.length ==0)
-			return (<div className="d-flex align-items-center justify-content-center" style={{height: height-60}}>Click <Button disabled outline color="primary" onClick={this.handleAddObject} className="d-flex align-items-center explanation-add-button"><MdAdd/> Add Annotations</Button> above to add an annotation </div>)
+			return (<div className="d-flex align-items-center justify-content-center" style={{height: height-60}}>Click <Button disabled color="primary" size="lg" onClick={this.handleAddObject} className="d-flex align-items-center explanation-add-button"><MdAdd/> New Annotation</Button> above to add a new annotation </div>)
     return (
 			<div>
 				<ListGroup className="list-wrapper" id="list-wrapper" style={{maxHeight: height-60}}>{items}</ListGroup>
