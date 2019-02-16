@@ -322,9 +322,11 @@ class List extends Component {
 
 
 
-		if(items.length ==0)
-			return (<div className="d-flex align-items-center justify-content-center" style={{height: height-60}}>Click <Button disabled color="primary" size="lg" onClick={this.handleAddObject} className="d-flex align-items-center explanation-add-button"><MdAdd/> Add a New Box</Button> above to track a new cell </div>)
-    return (
+/*		if(items.length ==0)
+			return (<div className="d-flex align-items-center justify-content-center" style={{height: height-60}}>Click <Button disabled color="primary" size="lg" onClick={this.handleAddObject} className="d-flex align-items-center explanation-add-button"><MdAdd/> Add a New Box</Button> above to track a new cell </div>)*/
+      if(items.length ==0)
+	  return (<div className="d-flex align-items-center justify-content-center" style={{height: height-60}}>Click the button above to track a new cell </div>)
+      return (
 			<div>
 				<ListGroup className="list-wrapper" id="list-wrapper" style={{maxHeight: height-60}}>{items}</ListGroup>
 				<Modal isOpen={this.state.modal} toggle={this.handleModalToggle} backdrop={'static'}>
