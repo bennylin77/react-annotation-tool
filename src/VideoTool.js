@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {normalize, denormalize, schema} from 'normalizr';
 import {Container, Button, ButtonGroup} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -25,6 +26,9 @@ class VideoTool extends Component {
 			const normalizedAnn = normalize(props.annotations, [annotation])
 			entities.annotations = normalizedAnn.entities.annotations
 			annotations = normalizedAnn.result
+            annotations.forEach( id => {
+                entities.annotations[id].isManipulatable = props.defaultAnnotationsManipulatable;
+            })
 		}
 		this.state = { previewed: !props.previewNotices, submitted: false, annotationWidth: props.annotationWidth || 400, annotationHeight: 200, entities: entities, annotations: annotations,
 							 		 played: 0, playing: false, playbackRate: 1, duration: 0, loop: false, seeking: false, adding: false, focusing: "",
@@ -139,6 +143,8 @@ class VideoTool extends Component {
 		}, () => {
 			const group = stage.find(`.${timeNow}`)[0]
 			const bottomRight = group.get('.bottomRight')[0]
+            group.moveToTop();
+            bottomRight.moveToTop();
 			bottomRight.startDrag();
 		});
 	}
@@ -516,6 +522,9 @@ class VideoTool extends Component {
 		const { url } = this.props
 		const annotation = new schema.Entity('annotations')
 		const denormalizedAnnotations = denormalize({ annotations: annotations }, {annotations: [annotation]}, entities).annotations;
+        denormalizedAnnotations.forEach( ann => {
+            delete ann.isManipulatable;
+        });
 		const data = {url: url, annotationWidth: annotationWidth, annotationHeight: annotationHeight, annotations: denormalizedAnnotations}
 		this.props.onSubmit(data);
 	}
@@ -619,6 +628,11 @@ class VideoTool extends Component {
     );
   }
 }
-export default VideoTool;
 
-/*onCanvasStageRef={this.handleCanvasStageRef}*/
+VideoTool.propTypes = {
+  isDefaultAnnotationsManipulatable: PropTypes.bool
+};
+VideoTool.defaultProps = {
+  defaultAnnotationsManipulatable: false
+};
+export default VideoTool;

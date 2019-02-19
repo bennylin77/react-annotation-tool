@@ -17,7 +17,7 @@ module.exports = merge(common, {
     contentBase: path.join(__dirname, "public/"),
 	host: process.env.HOST,
     port: process.env.PORT,
-    publicPath: process.env.PUBLIC_PATH",
+    publicPath: process.env.PUBLIC_PATH,
     hotOnly: true
   },
   plugins: [
