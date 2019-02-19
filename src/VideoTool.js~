@@ -534,7 +534,7 @@ class VideoTool extends Component {
 		else if(previewed)
 			panelContent = (<div>
 											<div className="pb-3 clearfix" style={{minWidth: "400px"}}>
-												<Button disabled={adding} color="primary" size ="lg" onClick={this.handleAddClick} className="d-flex align-items-center float-left"><MdAdd/> {adding ? 'Adding a New Box' : 'Add a New Box'}</Button>
+												<Button outline disabled={adding} color="primary" size ="lg" onClick={this.handleAddClick} className="d-flex align-items-center float-left"><MdAdd/> {adding ? 'Adding Annotation' : 'New Annotation'}</Button>
 												<ButtonGroup className="float-right">
 													<Button disabled={this.UndoRedoState.previous.length==0} outline onClick={this.handleUndo}><MdUndo/></Button>
 													<Button disabled={this.UndoRedoState.next.length==0} outline onClick={this.handleRedo}><MdRedo/></Button>
