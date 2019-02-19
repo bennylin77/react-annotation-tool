@@ -95,13 +95,12 @@ class Canvas extends Component {
 
 		});
 		const adjLength = magnifyingLength/power
-		return(
-						<div>
-							<img ref={ image => this.image = image}
-									 width={width}
-									 style={{visibility: "hidden"}}
-									 onLoad={this.props.onImgLoad}
-									 src={url}
+		return( <div>
+					<img ref={ image => this.image = image}
+							   width={width}
+							   style={{visibility: "hidden"}}
+							   onLoad={this.props.onImgLoad}
+							   src={url}
 									 />
 							<Stage width={width} height={height} className="konva-wrapper" onMouseOver={this.handleStageMouseOver} onMouseDown={this.props.onStageMouseDown} onMouseMove={this.handleStageMouseMove}>
 							<Layer><Image image={this.image} width={width} height={height} />{layerItems}</Layer>
