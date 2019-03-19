@@ -16,7 +16,7 @@ class Preview extends Component {
 		const items = notices.map( n => <li key={n} dangerouslySetInnerHTML={{__html: n}} /> )
 		return (<div className="d-flex align-items-center justify-content-center" style={{height: height}}>
 							<div>
-								Please quick scan the video and observe the following points to help you complete the task:
+								Please quickly scan the video and observe the following to help you complete the task:
 								<ul className="text-left focus-list">
 									{items}
 					    	</ul>

@@ -75,23 +75,23 @@ class List extends Component {
 	handleDeleteModal = (name) => {
 		const {disableDeleteModal} = this.state
 		if(!disableDeleteModal)
-			this.setState({ modalDeleteName: name, modal: true, modalMessage: "Is this an extra annotation and you want to delete it?", modalTitle: "Delete this annotation"}, this.props.onListVideoPause())
+			this.setState({ modalDeleteName: name, modal: true, modalMessage: "Are you sure you would like to delete this annotation?", modalTitle: "Delete this annotation"}, this.props.onListVideoPause())
 		else
 			this.props.onListAnnotationDelete(name)
 	}
 	handleSplitModal = (name) => {
 		const {disableSplitModal} = this.state
 		if(!disableSplitModal)
-			this.setState({ modalSplitName: name, modal: true, modalMessage: "Is this object split apart and you want to split its bounding box?", modalTitle: "Split this box"}, this.props.onListVideoPause())
+			this.setState({ modalSplitName: name, modal: true, modalMessage: "Does the object split into two and would you like to split this bounding box into two boxes?", modalTitle: "Split this box"}, this.props.onListVideoPause())
 		else
 			this.props.onListAnnotationSplit(name)
 	}
 	handleShowHideModal = (data) => {
 		const {disableShowHideModal} = this.state
 		if(!disableShowHideModal && data.status == SHOW)
-			this.setState({ modalShowHideData: data, modal: true, modalMessage: "Does the object show on the video and you want to show its annotation?", modalTitle: `Show this annotation`})
+			this.setState({ modalShowHideData: data, modal: true, modalMessage: "Does the object show up on the video and would you like to show its annotation?", modalTitle: `Show this annotation`})
 		else if(!disableShowHideModal && data.status == HIDE)
-			this.setState({ modalShowHideData: data, modal: true, modalMessage: "Does the object leave or is obscured by other objects and you want to hide its annotation?", modalTitle: `Hide this annotation`}, this.props.onListVideoPause())
+			this.setState({ modalShowHideData: data, modal: true, modalMessage: "Does the object leave the video or is obscured by other objects and would you like to hide its annotation?", modalTitle: `Hide this annotation`}, this.props.onListVideoPause())
 		else
 			this.props.onListAnnotationShowHide(data)
 	}
