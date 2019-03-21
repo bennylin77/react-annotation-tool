@@ -16,6 +16,8 @@ import {SPLIT, HIDE, SHOW} from './models/2DVideo.js';
 import {VideoAnnotation, Trajectory} from 'models/2DVideo.js';
 import {UndoRedo} from 'models/UndoRedo.js';
 
+import PopupDialog from './components/popupDialog/PopupDialog';
+
 class VideoTool extends Component {
   constructor(props) {
     super(props);
@@ -30,9 +32,27 @@ class VideoTool extends Component {
                 entities.annotations[id].isManipulatable = props.defaultAnnotationsManipulatable;
             })
 		}
-		this.state = { previewed: !props.previewNotices, submitted: false, annotationWidth: props.annotationWidth || 400, annotationHeight: 200, entities: entities, annotations: annotations,
-							 		 played: 0, playing: false, playbackRate: 1, duration: 0, loop: false, seeking: false, adding: false, focusing: "",
-								   trajectoryCollapses: {} };
+		this.state = {
+            previewed: !props.previewNotices,
+            submitted: false,
+            annotationWidth: props.annotationWidth || 400,
+            annotationHeight: 200,
+            entities: entities,
+            annotations: annotations,
+			played: 0,
+            playing: false,
+            playbackRate: 1,
+            duration: 0,
+            loop: false,
+            seeking: false,
+            adding: false,
+            focusing: "",
+			trajectoryCollapses: {},
+            dialogIsOpen: false,
+            dialogTitle: '',
+            dialogMessage: '',
+            defaultNumberOfAnnotation: annotations.length
+        };
 		this.UndoRedoState = new UndoRedo();
   }
 
@@ -514,11 +534,16 @@ class VideoTool extends Component {
 	}
 	/* ==================== submit ==================== */
 	handleSubmit = () =>{
+        const {annotations, defaultNumberOfAnnotation} = this.state
+        if (annotations.length == 0 || defaultNumberOfAnnotation >= annotations.length) {
+            this.setState({dialogIsOpen: true, dialogTitle: 'Submission warning' , dialogMessage: 'Please track at least a cell.'});
+            return;
+        }
 		if(!this.state.submitted && this.props.review){
 			this.setState({loop: true, submitted: true, played: 0, playing: true, focusing: ""})
 			return;
 		}
-		const { annotationWidth, annotationHeight, annotations, entities } = this.state
+		const { annotationWidth, annotationHeight, entities } = this.state
 		const { url } = this.props
 		const annotation = new schema.Entity('annotations')
 		const denormalizedAnnotations = denormalize({ annotations: annotations }, {annotations: [annotation]}, entities).annotations;
@@ -529,11 +554,32 @@ class VideoTool extends Component {
 		this.props.onSubmit(data);
 	}
 
-
+    handleDialogToggle = () => {
+        this.setState( prevState => {
+            return { dialogIsOpen: !prevState.dialogIsOpen }
+        });
+    }
 
   render() {
-		const { previewed,	submitted, annotationWidth, annotationHeight, playing, played, playbackRate, duration, loop, adding, focusing,
-		 				entities, annotations, trajectoryCollapses} = this.state;
+		const {
+            previewed,
+            submitted,
+            annotationWidth,
+            annotationHeight,
+            playing,
+            played,
+            playbackRate,
+            duration,
+            loop,
+            adding,
+            focusing,
+            entities,
+            annotations,
+            trajectoryCollapses,
+            dialogIsOpen,
+            dialogTitle,
+            dialogMessage,
+        } = this.state;
     const { url, previewNotices } = this.props
 		//const playbackRate = this.props.playbackRate || 1;
 		//let panelHeight = annotationHeight<=MAX_PANEL_HEIGHT? annotationHeight:MAX_PANEL_HEIGHT;
@@ -572,20 +618,22 @@ class VideoTool extends Component {
 
     return (
 			<div>
+                <PopupDialog isOpen={dialogIsOpen} title={dialogTitle} message={dialogMessage} handleToggle={this.handleDialogToggle} />
 				<div className="d-flex flex-wrap justify-content-around py-3" style={{background: "rgb(246, 246, 246)"}}>
 					<div className="mb-3" style={{width: annotationWidth}}>
 						<div style={{position: 'relative'}}>
-							<Player playerRef={this.playerRef}
-											onVideoReady={this.handleVideoReady}
-											onVideoProgress={this.handleVideoProgress}
-											onVideoDuration={this.handleVideoDuration}
-											onVideoEnded={this.handleVideoEnded }
-											url={url}
-											width={annotationWidth}
-											playing={playing}
-											loop={loop}
-											playbackRate={playbackRate}
-											/>
+							<Player
+                                playerRef={this.playerRef}
+								onVideoReady={this.handleVideoReady}
+								onVideoProgress={this.handleVideoProgress}
+								onVideoDuration={this.handleVideoDuration}
+								onVideoEnded={this.handleVideoEnded }
+								url={url}
+								width={annotationWidth}
+								playing={playing}
+								loop={loop}
+								playbackRate={playbackRate}
+							/>
 							<Canvas width = {annotationWidth}
 											height = {annotationHeight}
 											played = {played}
@@ -630,9 +678,12 @@ class VideoTool extends Component {
 }
 
 VideoTool.propTypes = {
-  isDefaultAnnotationsManipulatable: PropTypes.bool
+  isDefaultAnnotationsManipulatable: PropTypes.bool,
+  checkEmpty: PropTypes.bool,
+  width: PropTypes.number
 };
 VideoTool.defaultProps = {
-  defaultAnnotationsManipulatable: false
+  defaultAnnotationsManipulatable: false,
+  checkEmpty: false
 };
 export default VideoTool;
