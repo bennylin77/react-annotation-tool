@@ -154,6 +154,7 @@ class App extends Component{
 										 annotationWidth={500}
 
 										 review
+										 checkEmpty
 										 />
 				</div>
 				<div className="mb-5">

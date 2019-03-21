@@ -534,8 +534,8 @@ class VideoTool extends Component {
 	}
 	/* ==================== submit ==================== */
 	handleSubmit = () =>{
-        const {annotations, defaultNumberOfAnnotation} = this.state
-        if (annotations.length == 0 || defaultNumberOfAnnotation >= annotations.length) {
+        const { annotations, defaultNumberOfAnnotation} = this.state
+        if ( this.props.checkEmpty && (annotations.length == 0 || defaultNumberOfAnnotation >= annotations.length) ) {
             this.setState({dialogIsOpen: true, dialogTitle: 'Submission warning' , dialogMessage: 'Please track at least a cell.'});
             return;
         }
