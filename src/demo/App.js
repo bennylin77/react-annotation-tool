@@ -152,9 +152,9 @@ class App extends Component{
 					<VideoTool onSubmit={this.handleSubmit}
 										 url={"https://cildata.crbs.ucsd.edu/media/videos/15793/15793_web.mp4"}
 										 annotationWidth={500}
-
 										 review
 										 checkEmpty
+										 
 										 />
 				</div>
 				<div className="mb-5">
