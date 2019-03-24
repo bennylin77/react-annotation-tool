@@ -1,4 +1,4 @@
-require('dotenv').config()
+//require('dotenv').config()
 const path = require("path");
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
@@ -15,8 +15,9 @@ module.exports = merge(common, {
   },
   devServer: {
     contentBase: path.join(__dirname, "public/"),
-	host: process.env.HOST,
-    port: process.env.PORT,
+	host: "ivc.ischool.utexas.edu",
+      https:true,
+      port: 8082,
     publicPath: process.env.PUBLIC_PATH,
     hotOnly: true
   },
