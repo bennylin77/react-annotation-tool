@@ -32,6 +32,10 @@ class VideoTool extends Component {
                 entities.annotations[id].isManipulatable = props.defaultAnnotationsManipulatable;
             })
 		}
+
+
+
+
 		this.state = {
             previewed: !props.previewNotices,
             submitted: false,
@@ -51,15 +55,15 @@ class VideoTool extends Component {
             dialogIsOpen: false,
             dialogTitle: '',
             dialogMessage: '',
-            defaultNumberOfAnnotation: annotations.length
+            defaultNumberOfAnnotations: annotations.length,
+            defaultNumberOfParentAnnotations: this.getLastLabel(annotations, entities)
         };
 		this.UndoRedoState = new UndoRedo();
   }
 
 	componentDidUpdate(prevProps) {}
 	/* ==================== utilities ==================== */
-	getLastLabel = () =>{
-		const {annotations, entities} = this.state;
+	getLastLabel = (annotations, entities) =>{
 		let i = 1;
 		while(i <= annotations.length){
 			const ann = annotations.find( ann=> entities.annotations[ann].label === `${i}` )
@@ -133,9 +137,9 @@ class VideoTool extends Component {
 	}
 	/* ==================== canvas ==================== */
     showAddButton = () => {
-        const {defaultNumberOfAnnotation, annotations} = this.state;
+        const {defaultNumberOfParentAnnotations, annotations, entities} = this.state;
         const {numberOfParentAnnotationsToBeAdded} = this.props;
-        return (defaultNumberOfAnnotation + numberOfParentAnnotationsToBeAdded) > (this.getLastLabel() - 1) ;
+        return (defaultNumberOfParentAnnotations + numberOfParentAnnotationsToBeAdded) > (this.getLastLabel(annotations, entities)) ;
     }
 
     renderAddButton = () => {
@@ -170,9 +174,8 @@ class VideoTool extends Component {
 			this.UndoRedoState.save({...prevState, adding: false}); // Undo/Redo
 			const {adding, focusing, annotations, entities, trajectoryCollapses} = prevState;
 			const trajectories = []
-			//console.log(this.getLastLabel());
 			trajectories.push( new Trajectory({id: `${timeNow}`, name: `${timeNow}`, x: position.x, y: position.y, height: 1, width: 1, time: prevState.played}) )
-			entities.annotations[`${timeNow}`] = new VideoAnnotation({id: `${timeNow}`, name: `${timeNow}`, label: `${this.getLastLabel()}`, color: color, trajectories: trajectories})
+			entities.annotations[`${timeNow}`] = new VideoAnnotation({id: `${timeNow}`, name: `${timeNow}`, label: `${this.getLastLabel(annotations, entities)}`, color: color, trajectories: trajectories})
 			//this.counter++;
 			//handle trajectory collapses
 			trajectoryCollapses[`${timeNow}`] = false;
@@ -356,7 +359,7 @@ class VideoTool extends Component {
 			const label = entitiesAnnotations[name].label
 			//reorder the list
 			if(!isNaN(label)){
-				const lastLabel = this.getLastLabel()-1;
+				const lastLabel = this.getLastLabel(annotations, entities)-1;
 				if(`${lastLabel}`!=='1' && `${lastLabel}` !== label){
 					const lastName = annotations.find( a =>{
 						return entitiesAnnotations[a].label === `${lastLabel}`;
@@ -555,10 +558,10 @@ class VideoTool extends Component {
 	}
 	/* ==================== submit ==================== */
     isEmptyOrNotTrack = () => {
-        const { annotations, defaultNumberOfAnnotation, entities} = this.state
+        const { annotations, defaultNumberOfAnnotations, entities} = this.state
         if (!this.props.checkEmpty)
             return false;
-        if (annotations.length != 0 && defaultNumberOfAnnotation < annotations.length) {
+        if (annotations.length != 0 && defaultNumberOfAnnotations < annotations.length) {
             for( const a of annotations ){
                 if (entities.annotations[a].trajectories.length < 2)
                     return true;
@@ -569,7 +572,7 @@ class VideoTool extends Component {
     }
 
 	handleSubmit = () =>{
-        const { annotations, defaultNumberOfAnnotation} = this.state
+        const { annotations, defaultNumberOfAnnotations} = this.state
         if ( this.isEmptyOrNotTrack() ) {
             this.setState({dialogIsOpen: true, dialogTitle: 'Submission warning' , dialogMessage: 'You must annotate and track one cell'});
             return;
@@ -717,10 +720,12 @@ class VideoTool extends Component {
 VideoTool.propTypes = {
   isDefaultAnnotationsManipulatable: PropTypes.bool,
   checkEmpty: PropTypes.bool,
-  width: PropTypes.number
+  width: PropTypes.number,
+  numberOfParentAnnotationsToBeAdded: PropTypes.number,
 };
 VideoTool.defaultProps = {
   defaultAnnotationsManipulatable: false,
-  checkEmpty: false
+  checkEmpty: false,
+  numberOfParentAnnotationsToBeAdded: 1,
 };
 export default VideoTool;
