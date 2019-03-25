@@ -154,7 +154,7 @@ class App extends Component{
 										 annotationWidth={500}
 										 review
 										 checkEmpty
-										 
+										 numberOfParentAnnotationsToBeAdded = {3}
 										 />
 				</div>
 				<div className="mb-5">

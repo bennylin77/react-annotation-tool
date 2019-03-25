@@ -132,6 +132,27 @@ class VideoTool extends Component {
 		}, ()=>{this.player.seekTo(played)})
 	}
 	/* ==================== canvas ==================== */
+    showAddButton = () => {
+        const {defaultNumberOfAnnotation, annotations} = this.state;
+        const {numberOfParentAnnotationsToBeAdded} = this.props;
+        return (defaultNumberOfAnnotation + numberOfParentAnnotationsToBeAdded) > (this.getLastLabel() - 1) ;
+    }
+
+    renderAddButton = () => {
+        const {adding} = this.state
+        if(adding || !adding && this.showAddButton() )
+            return (
+                <Button disabled={adding}
+                        color="primary"
+                        size ="lg"
+                        onClick={this.handleAddClick}
+                        className="d-flex align-items-center float-left">
+                        <MdAdd/> {adding ? 'Adding a New Box' : 'Add a New Box'}
+                </Button>
+            )
+        return null;
+    }
+
 	handleAddClick = () =>{
 		this.setState((prevState, props) => {
 			return {adding: !prevState.adding, playing: false};
@@ -533,9 +554,23 @@ class VideoTool extends Component {
 		this.setState({loop: false, submitted: false, playing: false})
 	}
 	/* ==================== submit ==================== */
+    isEmptyOrNotTrack = () => {
+        const { annotations, defaultNumberOfAnnotation, entities} = this.state
+        if (!this.props.checkEmpty)
+            return false;
+        if (annotations.length != 0 && defaultNumberOfAnnotation < annotations.length) {
+            for( const a of annotations ){
+                if (entities.annotations[a].trajectories.length < 2)
+                    return true;
+            };
+            return false;
+        }
+        return true;
+    }
+
 	handleSubmit = () =>{
         const { annotations, defaultNumberOfAnnotation} = this.state
-        if ( this.props.checkEmpty && (annotations.length == 0 || defaultNumberOfAnnotation >= annotations.length) ) {
+        if ( this.isEmptyOrNotTrack() ) {
             this.setState({dialogIsOpen: true, dialogTitle: 'Submission warning' , dialogMessage: 'You must annotate and track one cell'});
             return;
         }
@@ -580,7 +615,7 @@ class VideoTool extends Component {
             dialogTitle,
             dialogMessage,
         } = this.state;
-    const { url, previewNotices } = this.props
+    const { url, previewNotices, checkEmpty } = this.props
 		//const playbackRate = this.props.playbackRate || 1;
 		//let panelHeight = annotationHeight<=MAX_PANEL_HEIGHT? annotationHeight:MAX_PANEL_HEIGHT;
 		let panelContent;
@@ -589,7 +624,7 @@ class VideoTool extends Component {
 		else if(previewed)
 			panelContent = (<div>
 											<div className="pb-3 clearfix" style={{minWidth: "400px"}}>
-												<Button disabled={adding} color="primary" size ="lg" onClick={this.handleAddClick} className="d-flex align-items-center float-left"><MdAdd/> {adding ? 'Adding a New Box' : 'Add a New Box'}</Button>
+                                                {this.renderAddButton()}
 												<ButtonGroup className="float-right">
 													<Button disabled={this.UndoRedoState.previous.length==0} outline onClick={this.handleUndo}><MdUndo/></Button>
 													<Button disabled={this.UndoRedoState.next.length==0} outline onClick={this.handleRedo}><MdRedo/></Button>
@@ -610,6 +645,7 @@ class VideoTool extends Component {
 													  onListTrajectoryJump={this.handleListTrajectoryJump}
 													  onListTrajectoryDelete={this.handleListTrajectoryDelete}
 													  onListTrajectoryToggle={this.handleListTrajectoryToggle}
+                                                      checkEmpty = {checkEmpty}
 											  />
 											</div>)
 		else {
@@ -651,6 +687,7 @@ class VideoTool extends Component {
 											onCanvasDotMouseDown={this.handleCanvasDotMouseDown}
 											onCanvasDotDragMove={this.handleCanvasDotDragMove}
 											onCanvasDotDragEnd={this.handleCanvasDotDragEnd}
+                                            checkEmpty = {checkEmpty}
 											/>
 						</div>
 						<PlayerControl playing={playing}

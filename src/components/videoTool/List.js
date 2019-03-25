@@ -136,7 +136,7 @@ class List extends Component {
 	}
 
   render() {
-		const { objects, duration, played, focusing, height, entities, annotations, trajectoryCollapses } = this.props;
+		const { objects, duration, played, focusing, height, entities, annotations, trajectoryCollapses, checkEmpty } = this.props;
 		const items = [];
 		const sortedAnn = this.sortAnnotations();
 		//console.log(sortedAnn)
@@ -193,9 +193,9 @@ class List extends Component {
 					if(trajectories[i].status === SPLIT )
 						show = ""
 				}
-	    }
+	    	}
 
-
+			const warningText = checkEmpty && trajectories.length < 2 && <span className='text-danger'>You should track the cell bound by this box</span>
 			if(name === focusing){
 				items.push(<ListGroupItem className="video-ann video-ann-highlight" key={name} name={name} style={{borderColor: color.replace(/,1\)/, ",.3)")}}>
 														 <div className="d-flex align-items-center mb-2">
@@ -214,12 +214,16 @@ class List extends Component {
 															<Collapse isOpen={trajectoryCollapses[name]}>
 																<ListGroup className="px-3 py-2 text-center trajectory-wrapper">{trajectoryItems}</ListGroup>
 															</Collapse>
+															<div className='mt-3'>
+																{warningText}
+															</div>
 											</ListGroupItem>)
 			}else
 				items.push(<ListGroupItem className="video-ann" key={name} name={name} onClick={()=>this.handleAnnotationClick(name)} action>
 													 <div className="d-flex w-100 justify-content-between align-items-center">
 															<div>{label}</div>
 													 </div>
+													 <div>{warningText}</div>
 										  </ListGroupItem>)
 		})
       if(items.length ==0)
