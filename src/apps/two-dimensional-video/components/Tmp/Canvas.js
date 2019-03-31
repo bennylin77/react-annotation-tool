@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './styles/Canvas.css';
 import { Stage, Layer, Rect, Group, Text} from 'react-konva';
-import {SHOW} from '../../models/2DVideo.js';
-import {interpolationArea, interpolationPosition} from '../../helper.js';
+import {SHOW} from 'models/2DVideo.js';
+import {interpolationArea, interpolationPosition} from './helper.js';
 
 class Canvas extends Component {
 	constructor(props){

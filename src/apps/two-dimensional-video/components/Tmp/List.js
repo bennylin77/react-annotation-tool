@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import Duration from '../videoTool/Duration'
-import {Rounding} from '../../helper.js'
+import Duration from './Duration'
+import {Rounding} from './helper.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import { Button, ButtonGroup, ListGroup, ListGroupItem, Collapse, Badge} from 'reactstrap';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Label, Input } from 'reactstrap';
@@ -11,7 +11,7 @@ import {FaChevronDown, FaChevronUp, FaArrowDown} from 'react-icons/fa';
 import {IoMdEyeOff, IoMdEye} from 'react-icons/io';
 
 
-import {SPLIT, HIDE, SHOW} from '../../models/2DVideo.js';
+import {SPLIT, HIDE, SHOW} from 'models/2DVideo.js';
 import './styles/List.css';
 
 class List extends Component {
