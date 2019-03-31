@@ -29,7 +29,7 @@ module.exports = {
         alias: {
             apps: path.resolve(__dirname, 'src/apps'),
             shared: path.resolve(__dirname, 'src/shared'),
-            // Todo: remove it
+            // Todo: remove them
             models: path.resolve(__dirname, 'src/models'),
             components: path.resolve(__dirname, 'src/components'),
         },

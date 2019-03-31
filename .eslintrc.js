@@ -27,8 +27,11 @@ module.exports = {
           2,
           "single"
         ],
+        "jsx-quotes": ["error", "prefer-single"],
+        "react/jsx-indent-props": "off",
         "react/jsx-indent": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+        "react/jsx-curly-spacing": [2, {"when": "always"}],
         "import/no-extraneous-dependencies": [
             "error", {
                 "devDependencies": [ "./webpack.dev.js", "./webpack.prod.js" ]

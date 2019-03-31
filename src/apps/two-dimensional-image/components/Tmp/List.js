@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Duration from './Duration'
 import Options from './Options'
-import {Rounding} from '../../helper.js'
+import {Rounding} from './helper.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import { Button, ButtonGroup, ListGroup, ListGroupItem, Collapse} from 'reactstrap';
 import { Events, scrollSpy, scroller} from 'react-scroll'

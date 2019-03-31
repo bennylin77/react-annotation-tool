@@ -7,7 +7,7 @@ const common = require('./webpack.common.js');
 module.exports = merge(common, {
     mode: 'development',
     devtool: 'eval',
-    entry: './src/demo/index.js',
+    entry: 'apps/demo/index.js',
     output: {
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist/',

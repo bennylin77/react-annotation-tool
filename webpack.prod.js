@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
-    entry: './src/index.js',
+    entry: './src/apps/index.js',
     mode: 'production',
     output: {
         path: path.resolve(__dirname, 'dist/'),

@@ -1,20 +1,31 @@
 import React, { Component } from 'react';
-import {normalize, denormalize, schema} from 'normalizr';
-import {Button, ButtonGroup, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+import { normalize, denormalize, schema } from 'normalizr';
+import {
+    Button,
+    ButtonGroup,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import './styles/ImageTool.css'
+import '../Tmp/styles/ImageTool.css'
 
 import {MdAdd, MdUndo, MdRedo } from 'react-icons/md';
 import {GoSearch } from 'react-icons/go';
 import {FaCommentAlt } from 'react-icons/fa';
-import {colors, getRandomInt} from './helper.js';
-import Canvas from 'components/imageTool/Canvas';
-import List from 'components/imageTool/List';
+import {colors, getRandomInt} from '../Tmp/helper.js';
+
+
+import Canvas from '../Tmp/Canvas';
+import List from '../Tmp/List';
+
+
 import {ImageAnnotation} from 'models/2DImage.js';
 import {UndoRedo} from 'models/UndoRedo.js';
 
 
-class ImageTool extends Component {
+class TwoDimensionalImage extends Component {
 	constructor(props) {
     super(props);
 		const entities = {options:{}, annotations:{}}
@@ -394,8 +405,4 @@ class ImageTool extends Component {
 			</div>
 		)}
 }
-export default ImageTool;
-
-/*
-<Button outline color="primary" onClick={this.handleToggleMagnifier} className="d-flex align-items-center"><GoSearch/> {magnifying ? 'Turn Off' : 'Turn On'}</Button>
-*/
+export default TwoDimensionalImage;
