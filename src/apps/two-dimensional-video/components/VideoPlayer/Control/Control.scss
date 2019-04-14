@@ -1,0 +1,45 @@
+.player-control .player-control {
+    &__icon {
+        font-size: 30px;
+    }
+
+    &__button {
+        color: #000;
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+
+    &__button:hover,
+    &__button:active,
+    &__button:focus {
+        text-decoration: none;
+    }
+
+    &__speed-toggle {
+        color: #000;
+        font-family: Courier, sans-serif;
+    }
+
+    &__speed-toggle:hover,
+    &__speed-toggle:active,
+    &__speed-toggle:focus {
+        text-decoration: none;
+    }
+
+    &__speed-item {
+        color: #000;
+        font-family: Courier, sans-serif;
+    }
+
+    &__speed-item:hover {
+        cursor: pointer;
+    }
+
+    &__speed-item:active {
+        background: #f8f9fa;
+    }
+
+    &__speed-item:focus {
+        outline: none;
+    }
+}

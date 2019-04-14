@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Duration from '../Player/FormattedTime/FormattedTime.jsx'
+import Duration from '../VideoPlayer/FormattedTime/FormattedTime.jsx'
 import {Rounding} from './helper.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import { Button, ButtonGroup, ListGroup, ListGroupItem, Collapse, Badge} from 'reactstrap';

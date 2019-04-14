@@ -12,8 +12,8 @@ import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolati
 import { interpolationArea, interpolationPosition } from '../Tmp/helper.js';
 
 
-import Player from '../Tmp/Player';
-import PlayerControl from '../Player/Control/Control';
+import VideoPlayerScreen from '../VideoPlayer/Screen/Screen.jsx';
+import VideoPlayerControl from '../VideoPlayer/Control/Control.jsx';
 import Canvas from '../Tmp/Canvas';
 import List from '../Tmp/List';
 import Review from '../Tmp/Review';
@@ -79,7 +79,7 @@ class TwoDimensionalVideo extends Component {
 		return i;
 	}
 	/* ==================== video player ==================== */
-	playerRef = player => {
+	handlePlayerRef = player => {
 		this.player = player
 	}
 	handleVideoReady = () =>{
@@ -666,12 +666,12 @@ class TwoDimensionalVideo extends Component {
 				<div className="d-flex flex-wrap justify-content-around py-3" style={{background: "rgb(246, 246, 246)"}}>
 					<div className="mb-3" style={{width: annotationWidth}}>
 						<div style={{position: 'relative'}}>
-							<Player
-                                playerRef={this.playerRef}
-								onVideoReady={this.handleVideoReady}
-								onVideoProgress={this.handleVideoProgress}
-								onVideoDuration={this.handleVideoDuration}
-								onVideoEnded={this.handleVideoEnded }
+							<VideoPlayerScreen
+                                playerRef={this.handlePlayerRef}
+								onReady={this.handleVideoReady}
+								onProgress={this.handleVideoProgress}
+								onDuration={this.handleVideoDuration}
+								onEnded={this.handleVideoEnded }
 								url={url}
 								width={annotationWidth}
 								playing={playing}
@@ -698,7 +698,7 @@ class TwoDimensionalVideo extends Component {
                                             checkEmpty = {checkEmpty}
 											/>
 						</div>
-						<PlayerControl
+						<VideoPlayerControl
                             playing={ playing }
                             played={ played }
 							playbackRate={ playbackRate }
