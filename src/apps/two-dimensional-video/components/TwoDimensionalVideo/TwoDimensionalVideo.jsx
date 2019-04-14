@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { normalize, denormalize, schema } from 'normalizr';
-import { Container, Button, ButtonGroup } from 'reactstrap';
-import 'bootstrap/dist/css/bootstrap.css';
-
+import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
-import { colors, getRandomInt, interpolationArea, interpolationPosition } from '../Tmp/helper.js';
+import 'bootstrap/dist/css/bootstrap.css';
+import PopupDialog from 'shared/components/PopupDialog/PopupDialog';
+import { highContrastingColors as colors } from 'shared/utils/colorUtils';
+import { getRandomInt } from 'shared/utils/mathUtils';
+import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils'
+
+import { interpolationArea, interpolationPosition } from '../Tmp/helper.js';
+
+
 import Player from '../Tmp/Player';
-import PlayerControl from '../Tmp/PlayerControl';
+import PlayerControl from '../Player/Control/Control';
 import Canvas from '../Tmp/Canvas';
 import List from '../Tmp/List';
 import Review from '../Tmp/Review';
@@ -16,9 +22,8 @@ import {SPLIT, HIDE, SHOW} from 'models/2DVideo.js';
 import {VideoAnnotation, Trajectory} from 'models/2DVideo.js';
 import {UndoRedo} from 'models/UndoRedo.js';
 
-import PopupDialog from 'shared/components/PopupDialog/PopupDialog';
 
-class VideoTool extends Component {
+class TwoDimensionalVideo extends Component {
   constructor(props) {
     super(props);
 		const entities = {annotations:{}}
@@ -693,16 +698,17 @@ class VideoTool extends Component {
                                             checkEmpty = {checkEmpty}
 											/>
 						</div>
-						<PlayerControl playing={playing}
-													 played={played}
-													 playbackRate={playbackRate}
-													 duration={duration}
-													 onPlayerControlSliderMouseUp={this.handlePlayerControlSliderMouseUp}
-													 onPlayerControlSliderMouseDown={this.handlePlayerControlSliderMouseDown}
-													 onPlayerControlSliderChange={this.handlePlayerControlSliderChange}
-													 onPlayerControlVideoRewind={this.handlePlayerControlVideoRewind}
-													 onPlayerControlVideoPlayPause={this.handlePlayerControlVideoPlayPause}
-													 onPlayerControlVideoSpeedChange={this.handlePlayerControlVideoSpeedChange}
+						<PlayerControl
+                            playing={ playing }
+                            played={ played }
+							playbackRate={ playbackRate }
+							duration={ duration }
+							onSliderMouseUp={ this.handlePlayerControlSliderMouseUp }
+						    onSliderMouseDown={this.handlePlayerControlSliderMouseDown}
+							onSliderChange={this.handlePlayerControlSliderChange}
+							onRewind={this.handlePlayerControlVideoRewind}
+							onPlayPause={this.handlePlayerControlVideoPlayPause}
+							onSpeedChange={this.handlePlayerControlVideoSpeedChange}
 						/>
 					</div>
 					<div className="mb-3">
@@ -717,15 +723,15 @@ class VideoTool extends Component {
   }
 }
 
-VideoTool.propTypes = {
-  isDefaultAnnotationsManipulatable: PropTypes.bool,
-  checkEmpty: PropTypes.bool,
-  width: PropTypes.number,
-  numberOfParentAnnotationsToBeAdded: PropTypes.number,
+TwoDimensionalVideo.propTypes = {
+    isDefaultAnnotationsManipulatable: PropTypes.bool,
+    checkEmpty: PropTypes.bool,
+    width: PropTypes.number,
+    numberOfParentAnnotationsToBeAdded: PropTypes.number,
 };
-VideoTool.defaultProps = {
-  defaultAnnotationsManipulatable: false,
-  checkEmpty: false,
-  numberOfParentAnnotationsToBeAdded: 1,
+TwoDimensionalVideo.defaultProps = {
+    defaultAnnotationsManipulatable: false,
+    checkEmpty: false,
+    numberOfParentAnnotationsToBeAdded: 1,
 };
-export default VideoTool;
+export default TwoDimensionalVideo;

@@ -22,16 +22,20 @@ module.exports = {
     ],
     "rules": {
         "no-mixed-spaces-and-tabs": 2,
-        "indent": [2, 4, {"SwitchCase": 1}],
+        "indent": ["error", "tab"],
         "quotes": [
           2,
           "single"
         ],
+        "max-len": [2, {"code": 160}],
+        "no-tabs": ["error", { "allowIndentationTabs": true }],
+        "import/extensions": ["error", "never", {"jsx": "always"}],
         "jsx-quotes": ["error", "prefer-single"],
         "react/jsx-indent-props": "off",
         "react/jsx-indent": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "react/jsx-curly-spacing": [2, {"when": "always"}],
+        "import/prefer-default-export": "off",
         "import/no-extraneous-dependencies": [
             "error", {
                 "devDependencies": [ "./webpack.dev.js", "./webpack.prod.js" ]
