@@ -14,10 +14,12 @@ import { interpolationArea, interpolationPosition } from '../Tmp/helper.js';
 
 import VideoPlayerScreen from '../VideoPlayer/Screen/Screen.jsx';
 import VideoPlayerControl from '../VideoPlayer/Control/Control.jsx';
+import Preview from '../Preview/Preview.jsx';
+import Review from '../Review/Review.jsx'
+
 import Canvas from '../Tmp/Canvas';
 import List from '../Tmp/List';
-import Review from '../Tmp/Review';
-import Preview from '../Tmp/Preview';
+
 import {SPLIT, HIDE, SHOW} from 'models/2DVideo.js';
 import {VideoAnnotation, Trajectory} from 'models/2DVideo.js';
 import {UndoRedo} from 'models/UndoRedo.js';
@@ -42,7 +44,7 @@ class TwoDimensionalVideo extends Component {
 
 
 		this.state = {
-            previewed: !props.previewNotices,
+            previewed: !props.previewNotices && !props.previewHead,
             submitted: false,
             annotationWidth: props.annotationWidth || 400,
             annotationHeight: 200,
@@ -623,12 +625,12 @@ class TwoDimensionalVideo extends Component {
             dialogTitle,
             dialogMessage,
         } = this.state;
-    const { url, previewNotices, checkEmpty } = this.props
+    const { url, previewHead, previewNotices, checkEmpty } = this.props
 		//const playbackRate = this.props.playbackRate || 1;
 		//let panelHeight = annotationHeight<=MAX_PANEL_HEIGHT? annotationHeight:MAX_PANEL_HEIGHT;
 		let panelContent;
 		if(submitted)
-			panelContent = <Review height={annotationHeight} onConfirmSubmission={this.handleSubmit} onCancelSubmission={this.handleReviewCancelSubmission} />
+			panelContent = <Review height={annotationHeight} onConfirmSubmit={this.handleSubmit} onCancelSubmit={this.handleReviewCancelSubmission} />
 		else if(previewed)
 			panelContent = (<div>
 											<div className="pb-3 clearfix" style={{minWidth: "400px"}}>
@@ -657,7 +659,7 @@ class TwoDimensionalVideo extends Component {
 											  />
 											</div>)
 		else {
-			panelContent = <Preview height={annotationHeight} notices={previewNotices} onPreviewed={this.handlePreviewed} />
+			panelContent = <Preview height={annotationHeight} notices={ previewNotices } head={ previewHead } onPreviewed={this.handlePreviewed} />
 		}
 
     return (

@@ -169,7 +169,11 @@ const DemoPage = () => {
         children: ['jt192wyc', 'jt192wyd'],
         parent: '',
     }];
-
+	const previewNotices = [
+		'Cells\' body range.',
+		'The time that cells <u>split</u>, <u>leave</u>, <u>obscured</u> and <u>show up</u> (if applicable).'
+	];
+    const previewHead = 'Please scan the video and observe the following to help you complete the task:'
 
     return (
         <div>
@@ -182,6 +186,8 @@ const DemoPage = () => {
                     checkEmpty
                     numberOfParentAnnotationsToBeAdded={ 3 }
                     annotations={ videoAnnotations }
+                    previewHead={ previewHead }
+                    previewNotices={ previewNotices }
                 />
             </div>
             <div className='mb-5'>
