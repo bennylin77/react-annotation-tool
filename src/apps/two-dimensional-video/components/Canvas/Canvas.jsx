@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import './styles/Canvas.css';
+import PropTypes from 'prop-types';
 import {
 	Stage, Layer, Rect, Group, Text,
 } from 'react-konva';
+
+import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
+import './Canvas.scss';
 import { SHOW } from 'models/2DVideo.js';
-import { interpolationArea, interpolationPosition } from './helper.js';
 
 class Canvas extends Component {
 	constructor(props) {
@@ -82,18 +84,6 @@ class Canvas extends Component {
 			absY;
 		let activeAnchor;
 		// boundary
-
-		/*
-		for(let dot of [topLeft, topRight, bottomRight, bottomLeft, top, bottom, left, right]){
-			absX = dot.getAbsolutePosition().x
-			absY = dot.getAbsolutePosition().y
-			absX = absX < 0 ? 0:absX;
-			absY = absY < 0 ? 0:absY;
-			absX = absX > width ? width:absX;
-			absY = absY > height ? height:absY;
-			dot.setAbsolutePosition({x: absX, y:absY})
-		}
-		*/
 		absX = topLeft.getAbsolutePosition().x;
 		absY = topLeft.getAbsolutePosition().y;
 		absX = absX < 0 ? 0 : absX;
@@ -105,29 +95,6 @@ class Canvas extends Component {
 		group.y(topLeft.getAbsolutePosition().y);
 		topLeft.position({ x: 0, y: 0 });
 
-		/*
-		topLeft.position({x: 0, y: 0});
-		activeAnchor = topLeft;
-		const anchorX = activeAnchor.getX();
-		const anchorY = activeAnchor.getY();
-		topRight.y(anchorY); top.y(anchorY); bottomLeft.x(anchorX); left.x(anchorX);
-		resizedHeight = bottomRight.y()-topLeft.y()
-		resizedWidth = bottomRight.x()-topLeft.x()
-		top.x(anchorX+resizedWidth/2); left.y(anchorY+resizedHeight/2); right.y(anchorY+resizedHeight/2); bottom.x(anchorX+resizedWidth/2);
-		text.x(anchorX); text.y(anchorY);
-		rect.position(topLeft.position());
-		rect.width(resizedWidth);
-		rect.height(resizedHeight);
-*/
-		/*
-		console.log(`topLeft.position() ${topLeft.position()}`)
-		console.log(topLeft.position())
-		console.log(`topLeft.getAbsolutePosition() ${topLeft.getAbsolutePosition()}`)
-		console.log(topLeft.getAbsolutePosition())
-		console.log(`group.position() ${group.position()}`)
-		console.log(group.position())
-		*/
-		// this.props.onCanvasGroupDragMove(e);
 	}
 
 	handleGroupDragEnd = (e) => {
@@ -323,8 +290,18 @@ class Canvas extends Component {
 						width = trajectories[i].width;
 						height = trajectories[i].height;
 					} else {
-						const interpoArea = interpolationArea({ startTraj: trajectories[i], endTraj: trajectories[i + 1], played });
-						const interpoPos = interpolationPosition({ startTraj: trajectories[i], endTraj: trajectories[i + 1], played });
+						const interpoArea = getInterpolatedData({
+							startEvent: trajectories[i],
+							endEvent: trajectories[i + 1],
+							currentTime: played,
+							type: INTERPOLATION_TYPE.LENGTH
+						});
+						const interpoPos = getInterpolatedData({
+							startEvent: trajectories[i],
+							endEvent: trajectories[i + 1],
+							currentTime: played,
+							type: INTERPOLATION_TYPE.POSITION
+						});
 						x = interpoPos.x;
 						y = interpoPos.y;
 						width = interpoArea.width;
@@ -373,4 +350,15 @@ class Canvas extends Component {
 		);
 	}
 }
+
+Canvas.propTypes = {
+	className: PropTypes.string,
+	dotLength: PropTypes.number,
+};
+Canvas.defaultProps = {
+	className: '',
+	dotLength: 6,
+};
+
+
 export default Canvas;
