@@ -176,8 +176,6 @@ class TwoDimensionalVideo extends Component {
 		this.setState((prevState, props) => ({ adding: !prevState.adding, playing: false }));
 	}
 
-	handleCanvasStageMouseMove = (e) => {}
-
 	handleCanvasStageMouseDown = (e) => {
 		if (!this.state.adding) return;
 		const stage = e.target.getStage();
@@ -215,54 +213,9 @@ class TwoDimensionalVideo extends Component {
 		});
 	}
 
-	handleCanvasStageMouseUp = (e) => {}
-
 	handleCanvasGroupMouseDown = (e) => {
 		const group = e.target.findAncestor('Group');
 		this.setState({ playing: false, focusing: group.name() });
-	}
-
-	handleCanvasGroupDragStart = (e) => {}
-
-	handleCanvasGroupDragMove = (e) => {
-		if (e.target.getClassName() !== 'Group') return;
-		const group = e.target;
-		const rect = group.get('Rect')[0];
-		const topLeft = group.get('.topLeft')[0];
-		// const position = topLeft.getAbsolutePosition()
-		const position = group.position();
-		const timeNow = new Date().getTime().toString(36);
-		// console.log(position)
-		const x = position.x < 0 ? 0 : position.x;
-		const y = position.y < 0 ? 0 : position.y;
-
-		this.setState((prevState, props) => {
-			this.UndoRedoState.save(prevState);
-			const { entities, played } = prevState;
-			const { annotations } = entities;
-			const { trajectories } = entities.annotations[group.name()];
-			for (let i = 0; i < trajectories.length; i++) {
-				if (played >= trajectories[i].time) {
-					// skip elapsed trajectories
-					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-					if (played === trajectories[i].time) {
-						trajectories[i].x = x; trajectories[i].y = y; trajectories[i].width = rect.width(); trajectories[i].height = rect.height();
-						break;
-					}
-					if (i === trajectories.length - 1) {
-						trajectories.push(new Trajectory({
-							id: `${timeNow}`, name: `${timeNow}`, x, y, width: rect.width(), height: rect.height(), time: played,
-						}));
-						break;
-					}
-					trajectories.splice(i + 1, 0, new Trajectory({
-						id: `${timeNow}`, name: `${timeNow}`, x, y, height: rect.height(), width: rect.width(), time: played,
-					}));
-					break;
-				}
-			}
-			return {};
-		});
 	}
 
 	handleCanvasGroupDragEnd = (e) => {
@@ -307,8 +260,6 @@ class TwoDimensionalVideo extends Component {
 		const group = e.target.findAncestor('Group');
 		this.setState({ focusing: group.name() });
 	}
-
-	handleCanvasDotDragMove = (e) => {}
 
 	handleCanvasDotDragEnd = (e) => {
 		const activeAnchor = e.target;
@@ -738,16 +689,11 @@ class TwoDimensionalVideo extends Component {
     							adding={ adding }
     							entities={ entities }
     							annotations={ annotations }
-    							onCanvasStageMouseMove={ this.handleCanvasStageMouseMove }
-    							onCanvasStageMouseDown={ this.handleCanvasStageMouseDown }
-    							onCanvasStageMouseUp={ this.handleCanvasStageMouseUp }
-    							onCanvasGroupMouseDown={ this.handleCanvasGroupMouseDown }
-    							onCanvasGroupDragStart={ this.handleCanvasGroupDragStart }
-    							onCanvasGroupDragEnd={ this.handleCanvasGroupDragEnd }
-    							onCanvasGroupDragMove={ this.handleCanvasGroupDragMove }
-    							onCanvasDotMouseDown={ this.handleCanvasDotMouseDown }
-    							onCanvasDotDragMove={ this.handleCanvasDotDragMove }
-    							onCanvasDotDragEnd={ this.handleCanvasDotDragEnd }
+    							onStageMouseDown={ this.handleCanvasStageMouseDown }
+    							onGroupMouseDown={ this.handleCanvasGroupMouseDown }
+    							onGroupDragEnd={ this.handleCanvasGroupDragEnd }
+    							onDotMouseDown={ this.handleCanvasDotMouseDown }
+    							onDotDragEnd={ this.handleCanvasDotDragEnd }
     							checkEmpty={ checkEmpty }
     						/>
     					</div>

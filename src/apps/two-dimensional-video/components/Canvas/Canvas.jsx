@@ -1,355 +1,319 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	Stage, Layer, Rect, Group, Text,
 } from 'react-konva';
+import { SHOW } from 'models/2DVideo';
 
+import ResizingAnchor from './ResizingAnchor/ResizingAnchor.jsx';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
 import './Canvas.scss';
-import { SHOW } from 'models/2DVideo.js';
 
-class Canvas extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { dotLength: 6 };
-	}
+const handleGroupDragMove = (e) => {
+	if (e.target.getClassName() !== 'Group') return;
+	const group = e.target;
+	const { width, height } = this.props;
+	const topLeft = group.get('.topLeft')[0];
+	const rect = group.get('Rect')[0];
+	let absX; let absY;
+	// boundary
+	absX = topLeft.getAbsolutePosition().x;
+	absY = topLeft.getAbsolutePosition().y;
+	absX = absX < 0 ? 0 : absX;
+	absY = absY < 0 ? 0 : absY;
+	absX = absX + rect.width() > width ? width - rect.width() : absX;
+	absY = absY + rect.height() > height ? height - rect.height() : absY;
+	topLeft.setAbsolutePosition({ x: absX, y: absY });
+	group.x(topLeft.getAbsolutePosition().x);
+	group.y(topLeft.getAbsolutePosition().y);
+	topLeft.position({ x: 0, y: 0 });
+};
 
-	isManipulatable = (id) => {
-		const { entities } = this.props;
-		return entities.annotations[id].isManipulatable;
-	}
+const Canvas = ({
+	className,
+	dotLength,
+	width: canvasWidth,
+	height: canvasHeight,
+	objects,
+	played,
+	focusing,
+	adding,
+	entities,
+	annotations,
+	checkEmpty,
+	onStageMouseDown,
+	onGroupDragEnd,
+	onGroupMouseDown,
+	onDotDragEnd,
+	onDotMouseDown,
+}) => {
 
-	handleMouseOver = (e) => {
-		const { adding } = this.props;
-		if (adding) return;
-		document.body.style.cursor = 'pointer';
-	}
-
-	handleRectMouseOver = (e) => {
-		const group = e.target.getParent();
-		if (!this.isManipulatable(group.id())) return;
-		const { adding } = this.props;
-		if (adding) return;
-		document.body.style.cursor = 'pointer';
-	}
-
-	handleStageMouseOver = (e) => {
-		if (this.props.adding) document.body.style.cursor = 'crosshair';
-	}
-
-	handleStageMouseLeave = (e) => {
-		document.body.style.cursor = 'default';
-	}
-
-	handleStageMouseOut = (e) => {
-		document.body.style.cursor = 'default';
-	}
-
-	handleStageMouseMove = (e) => {
-	  this.props.onCanvasStageMouseMove(e);
-	}
-
-	handleStageMouseDown = (e) => {
-	  this.props.onCanvasStageMouseDown(e);
-	}
-
-	handleStageMouseUp = (e) => {
-		this.props.onCanvasStageMouseUp(e);
-	}
-
-	handleGroupMouseDown = (e) => {
-		const group = e.target.findAncestor('Group');
-		if (!this.isManipulatable(group.id())) return;
-		group.moveToTop();
-	  	this.props.onCanvasGroupMouseDown(e);
-	}
-
-	handleGroupDragStart = (e) => {
-		this.props.onCanvasGroupDragStart(e);
-	}
-
-	handleGroupDragMove = (e) => {
-		if (e.target.getClassName() !== 'Group') return;
-		const group = e.target;
-		const { width, height } = this.props;
-		const topLeft = group.get('.topLeft')[0]; const topRight = group.get('.topRight')[0]; const bottomRight = group.get('.bottomRight')[0]; const
-			bottomLeft = group.get('.bottomLeft')[0];
-		const top = group.get('.top')[0]; const left = group.get('.left')[0]; const right = group.get('.right')[0]; const
-			bottom = group.get('.bottom')[0];
-		const rect = group.get('Rect')[0];
-		const text = group.get('Text')[0];
-		let resizedWidth; let
-			resizedHeight;
-		let absX; let
-			absY;
-		let activeAnchor;
-		// boundary
-		absX = topLeft.getAbsolutePosition().x;
-		absY = topLeft.getAbsolutePosition().y;
-		absX = absX < 0 ? 0 : absX;
-		absY = absY < 0 ? 0 : absY;
-		absX = absX + rect.width() > width ? width - rect.width() : absX;
-		absY = absY + rect.height() > height ? height - rect.height() : absY;
-		topLeft.setAbsolutePosition({ x: absX, y: absY });
-		group.x(topLeft.getAbsolutePosition().x);
-		group.y(topLeft.getAbsolutePosition().y);
-		topLeft.position({ x: 0, y: 0 });
-
-	}
-
-	handleGroupDragEnd = (e) => {
-		if (e.target.getClassName() !== 'Group') return;
-		/*
-		const group = e.target;
-		const topLeft = group.get('.topLeft')[0]
-		console.log(`topLeft.position() ${topLeft.position()}`)
-		console.log(topLeft.position())
-		console.log(`topLeft.getAbsolutePosition() ${topLeft.getAbsolutePosition()}`)
-		console.log(topLeft.getAbsolutePosition())
-		console.log(`group.position() ${group.position()}`)
-		console.log(group.position())
-
-
-		group.x(topLeft.getAbsolutePosition().x)
-		group.y(topLeft.getAbsolutePosition().y)
-*/
-		this.props.onCanvasGroupDragEnd(e);
-	}
-
-	handleDotMouseOver = (e) => {
-		const activeAnchor = e.target;
-		if (!this.isManipulatable(activeAnchor.getParent().id())) return;
-		switch (activeAnchor.getName()) {
-		case 'topLeft':
-		case 'bottomRight':
-			document.body.style.cursor = 'nwse-resize';
-			break;
-		case 'topRight':
-		case 'bottomLeft':
-			document.body.style.cursor = 'nesw-resize';
-			break;
-		case 'top':
-		case 'bottom':
-			document.body.style.cursor = 'ns-resize';
-			break;
-		case 'left':
-		case 'right':
-			document.body.style.cursor = 'ew-resize';
-			break;
-		}
-	}
-
-	handleDotMouseOut = (e) => {
-		document.body.style.cursor = 'default';
-	}
-
-	handleDotMouseDown = (e) => {
-		const group = e.target.findAncestor('Group');
-		if (!this.isManipulatable(group.id())) return;
-		group.draggable(false);
-		group.moveToTop();
-		e.target.moveToTop();
-		this.props.onCanvasDotMouseDown(e);
-	}
-
-	handleDotDragEnd = (e) => {
-		this.props.onCanvasDotDragEnd(e);
-		document.body.style.cursor = 'default';
-	}
-
-	handleDotDragMove = (e) => {
-		const { width, height } = this.props;
-		const activeAnchor = e.target;
-		const group = activeAnchor.getParent();
-		const topLeft = group.get('.topLeft')[0]; const topRight = group.get('.topRight')[0]; const bottomRight = group.get('.bottomRight')[0]; const
-			bottomLeft = group.get('.bottomLeft')[0];
-		const top = group.get('.top')[0]; const left = group.get('.left')[0]; const right = group.get('.right')[0]; const
-			bottom = group.get('.bottom')[0];
-		const rect = group.get('Rect')[0];
-		const text = group.get('Text')[0];
-
-		let resizedWidth; let
-			resizedHeight;
-		// set box resizing boundary
-		let absX = activeAnchor.getAbsolutePosition().x;
-		let absY = activeAnchor.getAbsolutePosition().y;
-		absX = absX < 0 ? 0 : absX;
-		absY = absY < 0 ? 0 : absY;
-		absX = absX > width ? width : absX;
-		absY = absY > height ? height : absY;
-		activeAnchor.setAbsolutePosition({ x: absX, y: absY });
-		const anchorX = activeAnchor.getX();
-		const anchorY = activeAnchor.getY();
-		// update anchor positions
-		switch (activeAnchor.getName()) {
-		case 'topLeft':
-		  	topRight.y(anchorY); top.y(anchorY); bottomLeft.x(anchorX); left.x(anchorX);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			top.x(anchorX + resizedWidth / 2); left.y(anchorY + resizedHeight / 2); right.y(anchorY + resizedHeight / 2); bottom.x(anchorX + resizedWidth / 2);
-			text.x(anchorX); text.y(anchorY);
-		    break;
-		case 'topRight':
-		    topLeft.y(anchorY); top.y(anchorY); bottomRight.x(anchorX); right.x(anchorX);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			top.x(anchorX - resizedWidth / 2); left.y(anchorY + resizedHeight / 2); right.y(anchorY + resizedHeight / 2); bottom.x(anchorX - resizedWidth / 2);
-			text.y(anchorY); text.x(anchorX - resizedWidth);
-		    break;
-		  case 'bottomRight':
-		    bottomLeft.y(anchorY); bottom.y(anchorY); topRight.x(anchorX); right.x(anchorX);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			top.x(anchorX - resizedWidth / 2); left.y(anchorY - resizedHeight / 2); right.y(anchorY - resizedHeight / 2); bottom.x(anchorX - resizedWidth / 2);
-			text.x(anchorX - resizedWidth);
-		    break;
-		  case 'bottomLeft':
-		    bottomRight.y(anchorY); bottom.y(anchorY); topLeft.x(anchorX); left.x(anchorX);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			top.x(anchorX + resizedWidth / 2); left.y(anchorY - resizedHeight / 2); right.y(anchorY - resizedHeight / 2); bottom.x(anchorX + resizedWidth / 2);
-			text.x(anchorX);
-		    break;
-		case 'top':
-			topLeft.y(anchorY); topRight.y(anchorY);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			top.x(topLeft.x() + resizedWidth / 2);
-			left.y(anchorY + resizedHeight / 2); right.y(anchorY + resizedHeight / 2);
-			text.y(anchorY);
-			break;
-		case 'left':
-			topLeft.x(anchorX); bottomLeft.x(anchorX);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			left.y(topLeft.y() + resizedHeight / 2);
-			top.x(anchorX + resizedWidth / 2); bottom.x(anchorX + resizedWidth / 2);
-			text.x(anchorX);
-			break;
-		case 'right':
-			topRight.x(anchorX); bottomRight.x(anchorX);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			right.y(topLeft.y() + resizedHeight / 2);
-			top.x(anchorX - resizedWidth / 2); bottom.x(anchorX - resizedWidth / 2);
-			text.x(anchorX - resizedWidth);
-			break;
-		case 'bottom':
-			bottomLeft.y(anchorY); bottomRight.y(anchorY);
-			resizedHeight = bottomRight.y() - topLeft.y();
-			resizedWidth = bottomRight.x() - topLeft.x();
-			bottom.x(topLeft.x() + resizedWidth / 2);
-			left.y(anchorY - resizedHeight / 2); right.y(anchorY - resizedHeight / 2);
-			break;
-		}
-
-
-		group.x(topLeft.getAbsolutePosition().x);
-		group.y(topLeft.getAbsolutePosition().y);
-		topLeft.position({ x: 0, y: 0 });
-		top.position({ x: resizedWidth / 2, y: 0 });
-		topRight.position({ x: resizedWidth, y: 0 });
-		left.position({ x: 0, y: resizedHeight / 2 });
-		bottomLeft.position({ x: 0, y: resizedHeight });
-		right.position({ x: resizedWidth, y: resizedHeight / 2 });
-		bottom.position({ x: resizedWidth / 2, y: resizedHeight });
-		bottomRight.position({ x: resizedWidth, y: resizedHeight });
-		rect.position(topLeft.position());
-		rect.width(resizedWidth);
-		rect.height(resizedHeight);
-		text.position({ x: 0, y: 0 });
-	}
-
-	handle = (e) => {} // for testing
-
-	render() {
+	const layerItems = [];
+	annotations.slice().reverse().forEach((annotationId) => {
 		const {
-			height, width, objects, played, focusing, adding, entities, annotations, checkEmpty,
-		} = this.props;
-		const { dotLength } = this.state;
-		const layerItems = [];
+			trajectories, color, id, name, label, isManipulatable,
+		} = entities.annotations[annotationId];
 
-		annotations.slice().reverse().forEach((ann) => {
-			const { trajectories } = entities.annotations[ann];
-			const { color } = entities.annotations[ann];
-			const { id } = entities.annotations[ann];
-			const { name } = entities.annotations[ann];
-			const { label } = entities.annotations[ann];
-			const { isManipulatable } = entities.annotations[ann];
+		for (let i = 0; i < trajectories.length; i++) {
+			let x;
+			let y;
+			let width;
+			let height;
 
-			for (let i = 0; i < trajectories.length; i++) {
-				let x; let y; let width; let
-					height;
-				if (played >= trajectories[i].time) {
-					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-					if (trajectories[i].status !== SHOW) break; // todo
+			if (played >= trajectories[i].time) {
+				if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) {
+					continue;
+				}
+				if (trajectories[i].status !== SHOW) break; // todo
 
-					if (i === trajectories.length - 1) {
-						x = trajectories[i].x;
-						y = trajectories[i].y;
-						width = trajectories[i].width;
-						height = trajectories[i].height;
-					} else {
-						const interpoArea = getInterpolatedData({
-							startEvent: trajectories[i],
-							endEvent: trajectories[i + 1],
-							currentTime: played,
-							type: INTERPOLATION_TYPE.LENGTH
-						});
-						const interpoPos = getInterpolatedData({
-							startEvent: trajectories[i],
-							endEvent: trajectories[i + 1],
-							currentTime: played,
-							type: INTERPOLATION_TYPE.POSITION
-						});
-						x = interpoPos.x;
-						y = interpoPos.y;
-						width = interpoArea.width;
-						height = interpoArea.height;
-					}
-					const dots = [];
-					const fill = (focusing === name) ? color.replace(/,1\)/, ',.3)') : '';
-					const rect = <Rect x={ 0 } y={ 0 } fill={ fill } width={ width } height={ height } stroke={ color } strokeWidth={ 1 } onMouseOver={ this.handleRectMouseOver } />;
-					const labelText = <Text offsetY={ 20 } x={ 0 } y={ 0 } fontFamily='Calibri' text={ `${label}` } fontSize={ 16 } lineHeight={ 1.2 } fill='#fff' />;
-					const warningText = checkEmpty && trajectories.length < 2 && <Text offsetY={ -5 } x={ 0 } y={ height } fontFamily='Calibri' text='You should track the cell bound by this box' fontSize={ 16 } lineHeight={ 1.2 } fill='#fff' />;
+				if (i === trajectories.length - 1) {
+					({
+						x,
+						y,
+						width,
+						height,
+					} = trajectories[i]);
+				} else {
+					const interpoArea = getInterpolatedData({
+						startEvent: trajectories[i],
+						endEvent: trajectories[i + 1],
+						currentTime: played,
+						type: INTERPOLATION_TYPE.LENGTH,
+					});
+					const interpoPos = getInterpolatedData({
+						startEvent: trajectories[i],
+						endEvent: trajectories[i + 1],
+						currentTime: played,
+						type: INTERPOLATION_TYPE.POSITION,
+					});
+					({
+						x, y,
+					} = interpoPos);
+					({
+						width, height,
+					} = interpoArea);
+				}
 
-					if (isManipulatable) {
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ 0 } y={ 0 } key='topLeft' name='topLeft' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ width } y={ 0 } key='topRight' name='topRight' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ width } y={ height } key='bottomRight' name='bottomRight' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ 0 } y={ height } key='bottomLeft' name='bottomLeft' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ width / 2 } y={ 0 } key='top' name='top' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ 0 } y={ height / 2 } key='left' name='left' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ width } y={ height / 2 } key='right' name='right' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-						dots.push(<Rect offsetX={ dotLength / 2 } offsetY={ dotLength / 2 } x={ width / 2 } y={ height } key='bottom' name='bottom' stroke={ color } fill={ color } strokeWidth={ 0 } width={ dotLength } height={ dotLength } draggable={ isManipulatable } dragOnTop={ false } onDragMove={ this.handleDotDragMove } onMouseDown={ this.handleDotMouseDown } onDragEnd={ this.handleDotDragEnd } onMouseOver={ this.handleDotMouseOver } onMouseOut={ this.handleDotMouseOut } />);
-					}
-					layerItems.push(<Group x={ x } y={ y } key={ name } id={ id } name={ name } draggable={ isManipulatable } onDragMove={ this.handle } onMouseDown={ this.handleGroupMouseDown } onDragEnd={ this.handleGroupDragEnd } onDragStart={ this.handleGroupDragStart } onDragMove={ this.handleGroupDragMove }>
+				const dots = [];
+				const fill = (focusing === name) ? color.replace(/,1\)/, ',.3)') : '';
+				const rect = (
+					<Rect
+						x={ 0 }
+						y={ 0 }
+						fill={ fill }
+						width={ width }
+						height={ height }
+						stroke={ color }
+						strokeWidth={ 1 }
+						onFocus={ () => {} }
+						onMouseOver={ () => {
+							if (!isManipulatable || adding) return;
+							document.body.style.cursor = 'pointer';
+						} }
+					/>
+				);
+				const labelText = (
+					<Text
+						offsetY={ 20 }
+						x={ 0 }
+						y={ 0 }
+						fontFamily='Calibri'
+						text={ label }
+						fontSize={ 16 }
+						lineHeight={ 1.2 }
+						fill='#fff'
+					/>
+				);
+				const warningText = checkEmpty && trajectories.length < 2 && (
+					<Text
+						offsetY={ -5 }
+						x={ 0 }
+						y={ height }
+						fontFamily='Calibri'
+						text='You should track the cell bound by this box'
+						fontSize={ 16 }
+						lineHeight={ 1.2 }
+						fill='#fff'
+					/>
+				);
+				if (isManipulatable) {
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ 0 }
+							y={ 0 }
+							name='topLeft'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ width }
+							y={ 0 }
+							name='topRight'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ width }
+							y={ height }
+							name='bottomRight'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ 0 }
+							y={ height }
+							name='bottomLeft'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ width / 2 }
+							y={ 0 }
+							name='top'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ 0 }
+							y={ height / 2 }
+							name='left'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ width }
+							y={ height / 2 }
+							name='right'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+					dots.push(
+						<ResizingAnchor
+							dotLength={ dotLength }
+							color={ color }
+							isManipulatable={ isManipulatable }
+							x={ width / 2 }
+							y={ height }
+							name='bottom'
+							canvasWidth={ canvasWidth }
+							canvasHeight={ canvasHeight }
+							onDragEnd={ onDotDragEnd }
+							onMouseDown={ onDotMouseDown }
+						/>,
+					);
+				}
+				layerItems.push(
+					<Group
+						x={ x }
+						y={ y }
+						key={ name }
+						id={ id }
+						name={ name }
+						draggable={ isManipulatable }
+						onMouseDown={ (e) => {
+							const group = e.target.findAncestor('Group');
+							if (!isManipulatable) return;
+							group.moveToTop();
+							onGroupMouseDown(e);
+						} }
+						onDragEnd={ (e) => {
+							if (e.target.getClassName() !== 'Group') return;
+							onGroupDragEnd(e);
+						} }
+						onDragMove={ e => handleGroupDragMove(e) }
+					>
 						{labelText}
 						{rect}
 						{dots}
 						{warningText}
-                     </Group>);
-					break;
-				}
+					</Group>
+				);
+				break;
 			}
-		});
-		let addingLayer;
-		if (adding) {
-			addingLayer = (
-				<Layer>
-					<Rect fill='#ffffff' width={ width } height={ height } opacity={ 0.3 } />
-					<Text y={ height / 2 } width={ width } text='Click and Drag here to add new box' align='center' fontSize={ 16 } fill='#fff' />
-				</Layer>
-			);
 		}
-		return (
-			<Stage width={ width } height={ height } className='konva-wrapper' onMouseDown={ this.handleStageMouseDown } onMouseUp={ this.handleStageMouseUp } onMouseMove={ this.handleStageMouseMove } onMouseOver={ this.handleStageMouseOver } onMouseLeave={ this.handleStageMouseLeave } onMouseOut={ this.handleStageMouseOut }>
-				{addingLayer}
-				<Layer>{layerItems}</Layer>
-			</Stage>
+	});
+	let addingLayer;
+	if (adding) {
+		addingLayer = (
+			<Layer>
+				<Rect fill='#ffffff' width={ canvasWidth } height={ canvasHeight } opacity={ 0.3 } />
+				<Text y={ canvasHeight / 2 } width={ canvasWidth } text='Click and Drag here to add new box' align='center' fontSize={ 16 } fill='#fff' />
+			</Layer>
 		);
 	}
-}
+	return (
+		<Stage
+			width={ canvasWidth }
+			height={ canvasHeight }
+			className='konva-wrapper'
+			onMouseDown={ e => onStageMouseDown(e) }
+			onMouseOver={ () => {
+				if (adding) {
+					document.body.style.cursor = 'crosshair';
+				}
+			} }
+			onMouseLeave={ () => {
+				document.body.style.cursor = 'default';
+			} }
+			onMouseOut={ () => {
+				document.body.style.cursor = 'default';
+			} }
+			onBlur={ () => {} }
+			onFocus={ () => {} }
+		>
+			{addingLayer}
+			<Layer>{layerItems}</Layer>
+		</Stage>
+	);
+};
 
 Canvas.propTypes = {
 	className: PropTypes.string,
@@ -359,6 +323,4 @@ Canvas.defaultProps = {
 	className: '',
 	dotLength: 6,
 };
-
-
 export default Canvas;
