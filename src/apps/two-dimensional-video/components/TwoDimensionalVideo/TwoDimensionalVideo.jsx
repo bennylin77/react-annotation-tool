@@ -4,7 +4,7 @@ import { normalize, denormalize, schema } from 'normalizr';
 import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.css';
-import PopupDialog from 'shared/components/PopupDialog/PopupDialog';
+import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt } from 'shared/utils/mathUtils';
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
@@ -12,17 +12,12 @@ import { VideoAnnotation, Trajectory } from 'models/2DVideo.js';
 import { UndoRedo } from 'models/UndoRedo.js';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
 
-import { interpolationArea, interpolationPosition } from '../Tmp/helper.js';
-
-
 import VideoPlayerScreen from '../VideoPlayer/Screen/Screen.jsx';
 import VideoPlayerControl from '../VideoPlayer/Control/Control.jsx';
 import Preview from '../Preview/Preview.jsx';
 import Review from '../Review/Review.jsx';
 import Canvas from '../Canvas/Canvas.jsx';
-
-
-import List from '../Tmp/List';
+import List from '../List/List.jsx';
 
 
 class TwoDimensionalVideo extends Component {
@@ -157,7 +152,7 @@ class TwoDimensionalVideo extends Component {
     	if (adding || !adding && this.showAddButton()) {
     		return (
     			<Button
-    			disabled={ adding }
+    				disabled={ adding }
     				color='primary'
     				size='lg'
     				onClick={ this.handleAddClick }
@@ -436,8 +431,18 @@ class TwoDimensionalVideo extends Component {
 						}));
 						break;
 					}
-					const interpoArea = interpolationArea({ startTraj: trajectories[i], endTraj: trajectories[i + 1], played });
-					const interpoPos = interpolationPosition({ startTraj: trajectories[i], endTraj: trajectories[i + 1], played });
+					const interpoArea = getInterpolatedData({
+						startEvent: trajectories[i],
+						endEvent: trajectories[i + 1],
+						currentTime: played,
+						type: INTERPOLATION_TYPE.LENGTH,
+					});
+					const interpoPos = getInterpolatedData({
+						startEvent: trajectories[i],
+						endEvent: trajectories[i + 1],
+						currentTime: played,
+						type: INTERPOLATION_TYPE.POSITION,
+					});
 					trajectories.splice(i + 1, 0, new Trajectory({
 						id: `${timeNow}`, name: `${timeNow}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
 					}));
@@ -495,8 +500,18 @@ class TwoDimensionalVideo extends Component {
 						}));
 						break;
 					}
-					const interpoArea = interpolationArea({ startTraj: trajectories[i], endTraj: trajectories[i + 1], played });
-					const interpoPos = interpolationPosition({ startTraj: trajectories[i], endTraj: trajectories[i + 1], played });
+					const interpoArea = getInterpolatedData({
+						startEvent: trajectories[i],
+						endEvent: trajectories[i + 1],
+						currentTime: played,
+						type: INTERPOLATION_TYPE.LENGTH,
+					});
+					const interpoPos = getInterpolatedData({
+						startEvent: trajectories[i],
+						endEvent: trajectories[i + 1],
+						currentTime: played,
+						type: INTERPOLATION_TYPE.POSITION,
+					});
 					parentX = interpoPos.x;
 					parentY = interpoPos.y;
 					parentWidth = interpoArea.width;
@@ -665,7 +680,7 @@ class TwoDimensionalVideo extends Component {
 
     	return (
     		<div>
-    			<PopupDialog isOpen={ dialogIsOpen } title={ dialogTitle } message={ dialogMessage } handleToggle={ this.handleDialogToggle } />
+    			<PopupDialog isOpen={ dialogIsOpen } title={ dialogTitle } message={ dialogMessage } handleToggle={ this.handleDialogToggle } enableCloseButton />
     			<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
     				<div className='mb-3' style={ { width: annotationWidth } }>
     					<div style={ { position: 'relative' } }>

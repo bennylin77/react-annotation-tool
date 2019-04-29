@@ -1,28 +1,26 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.css';
 import {
-	Button, ButtonGroup, ListGroup, ListGroupItem, Collapse, Badge,
-} from 'reactstrap';
-import {
-	Modal, ModalHeader, ModalBody, ModalFooter, Label, Input,
+	Button, ListGroup, ListGroupItem, Collapse, Badge, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input,
 } from 'reactstrap';
 import { Events, scrollSpy, scroller } from 'react-scroll';
-
-import { MdCallSplit, MdDelete, MdAdd } from 'react-icons/md';
+import { MdCallSplit, MdDelete } from 'react-icons/md';
 import { FaChevronDown, FaChevronUp, FaArrowDown } from 'react-icons/fa';
 import { IoMdEyeOff, IoMdEye } from 'react-icons/io';
-
-
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
+import RoundedNumber from 'shared/components/Math/RoundedNumber/RoundedNumber.jsx';
+import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import Duration from '../VideoPlayer/FormattedTime/FormattedTime.jsx';
-import { Rounding } from './helper.js';
-import './styles/List.css';
+
+
+import './List.scss';
 
 class List extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			modal: false, modalMessage: '', modalTitle: '', modalShowHideData: null, modalDeleteName: '', modalSplitName: '', disableSplitModal: false, disableShowHideModal: false, disableDeleteModal: false, checkbox: false,
+			modal: false, modalMessage: '', modalTitle: '', modalShowHideData: null, modalDeleteName: '', modalSplitName: '', disableSplitModal: false, disableShowHideModal: false, disableDeleteModal: false, checkbox: false, handleYesClick: () => {},
 		};
 	}
 
@@ -96,7 +94,7 @@ class List extends Component {
 		const { disableDeleteModal } = this.state;
 		if (!disableDeleteModal) {
 			this.setState({
-				modalDeleteName: name, modal: true, modalMessage: 'Are you sure you would like to delete this annotation?', modalTitle: 'Delete this annotation',
+				modalDeleteName: name, modal: true, modalMessage: 'Are you sure you would like to delete this annotation?', modalTitle: 'Delete this annotation', handleYesClick: this.handleDelete,
 			}, this.props.onListVideoPause());
 		} else { this.props.onListAnnotationDelete(name); }
 	}
@@ -105,7 +103,7 @@ class List extends Component {
 		const { disableSplitModal } = this.state;
 		if (!disableSplitModal) {
 			this.setState({
-				modalSplitName: name, modal: true, modalMessage: 'Does the object split into two and would you like to split this bounding box into two boxes?', modalTitle: 'Split this box',
+				modalSplitName: name, modal: true, modalMessage: 'Does the object split into two and would you like to split this bounding box into two boxes?', modalTitle: 'Split this box', handleYesClick: this.handleSplit,
 			}, this.props.onListVideoPause());
 		} else { this.props.onListAnnotationSplit(name); }
 	}
@@ -114,11 +112,11 @@ class List extends Component {
 		const { disableShowHideModal } = this.state;
 		if (!disableShowHideModal && data.status == SHOW) {
 			this.setState({
-				modalShowHideData: data, modal: true, modalMessage: 'Does the object show up on the video and would you like to show its annotation?', modalTitle: 'Show this annotation',
+				modalShowHideData: data, modal: true, modalMessage: 'Does the object show up on the video and would you like to show its annotation?', modalTitle: 'Show this annotation', handleYesClick: this.handleShowHide,
 			});
 		} else if (!disableShowHideModal && data.status == HIDE) {
 			this.setState({
-				modalShowHideData: data, modal: true, modalMessage: 'Does the object leave the video or is obscured by other objects and would you like to hide its annotation?', modalTitle: 'Hide this annotation',
+				modalShowHideData: data, modal: true, modalMessage: 'Does the object leave the video or is obscured by other objects and would you like to hide its annotation?', modalTitle: 'Hide this annotation', handleYesClick: this.handleShowHide,
 			}, this.props.onListVideoPause());
 		} else { this.props.onListAnnotationShowHide(data); }
 	}
@@ -206,32 +204,32 @@ class List extends Component {
 at
 
 
-							
+
 {' '}
 							<Duration seconds={ duration * trajectories[i].time } />
                  </div>
 																 <div className='trajectory-size pr-1'>
 							<b>Size</b>
 							{' '}
-							<Rounding number={ trajectories[i].width } />
+							<RoundedNumber number={ trajectories[i].width } />
 							{' '}
 x
 
 
-							
+
 {' '}
-							<Rounding number={ trajectories[i].height } />
+							<RoundedNumber number={ trajectories[i].height } />
                  </div>
 																 <div className='trajectory-position'>
 							<b>Position</b>
 							{' '}
-							<Rounding number={ trajectories[i].x } />
+							<RoundedNumber number={ trajectories[i].x } />
 ,
 
 
-							
+
 {' '}
-							<Rounding number={ trajectories[i].y } />
+							<RoundedNumber number={ trajectories[i].y } />
                  </div>
 															 </div>
 															 <Button className='trajectory-delete' color='link' onClick={ () => this.props.onListTrajectoryDelete({ annotationName: name, trajectoryName: trajectories[i].name }) }><MdDelete /></Button>
@@ -317,32 +315,49 @@ x
 		return (
 			<div>
 				<ListGroup className='list-wrapper' id='list-wrapper' style={ { maxHeight: height - 60 } }>{items}</ListGroup>
-				<Modal isOpen={ this.state.modal } toggle={ this.handleModalToggle } backdrop='static'>
-					<ModalHeader toggle={ this.handleModalToggle }>{this.state.modalTitle}</ModalHeader>
-					<ModalBody>
-						{this.state.modalMessage}
-					</ModalBody>
-					<ModalFooter>
-						<div className='d-flex align-items-center'>
-							<Label check>
-								<Input type='checkbox' onChange={ this.handleCheckboxChange } />
-								{' '}
-									Don't show again
-
-
-							</Label>
-						</div>
-						{this.state.modalSplitName ? (<Button color='primary' onClick={ this.handleSplit }>Yes</Button>) : ''}
-						{' '}
-						{this.state.modalShowHideData ? (<Button color='primary' onClick={ this.handleShowHide }>Yes</Button>) : ''}
-						{' '}
-						{this.state.modalDeleteName ? (<Button color='primary' onClick={ this.handleDelete }>Yes</Button>) : ''}
-						{' '}
-						<Button color='secondary' onClick={ this.handleModalToggle }>No</Button>
-					</ModalFooter>
-				</Modal>
+				<PopupDialog
+					isOpen={ this.state.modal }
+					title={ this.state.modalTitle }
+					message={ this.state.modalMessage }
+					handleToggle={ this.handleModalToggle }
+					handleYesClick={ this.state.handleYesClick }
+					handleDontShowAgainChange={ this.handleCheckboxChange }
+					enableDontShowAgain
+					enableYesNoButton
+				/>
 			</div>
 		);
 	}
 }
+
+List.propTypes = {
+	className: PropTypes.string,
+};
+List.defaultProps = {
+	className: '',
+};
 export default List;
+
+/*
+<Modal isOpen={ this.state.modal } toggle={ this.handleModalToggle } backdrop='static'>
+	<ModalHeader toggle={ this.handleModalToggle }>{this.state.modalTitle}</ModalHeader>
+	<ModalBody>
+		{this.state.modalMessage}
+	</ModalBody>
+	<ModalFooter>
+		<div className='d-flex align-items-center'>
+			<Label check>
+				<Input type='checkbox' onChange={ this.handleCheckboxChange } />
+				{'Don\'t show again'}
+			</Label>
+		</div>
+		{this.state.modalSplitName ? (<Button color='primary' onClick={ this.handleSplit }>Yes</Button>) : ''}
+		{' '}
+		{this.state.modalShowHideData ? (<Button color='primary' onClick={ this.handleShowHide }>Yes</Button>) : ''}
+		{' '}
+		{this.state.modalDeleteName ? (<Button color='primary' onClick={ this.handleDelete }>Yes</Button>) : ''}
+		{' '}
+		<Button color='secondary' onClick={ this.handleModalToggle }>No</Button>
+	</ModalFooter>
+</Modal>
+*/

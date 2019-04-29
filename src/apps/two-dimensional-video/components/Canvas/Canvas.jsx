@@ -9,10 +9,9 @@ import ResizingAnchor from './ResizingAnchor/ResizingAnchor.jsx';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
 import './Canvas.scss';
 
-const handleGroupDragMove = (e) => {
+const handleGroupDragMove = (e, canvasWidth, canvasHeight) => {
 	if (e.target.getClassName() !== 'Group') return;
 	const group = e.target;
-	const { width, height } = this.props;
 	const topLeft = group.get('.topLeft')[0];
 	const rect = group.get('Rect')[0];
 	let absX; let absY;
@@ -21,8 +20,8 @@ const handleGroupDragMove = (e) => {
 	absY = topLeft.getAbsolutePosition().y;
 	absX = absX < 0 ? 0 : absX;
 	absY = absY < 0 ? 0 : absY;
-	absX = absX + rect.width() > width ? width - rect.width() : absX;
-	absY = absY + rect.height() > height ? height - rect.height() : absY;
+	absX = absX + rect.width() > canvasWidth ? canvasWidth - rect.width() : absX;
+	absY = absY + rect.height() > canvasHeight ? canvasHeight - rect.height() : absY;
 	topLeft.setAbsolutePosition({ x: absX, y: absY });
 	group.x(topLeft.getAbsolutePosition().x);
 	group.y(topLeft.getAbsolutePosition().y);
@@ -268,7 +267,7 @@ const Canvas = ({
 							if (e.target.getClassName() !== 'Group') return;
 							onGroupDragEnd(e);
 						} }
-						onDragMove={ e => handleGroupDragMove(e) }
+						onDragMove={ e => handleGroupDragMove(e, canvasWidth, canvasHeight) }
 					>
 						{labelText}
 						{rect}
