@@ -337,27 +337,3 @@ List.defaultProps = {
 	className: '',
 };
 export default List;
-
-/*
-<Modal isOpen={ this.state.modal } toggle={ this.handleModalToggle } backdrop='static'>
-	<ModalHeader toggle={ this.handleModalToggle }>{this.state.modalTitle}</ModalHeader>
-	<ModalBody>
-		{this.state.modalMessage}
-	</ModalBody>
-	<ModalFooter>
-		<div className='d-flex align-items-center'>
-			<Label check>
-				<Input type='checkbox' onChange={ this.handleCheckboxChange } />
-				{'Don\'t show again'}
-			</Label>
-		</div>
-		{this.state.modalSplitName ? (<Button color='primary' onClick={ this.handleSplit }>Yes</Button>) : ''}
-		{' '}
-		{this.state.modalShowHideData ? (<Button color='primary' onClick={ this.handleShowHide }>Yes</Button>) : ''}
-		{' '}
-		{this.state.modalDeleteName ? (<Button color='primary' onClick={ this.handleDelete }>Yes</Button>) : ''}
-		{' '}
-		<Button color='secondary' onClick={ this.handleModalToggle }>No</Button>
-	</ModalFooter>
-</Modal>
-*/
