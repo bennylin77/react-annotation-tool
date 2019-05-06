@@ -746,6 +746,6 @@ TwoDimensionalVideo.propTypes = {
 TwoDimensionalVideo.defaultProps = {
 	defaultAnnotationsManipulatable: false,
 	checkEmpty: false,
-	numberOfParentAnnotationsToBeAdded: 1,
+	numberOfParentAnnotationsToBeAdded: 1000,
 };
 export default TwoDimensionalVideo;

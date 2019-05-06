@@ -184,7 +184,7 @@ const DemoPage = () => {
 					annotationWidth={ 500 }
 					review
 					checkEmpty
-					numberOfParentAnnotationsToBeAdded={ 3 }
+					numberOfParentAnnotationsToBeAdded={ 20 }
 					annotations={ videoAnnotations }
 					previewHead={ previewHead }
 					previewNotices={ previewNotices }
