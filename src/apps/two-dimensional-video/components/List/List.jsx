@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.css';
 import {
-	Button, ListGroup, ListGroupItem, Collapse, Badge, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input,
+	Button, ListGroup, ListGroupItem, Collapse, Badge,
 } from 'reactstrap';
 import { Events, scrollSpy, scroller } from 'react-scroll';
 import { MdCallSplit, MdDelete } from 'react-icons/md';
 import { FaChevronDown, FaChevronUp, FaArrowDown } from 'react-icons/fa';
 import { IoMdEyeOff, IoMdEye } from 'react-icons/io';
-import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
+import { SPLIT, HIDE, SHOW } from 'models/2DVideo';
 import RoundedNumber from 'shared/components/Math/RoundedNumber/RoundedNumber.jsx';
 import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import Duration from '../VideoPlayer/FormattedTime/FormattedTime.jsx';
@@ -20,13 +20,23 @@ class List extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			modal: false, modalMessage: '', modalTitle: '', modalShowHideData: null, modalDeleteName: '', modalSplitName: '', disableSplitModal: false, disableShowHideModal: false, disableDeleteModal: false, checkbox: false, handleYesClick: () => {},
+			modal: false,
+			modalMessage: '',
+			modalTitle: '',
+			modalShowHideData: null,
+			modalDeleteName: '',
+			modalSplitName: '',
+			disableSplitModal: false,
+			disableShowHideModal: false,
+			disableDeleteModal: false,
+			checkbox: false,
+			handleYesClick: () => {},
 		};
 	}
 
 	componentDidMount = () => {
-		Events.scrollEvent.register('begin', (to, element) => {});
-		Events.scrollEvent.register('end', (to, element) => {});
+		Events.scrollEvent.register('begin', () => {});
+		Events.scrollEvent.register('end', () => {});
 		scrollSpy.update();
 	}
 
@@ -38,10 +48,9 @@ class List extends Component {
 	componentDidUpdate = (prevProps) => {
 		const { focusing } = this.props;
 		// Typical usage (don't forget to compare props):
-	  if (focusing && focusing !== prevProps.focusing) {
-	    scroller.scrollTo(focusing, { containerId: 'list-wrapper' });
-	  }
-		//
+		if (focusing && focusing !== prevProps.focusing) {
+			scroller.scrollTo(focusing, { containerId: 'list-wrapper' });
+		}
 	}
 
 	handleAnnotationClick = (name) => {
@@ -82,10 +91,6 @@ class List extends Component {
 		this.props.onListTrajectoryJump(e);
 	}
 
-	/*
-	handleTrajectoryDelete = (e) => {
-		this.props.onListTrajectoryDelete(e);
-	} */
 	handleCheckboxChange = (e) => {
 		this.setState({ checkbox: e.target.checked });
 	}
@@ -332,8 +337,10 @@ x
 
 List.propTypes = {
 	className: PropTypes.string,
+	focusing: PropTypes.string,
 };
 List.defaultProps = {
 	className: '',
+	focusing: '',
 };
 export default List;

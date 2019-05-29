@@ -12,8 +12,9 @@ const Preview = ({
 	onPreviewed,
 }) => {
 	const items = notices.map(n => <li key={ n } dangerouslySetInnerHTML={ { __html: n } } />);
+	const rootClassName = `d-flex align-items-center justify-content-center preview${className ? ` ${className}` : ''}`;
 	return (
-		<div className={ `${className} d-flex align-items-center justify-content-center preview` } style={ { height } }>
+		<div className={ rootClassName } style={ { height } }>
 			<div>
 				<div className='mb-4'>{head}</div>
 				<ul className='text-left preview__list mb-5 pl-4'>

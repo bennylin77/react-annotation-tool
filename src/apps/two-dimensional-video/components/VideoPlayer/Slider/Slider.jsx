@@ -5,7 +5,7 @@ import './Slider.scss';
 const Slider = ({
 	className, onMouseUp, onMouseDown, onChange, played,
 }) => (
-	<div className={ `${className} player-slider` }>
+	<div className={ `player-slider${className ? ` ${className}` : ''}` }>
 		<input
 			type='range'
 			min={ 0 }

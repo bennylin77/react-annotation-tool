@@ -26,7 +26,7 @@ const Screen = ({
 		onProgress={ onProgress }
 		onDuration={ onDuration }
 		onEnded={ onEnded }
-		className={ `${className} player-screen` }
+		className={ `player-screen${className ? ` ${className}` : ''}` }
 		progressInterval={ progressInterval }
 		controls={ false }
 		muted

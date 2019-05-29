@@ -23,7 +23,7 @@ const Control = ({
 }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	return (
-		<div className={ `${className} player-control` }>
+		<div className={ `player-control${className ? ` ${className}` : ''}` }>
 			<Slider
 				played={ played }
 				onMouseUp={ onSliderMouseUp }

@@ -9,23 +9,26 @@ const Review = ({
 	height,
 	onConfirmSubmit,
 	onCancelSubmit,
-}) => (
-	<div className={ `${className} d-flex align-items-center justify-content-center text-center` } style={ { height } }>
-		<div>
-			<div>The video is replaying</div>
-			<div className='mb-2'>
-				{'Make sure all the bounding boxes '}
-				<b className='text-danger'>PRECISELY</b>
-				{' bound the objects'}
-			</div>
+}) => {
+	const rootClassName = `d-flex align-items-center justify-content-center text-center${className ? ` ${className}` : ''}`;
+	return (
+		<div className={ rootClassName } style={ { height } }>
 			<div>
-				<Button className='mb-1' color='primary' onClick={ onCancelSubmit }>I want to adjust some boxes</Button>
-				{' '}
-				<Button className='mb-1' onClick={ onConfirmSubmit }>Everything is great! Submit it</Button>
+				<div>The video is replaying</div>
+				<div className='mb-2'>
+					{'Make sure all the bounding boxes '}
+					<b className='text-danger'>PRECISELY</b>
+					{' bound the objects'}
+				</div>
+				<div>
+					<Button className='mb-1' color='primary' onClick={ onCancelSubmit }>I want to adjust some boxes</Button>
+					{' '}
+					<Button className='mb-1' onClick={ onConfirmSubmit }>Everything is great! Submit it</Button>
+				</div>
 			</div>
 		</div>
-	</div>
-);
+	);
+};
 
 Review.propTypes = {
 	className: PropTypes.string,
