@@ -7,7 +7,7 @@ import { SHOW } from 'models/2DVideo';
 
 import ResizingAnchor from './ResizingAnchor/ResizingAnchor.jsx';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
-import './Canvas.scss';
+import './canvas.scss';
 
 const handleGroupDragMove = (e, canvasWidth, canvasHeight) => {
 	if (e.target.getClassName() !== 'Group') return;

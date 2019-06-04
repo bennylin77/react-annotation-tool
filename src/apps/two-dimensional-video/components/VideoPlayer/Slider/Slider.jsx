@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Slider.scss';
+import './slider.scss';
 
 const Slider = ({
 	className, onMouseUp, onMouseDown, onChange, played,

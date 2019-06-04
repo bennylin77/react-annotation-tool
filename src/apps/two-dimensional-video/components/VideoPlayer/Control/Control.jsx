@@ -6,7 +6,7 @@ import {
 } from 'reactstrap';
 import Slider from '../Slider/Slider.jsx';
 import FormattedTime from '../FormattedTime/FormattedTime.jsx';
-import './Control.scss';
+import './control.scss';
 
 const Control = ({
 	className,

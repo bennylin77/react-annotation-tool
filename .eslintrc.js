@@ -31,6 +31,7 @@ module.exports = {
         "no-tabs": ["error", { "allowIndentationTabs": true }],
         "import/extensions": ["error", "never", {"jsx": "always"}],
         "jsx-quotes": ["error", "prefer-single"],
+        "operator-linebreak": ["error", "after"],
         "react/jsx-indent-props": "off",
         "react/jsx-indent": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

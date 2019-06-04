@@ -1,0 +1,46 @@
+.event-list {
+    &__item {
+        min-width: 380px;
+    	padding: 0;
+    	line-height: 1;
+    	border: none;
+
+        &:hover {
+            border: none;
+        }
+    }
+
+    &__item-button {
+        color: #a2b0bc;
+
+        &:hover {
+            cursor: pointer;
+        	color: #555c63;
+        }
+    }
+
+    &__item-status {
+    	font-size: 0.85rem;
+    }
+
+    &__item-size {
+    	font-size: 0.85rem;
+    }
+
+    &__item-position {
+    	font-size: 0.85rem;
+    }
+
+    &__item-delete-button {
+        line-height: 1;
+        font-size: 1.2rem;
+        color: rgb(220, 53, 69);
+        padding: 0;
+    }
+}
+
+.explanation-add-button {
+	font-size: 0.6rem;
+	margin: 0 10px;
+	opacity: 1 !important;
+}

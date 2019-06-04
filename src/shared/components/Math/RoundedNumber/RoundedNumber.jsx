@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './RoundedNumber.scss';
+import './roundedNumber.scss';
 
 const RoundedNumber = ({ className, number }) => {
 	const rootClassName = `rounded-number${className ? ` ${className}` : ''}`;

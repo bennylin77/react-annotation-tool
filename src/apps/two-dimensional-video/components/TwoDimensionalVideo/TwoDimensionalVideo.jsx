@@ -4,12 +4,15 @@ import { normalize, denormalize, schema } from 'normalizr';
 import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.css';
+import './i18n';
+
 import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt } from 'shared/utils/mathUtils';
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
 import { VideoAnnotation, Trajectory } from 'models/2DVideo.js';
 import { UndoRedo } from 'models/UndoRedo.js';
+import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
 
 import VideoPlayerScreen from '../VideoPlayer/Screen/Screen.jsx';
@@ -17,7 +20,7 @@ import VideoPlayerControl from '../VideoPlayer/Control/Control.jsx';
 import Preview from '../Preview/Preview.jsx';
 import Review from '../Review/Review.jsx';
 import Canvas from '../Canvas/Canvas.jsx';
-import List from '../List/List.jsx';
+import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 
 
 class TwoDimensionalVideo extends Component {
@@ -301,9 +304,8 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	handleListTrajectoryJump = (e) => {
-		const { name } = e;
-		const { time } = e;
-		this.setState({ playing: false, focusing: name },
+		const { annotationName, time } = e;
+		this.setState({ playing: false, focusing: annotationName },
 			() => { this.player.seekTo(parseFloat(time)); });
 	}
 
@@ -316,14 +318,13 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	handleListTrajectoryDelete = (e) => {
-		const { annotationName } = e;
-		const { trajectoryName } = e;
+		const { annotationName, eventName } = e;
 		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { entities } = prevState;
 			const { annotations } = entities;
 			const trajectories = entities.annotations[annotationName].trajectories.filter((t) => {
-				if (t.name !== trajectoryName) return true;
+				if (t.name !== eventName) return true;
 				return false;
 		  });
 			annotations[annotationName].trajectories = trajectories;
@@ -640,10 +641,29 @@ class TwoDimensionalVideo extends Component {
     	const {
     		url, previewHead, previewNotices, checkEmpty,
     	} = this.props;
+
+
+		const twoDimensionalVideoContext = {
+			entities: entities,
+			annotations: annotations,
+			duration: duration,
+			played: played,
+			focusing: focusing,
+			height: annotationHeight,
+			isEmptyCheckEnable: checkEmpty,
+			onAnnotationItemClick: this.handleListAnnotationClick,
+			onAnnotationDeleteClick: this.handleListAnnotationDelete,
+			onAnnotationShowHideClick: this.handleListAnnotationShowHide,
+			onAnnotationSplitClick: this.handleListAnnotationSplit,
+			onEventItemClick: this.handleListTrajectoryJump,
+			onEventDeleteClick: this.handleListTrajectoryDelete,
+        };
+
     	// const playbackRate = this.props.playbackRate || 1;
     	// let panelHeight = annotationHeight<=MAX_PANEL_HEIGHT? annotationHeight:MAX_PANEL_HEIGHT;
     	let panelContent;
-    	if (submitted) panelContent = <Review height={ annotationHeight } onConfirmSubmit={ this.handleSubmit } onCancelSubmit={ this.handleReviewCancelSubmission } />;
+    	if (submitted)
+			panelContent = <Review height={ annotationHeight } onConfirmSubmit={ this.handleSubmit } onCancelSubmit={ this.handleReviewCancelSubmission } />;
     	else if (previewed) {
     		panelContent = (
     		<div>
@@ -654,7 +674,7 @@ class TwoDimensionalVideo extends Component {
     					<Button disabled={ this.UndoRedoState.next.length == 0 } outline onClick={ this.handleRedo }><MdRedo /></Button>
     				</ButtonGroup>
     			</div>
-    			<List
+    			<AnnotationList
     					entities={ entities }
 													  annotations={ annotations }
 													  duration={ duration }
@@ -662,15 +682,9 @@ class TwoDimensionalVideo extends Component {
 													  focusing={ focusing }
 													  height={ annotationHeight }
 													  trajectoryCollapses={ trajectoryCollapses }
-													  onListVideoPause={ this.handleListVideoPause }
-													  onListAnnotationClick={ this.handleListAnnotationClick }
-													  onListAnnotationDelete={ this.handleListAnnotationDelete }
-													  onListAnnotationShowHide={ this.handleListAnnotationShowHide }
-													  onListAnnotationSplit={ this.handleListAnnotationSplit }
-													  onListTrajectoryJump={ this.handleListTrajectoryJump }
-													  onListTrajectoryDelete={ this.handleListTrajectoryDelete }
-													  onListTrajectoryToggle={ this.handleListTrajectoryToggle }
-    				checkEmpty={ checkEmpty }
+													  onVideoPause={ this.handleListVideoPause }
+
+    				isEmptyCheckEnable={ checkEmpty }
     			/>
     		</div>
     	);
@@ -679,8 +693,9 @@ class TwoDimensionalVideo extends Component {
     	}
 
     	return (
+			<TwoDimensionalVideoContext.Provider value={twoDimensionalVideoContext}>
     		<div>
-    			<PopupDialog isOpen={ dialogIsOpen } title={ dialogTitle } message={ dialogMessage } handleToggle={ this.handleDialogToggle } enableCloseButton />
+    			<PopupDialog isOpen={ dialogIsOpen } title={ dialogTitle } message={ dialogMessage } onToggle={ this.handleDialogToggle } hasCloseButton />
     			<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
     				<div className='mb-3' style={ { width: annotationWidth } }>
     					<div style={ { position: 'relative' } }>
@@ -733,6 +748,7 @@ class TwoDimensionalVideo extends Component {
     				{submitted || !previewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
     			</div>
     		</div>
+		</TwoDimensionalVideoContext.Provider>
     	);
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
-import './Screen.scss';
+import './screen.scss';
 
 const Screen = ({
 	className,
