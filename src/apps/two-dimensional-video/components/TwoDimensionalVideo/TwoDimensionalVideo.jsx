@@ -5,7 +5,6 @@ import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.css';
 import './i18n';
-
 import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt } from 'shared/utils/mathUtils';
@@ -14,13 +13,10 @@ import { VideoAnnotation, Trajectory } from 'models/2DVideo.js';
 import { UndoRedo } from 'models/UndoRedo.js';
 import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
-
-import VideoPlayerScreen from '../VideoPlayer/Screen/Screen.jsx';
-import VideoPlayerControl from '../VideoPlayer/Control/Control.jsx';
 import Preview from '../Preview/Preview.jsx';
 import Review from '../Review/Review.jsx';
-import Canvas from '../Canvas/Canvas.jsx';
 import AnnotationList from '../AnnotationList/AnnotationList.jsx';
+import DrawableVideoPlayer from '../DrawableVideoPlayer/DrawableVideoPlayer.jsx';
 
 
 class TwoDimensionalVideo extends Component {
@@ -54,7 +50,6 @@ class TwoDimensionalVideo extends Component {
 			seeking: false,
 			adding: false,
 			focusing: '',
-			trajectoryCollapses: {},
 			dialogIsOpen: false,
 			dialogTitle: '',
 			dialogMessage: '',
@@ -183,7 +178,7 @@ class TwoDimensionalVideo extends Component {
 		this.setState((prevState, props) => {
 			this.UndoRedoState.save({ ...prevState, adding: false }); // Undo/Redo
 			const {
-				adding, focusing, annotations, entities, trajectoryCollapses,
+				adding, focusing, annotations, entities,
 			} = prevState;
 			const trajectories = [];
 			trajectories.push(new Trajectory({
@@ -194,13 +189,11 @@ class TwoDimensionalVideo extends Component {
 			});
 			// this.counter++;
 			// handle trajectory collapses
-			trajectoryCollapses[`${timeNow}`] = false;
 			return {
 				adding: !prevState.adding,
 							 focusing: `${timeNow}`,
 							 annotations: [...annotations, `${timeNow}`],
 							 entities: { ...entities, annotations: entities.annotations },
-						   trajectoryCollapses,
 			};
 		}, () => {
 			const group = stage.find(`.${timeNow}`)[0];
@@ -307,14 +300,6 @@ class TwoDimensionalVideo extends Component {
 		const { annotationName, time } = e;
 		this.setState({ playing: false, focusing: annotationName },
 			() => { this.player.seekTo(parseFloat(time)); });
-	}
-
-	handleListTrajectoryToggle = (e) => {
-		this.setState((prevState, props) => {
-			const { trajectoryCollapses } = prevState;
-			trajectoryCollapses[e] = !trajectoryCollapses[e];
-			return { trajectoryCollapses };
-		});
 	}
 
 	handleListTrajectoryDelete = (e) => {
@@ -579,7 +564,7 @@ class TwoDimensionalVideo extends Component {
 	/* ==================== submit ==================== */
     isEmptyOrNotTrack = () => {
     	const { annotations, defaultNumberOfAnnotations, entities } = this.state;
-    	if (!this.props.checkEmpty) return false;
+    	if (!this.props.isEmptyCheckEnable) return false;
     	if (annotations.length != 0 && defaultNumberOfAnnotations < annotations.length) {
     		for (const a of annotations) {
     			if (entities.annotations[a].trajectories.length < 2) return true;
@@ -620,7 +605,7 @@ class TwoDimensionalVideo extends Component {
 
     render() {
     	const {
-    		previewed,
+			previewed,
     		submitted,
     		annotationWidth,
     		annotationHeight,
@@ -633,24 +618,45 @@ class TwoDimensionalVideo extends Component {
     		focusing,
     		entities,
     		annotations,
-    		trajectoryCollapses,
     		dialogIsOpen,
     		dialogTitle,
     		dialogMessage,
     	} = this.state;
+
     	const {
-    		url, previewHead, previewNotices, checkEmpty,
+    		url, previewHead, previewNotices, isEmptyCheckEnable,
     	} = this.props;
 
-
 		const twoDimensionalVideoContext = {
-			entities: entities,
-			annotations: annotations,
-			duration: duration,
-			played: played,
-			focusing: focusing,
+			playerRef: this.handlePlayerRef,
+			entities,
+			annotations,
+			duration,
+			played,
+			focusing,
+			width: annotationWidth,
 			height: annotationHeight,
-			isEmptyCheckEnable: checkEmpty,
+			isEmptyCheckEnable,
+			url,
+			playing,
+			loop,
+			playbackRate,
+			isAdding: adding,
+			onVideoReady: this.handleVideoReady,
+			onVideoProgress: this.handleVideoProgress,
+			onVideoDuration: this.handleVideoDuration,
+			onVideoEnded: this.handleVideoEnded,
+			onVideoSliderMouseUp: this.handlePlayerControlSliderMouseUp,
+			onVideoSliderMouseDown: this.handlePlayerControlSliderMouseDown,
+			onVideoSliderChange: this.handlePlayerControlSliderChange,
+			onVideoRewind: this.handlePlayerControlVideoRewind,
+			onVideoPlayPause: this.handlePlayerControlVideoPlayPause,
+			onVideoSpeedChange: this.handlePlayerControlVideoSpeedChange,
+			onCanvasStageMouseDown: this.handleCanvasStageMouseDown,
+			onCanvasGroupMouseDown: this.handleCanvasGroupMouseDown,
+			onCanvasGroupDragEnd: this.handleCanvasGroupDragEnd,
+			onCanvasDotMouseDown: this.handleCanvasDotMouseDown,
+			onCanvasDotDragEnd: this.handleCanvasDotDragEnd,
 			onAnnotationItemClick: this.handleListAnnotationClick,
 			onAnnotationDeleteClick: this.handleListAnnotationDelete,
 			onAnnotationShowHideClick: this.handleListAnnotationShowHide,
@@ -659,8 +665,6 @@ class TwoDimensionalVideo extends Component {
 			onEventDeleteClick: this.handleListTrajectoryDelete,
         };
 
-    	// const playbackRate = this.props.playbackRate || 1;
-    	// let panelHeight = annotationHeight<=MAX_PANEL_HEIGHT? annotationHeight:MAX_PANEL_HEIGHT;
     	let panelContent;
     	if (submitted)
 			panelContent = <Review height={ annotationHeight } onConfirmSubmit={ this.handleSubmit } onCancelSubmit={ this.handleReviewCancelSubmission } />;
@@ -674,18 +678,7 @@ class TwoDimensionalVideo extends Component {
     					<Button disabled={ this.UndoRedoState.next.length == 0 } outline onClick={ this.handleRedo }><MdRedo /></Button>
     				</ButtonGroup>
     			</div>
-    			<AnnotationList
-    					entities={ entities }
-													  annotations={ annotations }
-													  duration={ duration }
-													  played={ played }
-													  focusing={ focusing }
-													  height={ annotationHeight }
-													  trajectoryCollapses={ trajectoryCollapses }
-													  onVideoPause={ this.handleListVideoPause }
-
-    				isEmptyCheckEnable={ checkEmpty }
-    			/>
+    			<AnnotationList />
     		</div>
     	);
     	} else {
@@ -693,75 +686,35 @@ class TwoDimensionalVideo extends Component {
     	}
 
     	return (
-			<TwoDimensionalVideoContext.Provider value={twoDimensionalVideoContext}>
-    		<div>
-    			<PopupDialog isOpen={ dialogIsOpen } title={ dialogTitle } message={ dialogMessage } onToggle={ this.handleDialogToggle } hasCloseButton />
-    			<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
-    				<div className='mb-3' style={ { width: annotationWidth } }>
-    					<div style={ { position: 'relative' } }>
-    						<VideoPlayerScreen
-    							playerRef={ this.handlePlayerRef }
-    							onReady={ this.handleVideoReady }
-    							onProgress={ this.handleVideoProgress }
-    							onDuration={ this.handleVideoDuration }
-    							onEnded={ this.handleVideoEnded }
-    							url={ url }
-    							width={ annotationWidth }
-    							playing={ playing }
-    							loop={ loop }
-    							playbackRate={ playbackRate }
-    						/>
-    						<Canvas
-    							width={ annotationWidth }
-    							height={ annotationHeight }
-    							played={ played }
-    							focusing={ focusing }
-    							adding={ adding }
-    							entities={ entities }
-    							annotations={ annotations }
-    							onStageMouseDown={ this.handleCanvasStageMouseDown }
-    							onGroupMouseDown={ this.handleCanvasGroupMouseDown }
-    							onGroupDragEnd={ this.handleCanvasGroupDragEnd }
-    							onDotMouseDown={ this.handleCanvasDotMouseDown }
-    							onDotDragEnd={ this.handleCanvasDotDragEnd }
-    							checkEmpty={ checkEmpty }
-    						/>
-    					</div>
-    					<VideoPlayerControl
-    						playing={ playing }
-    						played={ played }
-    						playbackRate={ playbackRate }
-    						duration={ duration }
-    						onSliderMouseUp={ this.handlePlayerControlSliderMouseUp }
-						    onSliderMouseDown={ this.handlePlayerControlSliderMouseDown }
-    						onSliderChange={ this.handlePlayerControlSliderChange }
-    						onRewind={ this.handlePlayerControlVideoRewind }
-    						onPlayPause={ this.handlePlayerControlVideoPlayPause }
-    						onSpeedChange={ this.handlePlayerControlVideoSpeedChange }
-    					/>
-    				</div>
-    				<div className='mb-3'>
-    					{panelContent}
-    				</div>
-    			</div>
-    			<div className='d-flex justify-content-center pt-3'>
-    				{submitted || !previewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
-    			</div>
-    		</div>
-		</TwoDimensionalVideoContext.Provider>
+			<TwoDimensionalVideoContext.Provider value={ twoDimensionalVideoContext }>
+	    		<div>
+	    			<PopupDialog isOpen={ dialogIsOpen } title={ dialogTitle } message={ dialogMessage } onToggle={ this.handleDialogToggle } hasCloseButton />
+	    			<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
+	    				<div className='mb-3' style={ { width: annotationWidth } }>
+	    					<DrawableVideoPlayer />
+	    				</div>
+	    				<div className='mb-3'>
+	    					{panelContent}
+	    				</div>
+	    			</div>
+	    			<div className='d-flex justify-content-center pt-3'>
+	    				{submitted || !previewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
+	    			</div>
+	    		</div>
+			</TwoDimensionalVideoContext.Provider>
     	);
     }
 }
 
 TwoDimensionalVideo.propTypes = {
 	isDefaultAnnotationsManipulatable: PropTypes.bool,
-	checkEmpty: PropTypes.bool,
+	isEmptyCheckEnable: PropTypes.bool,
 	width: PropTypes.number,
 	numberOfParentAnnotationsToBeAdded: PropTypes.number,
 };
 TwoDimensionalVideo.defaultProps = {
 	defaultAnnotationsManipulatable: false,
-	checkEmpty: false,
+	isEmptyCheckEnable: false,
 	numberOfParentAnnotationsToBeAdded: 1000,
 };
 export default TwoDimensionalVideo;

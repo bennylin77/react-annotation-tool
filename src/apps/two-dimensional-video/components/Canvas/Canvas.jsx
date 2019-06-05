@@ -36,10 +36,10 @@ const Canvas = ({
 	objects,
 	played,
 	focusing,
-	adding,
+	isAdding,
 	entities,
 	annotations,
-	checkEmpty,
+	isEmptyCheckEnable,
 	onStageMouseDown,
 	onGroupDragEnd,
 	onGroupMouseDown,
@@ -106,7 +106,7 @@ const Canvas = ({
 						strokeWidth={ 1 }
 						onFocus={ () => {} }
 						onMouseOver={ () => {
-							if (!isManipulatable || adding) return;
+							if (!isManipulatable || isAdding) return;
 							document.body.style.cursor = 'pointer';
 						} }
 					/>
@@ -123,7 +123,7 @@ const Canvas = ({
 						fill='#fff'
 					/>
 				);
-				const warningText = checkEmpty && trajectories.length < 2 && (
+				const warningText = isEmptyCheckEnable && trajectories.length < 2 && (
 					<Text
 						offsetY={ -5 }
 						x={ 0 }
@@ -288,7 +288,7 @@ const Canvas = ({
 		}
 	});
 	let addingLayer;
-	if (adding) {
+	if (isAdding) {
 		addingLayer = (
 			<Layer>
 				<Rect fill='#ffffff' width={ canvasWidth } height={ canvasHeight } opacity={ 0.3 } />
@@ -303,7 +303,7 @@ const Canvas = ({
 			className='konva-wrapper'
 			onMouseDown={ e => onStageMouseDown(e) }
 			onMouseOver={ () => {
-				if (adding) {
+				if (isAdding) {
 					document.body.style.cursor = 'crosshair';
 				}
 			} }

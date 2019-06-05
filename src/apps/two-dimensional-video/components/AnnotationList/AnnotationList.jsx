@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { ListGroup } from 'reactstrap';
 import { Events, scrollSpy, scroller } from 'react-scroll';
 import {
@@ -7,18 +8,21 @@ import {
 	isDialogDisabledReducer,
 } from './isDialogDisabledReducer';
 import AnnotationItem from './AnnotationItem/AnnotationItem.jsx';
+import TwoDimensionalVideoContext from '../TwoDimensionalVideo/twoDimensionalVideoContext';
 import { getSortedAnnotationsByLabel } from '../../utils/utils';
 import 'bootstrap/dist/css/bootstrap.css';
 import './annotationList.scss';
 
-const AnnotationList = ({
-	className,
-	focusing,
-	height,
-	entities,
-	annotations,
-}) => {
+const AnnotationList = ({ className }) => {
+	const { t } = useTranslation();
 	const [isDialogDisabled, dispatchIsDialogDisabled] = useReducer(isDialogDisabledReducer, initialIsDialogDisabledState);
+	const twoDimensionalVideoContext = useContext(TwoDimensionalVideoContext);
+	const {
+		entities,
+		focusing,
+		annotations,
+		height,
+	} = twoDimensionalVideoContext;
 
 	useEffect(() => {
 		Events.scrollEvent.register('begin', () => {});
@@ -50,7 +54,7 @@ const AnnotationList = ({
 	if (itemsUI.length === 0) {
 		return (
 			<div className='d-flex align-items-center justify-content-center' style={ { height: height - 60 } }>
-				{'Click the button above to begin tracking a new cell'}
+				{t('AnnotationListEmptyHint')}
 			</div>
 		);
 	}
@@ -63,18 +67,8 @@ const AnnotationList = ({
 
 AnnotationList.propTypes = {
 	className: PropTypes.string,
-	focusing: PropTypes.string,
-	height: PropTypes.number,
-	annotations: PropTypes.arrayOf(PropTypes.string),
-	entities: PropTypes.shape({
-		annotations: PropTypes.object,
-	}),
 };
 AnnotationList.defaultProps = {
 	className: '',
-	focusing: '',
-	height: 0,
-	annotations: [],
-	entities: {},
 };
 export default AnnotationList;
