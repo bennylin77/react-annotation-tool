@@ -11,14 +11,13 @@ import { SPLIT, HIDE, SHOW } from 'models/2DVideo';
 import EventList from '../../EventList/EventList.jsx';
 import TwoDimensionalVideoContext from '../../TwoDimensionalVideo/twoDimensionalVideoContext';
 import OpenDialogButton from '../../OpenDialogButton/OpenDialogButton.jsx';
-
+import { isDialogDisabledConst } from '../isDialogDisabledReducer';
 import 'bootstrap/dist/css/bootstrap.css';
 import './annotationItem.scss';
 
 const AnnotationItem = ({
 	className,
 	itemData,
-	isDialogDisabledConst,
 	isDialogDisabled,
 	dispatchIsDialogDisabled,
 }) => {
@@ -52,7 +51,7 @@ const AnnotationItem = ({
 	));
 	let showButtonUI = (
 		<OpenDialogButton
-			className='d-flex align-items-center video-ann-button'
+			className='d-flex align-items-center annotation-item__control-button'
 			outline
 			title={ t('dialogTitleShow') }
 			message={ t('dialogMessageShow') }
@@ -66,7 +65,7 @@ const AnnotationItem = ({
 	);
 	let hideButtonUI = (
 		<OpenDialogButton
-			className='d-flex align-items-center video-ann-button'
+			className='d-flex align-items-center annotation-item__control-button'
 			outline
 			title={ t('dialogTitleHide') }
 			message={ t('dialogMessageHide') }
@@ -80,7 +79,7 @@ const AnnotationItem = ({
 	);
 	let splitButtonUI = (
 		<OpenDialogButton
-			className='d-flex align-items-center video-ann-button'
+			className='d-flex align-items-center annotation-item__control-button'
 			outline
 			title={ t('dialogTitleSplit') }
 			message={ t('dialogMessageSplit') }
@@ -114,7 +113,7 @@ const AnnotationItem = ({
 	}
 
 	const warningText = isEmptyCheckEnable && trajectories.length < 2 && <span className='text-danger'>You should track the cell bound by this box</span>;
-	let rootClassName = `video-ann${className ? ` ${className}` : ''}`;
+	let rootClassName = `annotation-item${className ? ` ${className}` : ''}`;
 	if (name !== focusing) {
 		return (
 			<ListGroupItem
@@ -130,7 +129,8 @@ const AnnotationItem = ({
 			</ListGroupItem>
 		);
 	}
-	rootClassName = `${rootClassName} video-ann-highlight`;
+
+	rootClassName = `${rootClassName} annotation-item--highlight`;
 	return (
 		<ListGroupItem
 			className={ rootClassName }
@@ -138,12 +138,12 @@ const AnnotationItem = ({
 			style={ { borderColor: color.replace(/,1\)/, ',.3)') } }
 		>
 			<div className='d-flex align-items-center mb-2'>
-				<div className='video-ann-title mr-auto'><strong>{label}</strong></div>
+				<div className='mr-auto'><strong>{label}</strong></div>
 				{splitButtonUI}
 				{hideButtonUI}
 				{showButtonUI}
 				<OpenDialogButton
-					className='d-flex align-items-center video-ann-delete'
+					className='d-flex align-items-center annotation-item__delete-button'
 					color='link'
 					title={ t('dialogTitleDelete') }
 					message={ t('dialogMessageDelete') }
@@ -161,7 +161,7 @@ const AnnotationItem = ({
 						<Button
 							color='link'
 							onClick={ () => onAnnotationItemClick(parentAnnotation.name) }
-							className='video-ann-relatives'
+							className='annotation-item__parent-button'
 						>
 							{parentAnnotation.label}
 						</Button>
@@ -198,9 +198,13 @@ const AnnotationItem = ({
 AnnotationItem.propTypes = {
 	className: PropTypes.string,
     itemData: PropTypes.object,
+	dispatchIsDialogDisabled: PropTypes.func,
+	isDialogDisabled: PropTypes.object,
 };
 AnnotationItem.defaultProps = {
 	className: '',
 	itemData: {},
+	dispatchIsDialogDisabled: () => {},
+	isDialogDisabled: {},
 };
 export default AnnotationItem;

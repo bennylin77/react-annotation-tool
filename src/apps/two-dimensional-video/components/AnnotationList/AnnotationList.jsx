@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { ListGroup } from 'reactstrap';
 import { Events, scrollSpy, scroller } from 'react-scroll';
 import {
-	isDialogDisabledConst,
 	initialIsDialogDisabledState,
 	isDialogDisabledReducer,
 } from './isDialogDisabledReducer';
@@ -32,7 +31,9 @@ const AnnotationList = ({
 	}, []);
 
 	useEffect(() => {
-		scroller.scrollTo(focusing, { containerId: 'list-wrapper' });
+		if (focusing) {
+			scroller.scrollTo(focusing, { containerId: 'annotation-list' });
+		}
 	}, [focusing]);
 
 	const sortedAnnotations = getSortedAnnotationsByLabel(annotations, entities);
@@ -42,7 +43,6 @@ const AnnotationList = ({
 			<AnnotationItem
 				key={ ann }
 				itemData={ entities.annotations[ann] }
-				isDialogDisabledConst={ isDialogDisabledConst }
 				isDialogDisabled={ isDialogDisabled }
 				dispatchIsDialogDisabled={ dispatchIsDialogDisabled }
 			/>
@@ -55,10 +55,9 @@ const AnnotationList = ({
 		);
 	}
 
+	const rootClassName = `annotation-list${className ? ` ${className}` : ''}`;
 	return (
-		<div className={ className }>
-			<ListGroup className='list-wrapper' id='list-wrapper' style={ { maxHeight: height - 60 } }>{itemsUI}</ListGroup>
-		</div>
+		<ListGroup className={ rootClassName } id='annotation-list' style={ { maxHeight: height - 60 } }>{itemsUI}</ListGroup>
 	);
 };
 

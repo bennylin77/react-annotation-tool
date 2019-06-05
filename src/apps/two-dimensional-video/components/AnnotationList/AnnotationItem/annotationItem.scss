@@ -1,0 +1,38 @@
+.annotation-item {
+	cursor: pointer;
+	margin-bottom: 5px;
+	border-width: 0;
+	border-left-width: 8px;
+
+    &--highlight {
+        cursor: default;
+    }
+
+    &__parent-button {
+        cursor: pointer;
+    }
+
+    &__control-button {
+        margin-right: 5px;
+    }
+
+    &__delete-button {
+        padding: 0.375rem 0.3rem;
+        color: #dc3545;
+        font-size: 30px;
+
+        &:hover {
+            color: #c82333;
+        }
+    }
+}
+
+/* event list */
+.event-list-toggle-button {
+	background: #f6f6f6;
+	cursor: pointer;
+
+	&:hover {
+		color: #000;
+	}
+}
