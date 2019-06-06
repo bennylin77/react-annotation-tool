@@ -169,11 +169,11 @@ const DemoPage = () => {
 		children: ['jt192wyc', 'jt192wyd'],
 		parent: '',
 	}];
-	const previewNotices = [
+	const previewNoticeList = [
 		'Cells\' body range.',
 		'The time that cells <u>split</u>, <u>leave</u>, <u>obscured</u> and <u>show up</u> (if applicable).',
 	];
-	const previewHead = 'Please scan the video and observe the following to help you complete the task:';
+	const previewHeader = 'Please scan the video and observe the following to help you complete the task:';
 
 	return (
 		<div>
@@ -182,12 +182,12 @@ const DemoPage = () => {
 					onSubmit={ handleSubmit }
 					url='https://cildata.crbs.ucsd.edu/media/videos/15793/15793_web.mp4'
 					annotationWidth={ 500 }
-					review
+					hasReview
 					isEmptyCheckEnable
-					numberOfParentAnnotationsToBeAdded={ 20 }
-					annotations={ videoAnnotations }
-					previewHead={ previewHead }
-					previewNotices={ previewNotices }
+					numAnnotationsToBeAdded={ 20 }
+					defaultAnnotations={ videoAnnotations }
+					previewHeader={ previewHeader }
+					previewNoticeList={ previewNoticeList }
 				/>
 			</div>
 			<div className='mb-5'>

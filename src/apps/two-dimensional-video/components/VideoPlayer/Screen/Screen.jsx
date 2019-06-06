@@ -9,7 +9,7 @@ const Screen = ({
 	width,
 	progressInterval,
 	url,
-	loop,
+	isLoop,
 	playbackRate,
 	onReady,
 	onProgress,
@@ -30,7 +30,7 @@ const Screen = ({
 		progressInterval={ progressInterval }
 		controls={ false }
 		muted
-		loop={ loop }
+		loop={ isLoop }
 		playbackRate={ playbackRate }
 		width={ width }
 		height='auto'
@@ -43,7 +43,7 @@ Screen.propTypes = {
 	width: PropTypes.number,
 	progressInterval: PropTypes.number,
 	url: PropTypes.string,
-	loop: PropTypes.bool,
+	isLoop: PropTypes.bool,
 	playbackRate: PropTypes.number,
 	onReady: PropTypes.func,
 	onProgress: PropTypes.func,
@@ -57,7 +57,7 @@ Screen.defaultProps = {
 	width: 0,
 	progressInterval: 100,
 	url: '',
-	loop: false,
+	isLoop: false,
 	playbackRate: 1,
 	onReady: () => {},
 	onProgress: () => {},

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
 import { normalize, denormalize, schema } from 'normalizr';
 import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
@@ -17,16 +18,24 @@ import Preview from '../Preview/Preview.jsx';
 import Review from '../Review/Review.jsx';
 import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import DrawableVideoPlayer from '../DrawableVideoPlayer/DrawableVideoPlayer.jsx';
-
+import { getLastAnnotationLabel } from '../../utils/utils';
+import './twoDimensionalVideo.scss';
 
 class TwoDimensionalVideo extends Component {
 	constructor(props) {
 		super(props);
+		const {
+			defaultAnnotations,
+			annotationWidth,
+			previewHeader,
+			previewNoticeList,
+		} = props;
+		/* ===  normalize annotation props === */
 		const entities = { annotations: {} };
 		let annotations = [];
-		if (props.annotations && props.annotations.length !== 0) {
+		if (defaultAnnotations && defaultAnnotations.length !== 0) {
 			const annotation = new schema.Entity('annotations');
-			const normalizedAnn = normalize(props.annotations, [annotation]);
+			const normalizedAnn = normalize(defaultAnnotations, [annotation]);
 			entities.annotations = normalizedAnn.entities.annotations;
 			annotations = normalizedAnn.result;
 			annotations.forEach((id) => {
@@ -34,9 +43,9 @@ class TwoDimensionalVideo extends Component {
 			});
 		}
 		this.state = {
-			previewed: !props.previewNotices && !props.previewHead,
-			submitted: false,
-			annotationWidth: props.annotationWidth || 400,
+			isPreviewed: previewNoticeList && previewNoticeList.length === 0 && !previewHeader,
+			isSubmitted: false,
+			annotationWidth,
 			annotationHeight: 200,
 			entities,
 			annotations,
@@ -44,30 +53,17 @@ class TwoDimensionalVideo extends Component {
 			isPlaying: false,
 			playbackRate: 1,
 			duration: 0,
-			loop: false,
-			seeking: false,
-			adding: false,
+			isLoop: false,
+			isSeeking: false,
+			isAdding: false,
 			focusing: '',
-
 			isDialogOpen: false,
 			dialogTitle: '',
 			dialogMessage: '',
-
 			defaultNumAnnotations: annotations.length,
-			defaultNumParentAnnotations: this.getLastLabel(annotations, entities),
+			defaultNumRootAnnotations: getLastAnnotationLabel(annotations, entities),
 		};
 		this.UndoRedoState = new UndoRedo();
-	}
-
-	/* ==================== utilities ==================== */
-	getLastLabel = (annotations, entities) => {
-		let i = 1;
-		while (i <= annotations.length) {
-			const ann = annotations.find(ann => entities.annotations[ann].label === `${i}`);
-			if (!ann) return i;
-			i += 1;
-		}
-		return i;
 	}
 
 	/* ==================== video player ==================== */
@@ -82,7 +78,7 @@ class TwoDimensionalVideo extends Component {
 	handleVideoProgress = (state) => {
 		const { played } = state;
 		this.setState((prevState) => {
-			if (prevState.seeking) return null;
+			if (prevState.isSeeking) return null;
 			return { played };
 		});
 	}
@@ -92,44 +88,43 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	handleVideoEnded = () => {
-		this.setState({ isPlaying: this.state.loop });
+		this.setState(prevState => ({ isPlaying: prevState.isLoop }));
 	}
 
-	/* ==================== video player control ==================== */
-	handlePlayerControlVideoRewind = () => {
+	handleVideoRewind = () => {
 		this.setState({ isPlaying: false, played: 0 });
 		this.player.seekTo(0);
 	}
 
-	handlePlayerControlVideoPlayPause = () => {
-		this.setState({ isPlaying: !this.state.isPlaying });
+	handleVideoPlayPause = () => {
+		this.setState(prevState => ({ isPlaying: !prevState.isPlaying }));
 	}
 
-	handlePlayerControlVideoSpeedChange = (s) => {
+	handleVideoSpeedChange = (s) => {
 		this.setState({ playbackRate: s });
 	}
 
-	handlePlayerControlSliderMouseUp = (e) => {
-		this.setState({ seeking: false });
+	handleVideoSliderMouseUp = () => {
+		this.setState({ isSeeking: false });
 	}
 
-	handlePlayerControlSliderMouseDown = (e) => {
-		this.setState({ isPlaying: false, seeking: true });
+	handleVideoSliderMouseDown = () => {
+		this.setState({ isPlaying: false, isSeeking: true });
 	}
 
-	handlePlayerControlSliderChange = (e) => {
+	handleVideoSliderChange = (e) => {
 		const played = parseFloat(e.target.value);
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const { entities } = prevState;
 			let { focusing } = prevState;
 			if (focusing) {
 				const { trajectories } = entities.annotations[focusing];
-				for (let i = 0; i < trajectories.length; i++) {
+				for (let i = 0; i < trajectories.length; i += 1) {
 					if (played >= trajectories[i].time) {
 						if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
 						if (trajectories[i].status !== SHOW) focusing = '';
 						break;
-					} else if (i == trajectories.length - 1) focusing = '';
+					} else if (i === trajectories.length - 1) focusing = '';
 				}
 			}
 			return { played, focusing };
@@ -137,58 +132,31 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	/* ==================== canvas ==================== */
-    showAddButton = () => {
-    	const { defaultNumParentAnnotations, annotations, entities } = this.state;
-    	const { numberOfParentAnnotationsToBeAdded } = this.props;
-		return (defaultNumParentAnnotations + numberOfParentAnnotationsToBeAdded) > (this.getLastLabel(annotations, entities));
-    }
-
-    renderAddButton = () => {
-    	const { adding } = this.state;
-    	if (adding || !adding && this.showAddButton()) {
-    		return (
-    			<Button
-    				disabled={ adding }
-    				color='primary'
-    				size='lg'
-    				onClick={ this.handleAddClick }
-    				className='d-flex align-items-center float-left'
-    			>
-    				<MdAdd />
-    			{' '}
-    			{adding ? 'Adding a New Box' : 'Add a New Box'}
-    			</Button>
-    		);
-    	}
-    	return null;
-    }
 
 	handleAddClick = () => {
-		this.setState((prevState, props) => ({ adding: !prevState.adding, isPlaying: false }));
+		this.setState(prevState => ({ isAdding: !prevState.isAdding, isPlaying: false }));
 	}
 
 	handleCanvasStageMouseDown = (e) => {
-		if (!this.state.adding) return;
+		if (!this.state.isAdding) return;
 		const stage = e.target.getStage();
 		const position = stage.getPointerPosition();
 		const timeNow = new Date().getTime().toString(36);
 		const color = colors[getRandomInt(colors.length)];
 		this.setState((prevState, props) => {
-			this.UndoRedoState.save({ ...prevState, adding: false }); // Undo/Redo
+			this.UndoRedoState.save({ ...prevState, isAdding: false }); // Undo/Redo
 			const {
-				adding, focusing, annotations, entities,
+				isAdding, focusing, annotations, entities,
 			} = prevState;
 			const trajectories = [];
 			trajectories.push(new Trajectory({
 				id: `${timeNow}`, name: `${timeNow}`, x: position.x, y: position.y, height: 1, width: 1, time: prevState.played,
 			}));
 			entities.annotations[`${timeNow}`] = new VideoAnnotation({
-				id: `${timeNow}`, name: `${timeNow}`, label: `${this.getLastLabel(annotations, entities)}`, color, trajectories,
+				id: `${timeNow}`, name: `${timeNow}`, label: `${getLastAnnotationLabel(annotations, entities) + 1}`, color, trajectories,
 			});
-			// this.counter++;
-			// handle trajectory collapses
 			return {
-				adding: !prevState.adding,
+				isAdding: !prevState.isAdding,
 							 focusing: `${timeNow}`,
 							 annotations: [...annotations, `${timeNow}`],
 							 entities: { ...entities, annotations: entities.annotations },
@@ -280,16 +248,11 @@ class TwoDimensionalVideo extends Component {
 					break;
 				}
 			}
-			// console.log(`====save====`)
-			// console.log(`x ${minX}, y ${minY}`)
-			// console.log(`width ${maxX-minX}, height ${maxY-minY}`)
-
 			annotations[group.name()].trajectories = trajectories;
 			return { entities: { ...entities, annotations } };
 		});
 	}
 
-	/* ==================== list ==================== */
 	handleListAnnotationClick = (name) => {
 		this.setState({ focusing: name });
 	}
@@ -324,7 +287,7 @@ class TwoDimensionalVideo extends Component {
 			const { label } = entitiesAnnotations[name];
 			// reorder the list
 			if (!isNaN(label)) {
-				const lastLabel = this.getLastLabel(annotations, entities) - 1;
+				const lastLabel = getLastAnnotationLabel(annotations, entities) - 1;
 				if (`${lastLabel}` !== '1' && `${lastLabel}` !== label) {
 					const lastName = annotations.find(a => entitiesAnnotations[a].label === `${lastLabel}`);
 					// console.log(lastName)
@@ -350,28 +313,12 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	removeAnnotation = (annotations, entitiesAnnotations, name) => {
-		// console.log(name)
-		// console.log(JSON.stringify(entitiesAnnotations[name]))
 		if (entitiesAnnotations[name].children.length !== 0) {
-			// console.log(JSON.stringify(entitiesAnnotations[name].children))
 			entitiesAnnotations[name].children.forEach((c) => {
-				// console.log("children")
-				// console.log(c)
 				this.removeAnnotation(annotations, entitiesAnnotations, c);
 			});
 		}
-
-		/*
-		const deletedLabel = entitiesAnnotations[name].label;
-		if(annotations.length !== deletedLabel){
-			annotations.forEach(a=>{
-				if(entitiesAnnotations[a].label===annotations.length){
-					entitiesAnnotations[a].label = deletedLabel
-				}
-			})
-		}
-		*/
-		delete entitiesAnnotations[name];
+		delete entitiesAnnotations.name;
 		const i = annotations.indexOf(name);
 		annotations.splice(i, 1);
 	}
@@ -550,37 +497,40 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	/* ==================== preview ================ */
-	handlePreviewed = () => {
-		this.setState({ previewed: true });
+	handlePreviewClick = () => {
+		this.setState({ isPreviewed: true });
 	}
 
 	/* ==================== review ==================== */
 	handleReviewCancelSubmission = () => {
-		this.setState({ loop: false, submitted: false, isPlaying: false });
+		this.setState({ isLoop: false, isSubmitted: false, isPlaying: false });
 	}
 
-	/* ==================== submit ==================== */
-    isEmptyOrNotTrack = () => {
-    	const { annotations, defaultNumberOfAnnotations, entities } = this.state;
-    	if (!this.props.isEmptyCheckEnable) return false;
-    	if (annotations.length != 0 && defaultNumberOfAnnotations < annotations.length) {
-    		for (const a of annotations) {
-    			if (entities.annotations[a].trajectories.length < 2) return true;
-    		}
-    		return false;
-    	}
-    	return true;
-    }
+	/* ==================== others ==================== */
+	isEmptyAnnotationOrEvent = () => {
+		const { annotations, defaultNumAnnotations, entities } = this.state;
+		const { isEmptyCheckEnable } = this.props;
+		if (!isEmptyCheckEnable) return false;
+		if (annotations.length !== 0 && defaultNumAnnotations < annotations.length) {
+			for (const ann of annotations) {
+				if (entities.annotations[ann].trajectories.length < 2) return true;
+			}
+			return false;
+		}
+		return true;
+	}
 
 	handleSubmit = () => {
-		const { annotations, defaultNumAnnotations } = this.state;
-		if (this.isEmptyOrNotTrack()) {
+		const { annotations, isSubmitted } = this.state;
+		const { onSubmit, hasReview } = this.props;
+
+		if (this.isEmptyAnnotationOrEvent()) {
 			this.setState({ isDialogOpen: true, dialogTitle: 'Submission warning', dialogMessage: 'You must annotate and track one cell' });
 			return;
 		}
-		if (!this.state.submitted && this.props.review) {
+		if (!isSubmitted && hasReview) {
 			this.setState({
-				loop: true, submitted: true, played: 0, isPlaying: true, focusing: '',
+				isLoop: true, isSubmitted: true, played: 0, isPlaying: true, focusing: '',
 			});
 			return;
 		}
@@ -594,35 +544,63 @@ class TwoDimensionalVideo extends Component {
 		const data = {
 			url, annotationWidth, annotationHeight, annotations: denormalizedAnnotations,
 		};
-		this.props.onSubmit(data);
+		onSubmit(data);
 	}
 
     handleDialogToggle = () => this.setState(prevState => ({ isDialogOpen: !prevState.isDialogOpen }));
 
-    render() {
-    	const {
-			previewed,
-    		submitted,
-    		annotationWidth,
-    		annotationHeight,
-    		isPlaying,
-    		played,
-    		playbackRate,
-    		duration,
-    		loop,
-    		adding,
-    		focusing,
-    		entities,
-    		annotations,
-    		isDialogOpen,
-    		dialogTitle,
-    		dialogMessage,
-    	} = this.state;
+	renderAddButtonUI = () => {
+		const {
+			isAdding,
+			defaultNumRootAnnotations,
+			annotations,
+			entities,
+		} = this.state;
+		const { numAnnotationsToBeAdded, t } = this.props;
+		const isAddButtonAvailable = (defaultNumRootAnnotations + numAnnotationsToBeAdded) > getLastAnnotationLabel(annotations, entities);
+		if (isAdding || (!isAdding && isAddButtonAvailable)) {
+			return (
+				<Button
+					disabled={ isAdding }
+					color='primary'
+					size='lg'
+					onClick={ this.handleAddClick }
+					className='d-flex align-items-center float-left'
+				>
+					<MdAdd />
+					{isAdding ? t('addingBox') : t('addBox')}
+				</Button>
+			);
+		}
+		return null;
+	}
 
-    	const {
-    		url, previewHead, previewNotices, isEmptyCheckEnable,
-    	} = this.props;
-
+	render() {
+		const {
+			isPreviewed,
+			isSubmitted,
+			annotationWidth,
+			annotationHeight,
+			isPlaying,
+			played,
+			playbackRate,
+			duration,
+			isLoop,
+			isAdding,
+			focusing,
+			entities,
+			annotations,
+			isDialogOpen,
+			dialogTitle,
+			dialogMessage,
+		} = this.state;
+		const {
+			className,
+			url,
+			previewHeader,
+			previewNoticeList,
+			isEmptyCheckEnable,
+		} = this.props;
 		const twoDimensionalVideoContext = {
 			playerRef: this.handlePlayerRef,
 			entities,
@@ -635,19 +613,19 @@ class TwoDimensionalVideo extends Component {
 			isEmptyCheckEnable,
 			url,
 			isPlaying,
-			loop,
+			isLoop,
 			playbackRate,
-			isAdding: adding,
+			isAdding,
 			onVideoReady: this.handleVideoReady,
 			onVideoProgress: this.handleVideoProgress,
 			onVideoDuration: this.handleVideoDuration,
 			onVideoEnded: this.handleVideoEnded,
-			onVideoSliderMouseUp: this.handlePlayerControlSliderMouseUp,
-			onVideoSliderMouseDown: this.handlePlayerControlSliderMouseDown,
-			onVideoSliderChange: this.handlePlayerControlSliderChange,
-			onVideoRewind: this.handlePlayerControlVideoRewind,
-			onVideoPlayPause: this.handlePlayerControlVideoPlayPause,
-			onVideoSpeedChange: this.handlePlayerControlVideoSpeedChange,
+			onVideoSliderMouseUp: this.handleVideoSliderMouseUp,
+			onVideoSliderMouseDown: this.handleVideoSliderMouseDown,
+			onVideoSliderChange: this.handleVideoSliderChange,
+			onVideoRewind: this.handleVideoRewind,
+			onVideoPlayPause: this.handleVideoPlayPause,
+			onVideoSpeedChange: this.handleVideoSpeedChange,
 			onCanvasStageMouseDown: this.handleCanvasStageMouseDown,
 			onCanvasGroupMouseDown: this.handleCanvasGroupMouseDown,
 			onCanvasGroupDragEnd: this.handleCanvasGroupDragEnd,
@@ -659,66 +637,87 @@ class TwoDimensionalVideo extends Component {
 			onAnnotationSplitClick: this.handleListAnnotationSplit,
 			onEventItemClick: this.handleListTrajectoryJump,
 			onEventDeleteClick: this.handleListTrajectoryDelete,
-        };
+		};
 
-    	let panelContent;
-    	if (submitted)
-			panelContent = <Review height={ annotationHeight } onConfirmSubmit={ this.handleSubmit } onCancelSubmit={ this.handleReviewCancelSubmission } />;
-    	else if (previewed) {
-    		panelContent = (
-    		<div>
-    			<div className='pb-3 clearfix' style={ { minWidth: '400px' } }>
-    				{this.renderAddButton()}
-    				<ButtonGroup className='float-right'>
-    					<Button disabled={ this.UndoRedoState.previous.length == 0 } outline onClick={ this.handleUndo }><MdUndo /></Button>
-    					<Button disabled={ this.UndoRedoState.next.length == 0 } outline onClick={ this.handleRedo }><MdRedo /></Button>
-    				</ButtonGroup>
-    			</div>
-    			<AnnotationList />
-    		</div>
-    	);
-    	} else {
-    		panelContent = <Preview height={ annotationHeight } notices={ previewNotices } head={ previewHead } onPreviewed={ this.handlePreviewed } />;
-    	}
+		let controlPanelUI = null;
+		if (isSubmitted) {
+			controlPanelUI = (
+				<Review
+					height={ annotationHeight }
+					onConfirmSubmit={ this.handleSubmit }
+					onCancelSubmit={ this.handleReviewCancelSubmission }
+				/>
+			);
+		} else if (isPreviewed) {
+			controlPanelUI = (
+				<div>
+					<div className='pb-3 clearfix' style={ { minWidth: '400px' } }>
+						{this.renderAddButtonUI()}
+						<ButtonGroup className='float-right'>
+							<Button disabled={ this.UndoRedoState.previous.length === 0 } outline onClick={ this.handleUndo }><MdUndo /></Button>
+							<Button disabled={ this.UndoRedoState.next.length === 0 } outline onClick={ this.handleRedo }><MdRedo /></Button>
+						</ButtonGroup>
+					</div>
+					<AnnotationList />
+				</div>
+			);
+		} else {
+			controlPanelUI = (
+				<Preview
+					height={ annotationHeight }
+					notices={ previewNoticeList }
+					header={ previewHeader }
+					onPreviewClick={ this.handlePreviewClick }
+				/>
+			);
+		}
 
-    	return (
+		const rootClassName = `two-dimensional-video${className ? ` ${className}` : ''}`;
+		return (
 			<TwoDimensionalVideoContext.Provider value={ twoDimensionalVideoContext }>
-	    		<div>
-	    			<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
-	    				<div className='mb-3' style={ { width: annotationWidth } }>
-	    					<DrawableVideoPlayer />
-	    				</div>
-	    				<div className='mb-3'>
-	    					{panelContent}
-	    				</div>
-	    			</div>
-	    			<div className='d-flex justify-content-center pt-3'>
-	    				{submitted || !previewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
-	    			</div>
+				<div className={ rootClassName }>
+					<div className='d-flex flex-wrap justify-content-around py-3 two-dimensional-video__main'>
+						<div className='mb-3' style={ { width: annotationWidth } }>
+							<DrawableVideoPlayer />
+						</div>
+						<div className='mb-3'>
+							{ controlPanelUI }
+						</div>
+					</div>
+					<div className='d-flex justify-content-center pt-3'>
+						{isSubmitted || !isPreviewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
+					</div>
 					<PopupDialog isOpen={ isDialogOpen } title={ dialogTitle } message={ dialogMessage } onToggle={ this.handleDialogToggle } hasCloseButton />
-	    		</div>
+				</div>
 			</TwoDimensionalVideoContext.Provider>
-    	);
-    }
+		);
+	}
 }
 
 TwoDimensionalVideo.propTypes = {
-	annotations: PropTypes.arrayOf(PropTypes.object),
+	className: PropTypes.string,
+	defaultAnnotations: PropTypes.arrayOf(PropTypes.object),
+	annotationWidth: PropTypes.number,
 	isDefaultAnnotationsManipulatable: PropTypes.bool,
-
-
-
+	previewHeader: PropTypes.string,
+	previewNoticeList: PropTypes.arrayOf(PropTypes.string),
 	isEmptyCheckEnable: PropTypes.bool,
-	width: PropTypes.number,
-	numberOfParentAnnotationsToBeAdded: PropTypes.number,
+	hasReview: PropTypes.bool,
+	url: PropTypes.string,
+	numAnnotationsToBeAdded: PropTypes.number,
+	onSubmit: PropTypes.func,
 };
 TwoDimensionalVideo.defaultProps = {
-	annotations: [],
+	className: '',
+	defaultAnnotations: [],
+	annotationWidth: 400,
 	isDefaultAnnotationsManipulatable: false,
-
-
-
+	previewHeader: '',
+	previewNoticeList: [],
 	isEmptyCheckEnable: false,
-	numberOfParentAnnotationsToBeAdded: 1000,
+	hasReview: false,
+	url: '',
+	numAnnotationsToBeAdded: 1000,
+	onSubmit: () => {},
 };
-export default TwoDimensionalVideo;
+export default withTranslation()(TwoDimensionalVideo);

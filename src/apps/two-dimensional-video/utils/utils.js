@@ -29,7 +29,17 @@ const getSortedAnnotationsByLabel = (annotations, entities) => {
 	return sortedAnnotations;
 };
 
+const getLastAnnotationLabel = (annotations, entities) => {
+	let i = 0;
+	while (i < annotations.length) {
+		const id = getAnnotationIdByLabel(`${i + 1}`, annotations, entities);
+		if (!id) return i;
+		i += 1;
+	}
+	return i;
+};
 
 export {
 	getSortedAnnotationsByLabel,
+	getLastAnnotationLabel,
 };

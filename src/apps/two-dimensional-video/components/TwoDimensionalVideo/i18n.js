@@ -4,6 +4,8 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
 	en: {
 		translation: {
+			addingBox: 'Adding a New Box',
+			addBox: 'Add a New Box',
 			eventStatus: '<0>{{status}}</0> at <1/>',
 			eventSize: '<0>Size</0> <1/>x<2/>',
 			eventPosition: '<0>Position</0> <1/>, <2/>',

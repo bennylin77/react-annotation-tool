@@ -6,21 +6,21 @@ import './preview.scss';
 
 const Preview = ({
 	className,
-	head,
+	header,
 	notices,
 	height,
-	onPreviewed,
+	onPreviewClick,
 }) => {
 	const items = notices.map(n => <li key={ n } dangerouslySetInnerHTML={ { __html: n } } />);
 	const rootClassName = `d-flex align-items-center justify-content-center preview${className ? ` ${className}` : ''}`;
 	return (
 		<div className={ rootClassName } style={ { height } }>
 			<div>
-				<div className='mb-4'>{head}</div>
+				<div className='mb-4'>{header}</div>
 				<ul className='text-left preview__list mb-5 pl-4'>
 					{ items }
 				</ul>
-				<Button color='primary' onClick={ onPreviewed }>Scanned the video and ready to start</Button>
+				<Button color='primary' onClick={ onPreviewClick }>Scanned the video and ready to start</Button>
 			</div>
 		</div>
 	);
@@ -28,17 +28,17 @@ const Preview = ({
 
 Preview.propTypes = {
 	className: PropTypes.string,
-	head: PropTypes.string,
+	header: PropTypes.string,
 	notices: PropTypes.arrayOf(PropTypes.string),
 	height: PropTypes.number,
-	onPreviewed: PropTypes.func,
+	onPreviewClick: PropTypes.func,
 };
 Preview.defaultProps = {
 	className: '',
-	head: '',
+	header: '',
 	notices: [],
 	height: 0,
-	onPreviewed: () => {},
+	onPreviewClick: () => {},
 };
 
 export default Preview;

@@ -15,7 +15,7 @@ const DrawableVideoPlayer = ({
 		played,
 		isPlaying,
 		playbackRate,
-		loop,
+		isLoop,
 		entities,
 		annotations,
 		focusing,
@@ -55,7 +55,7 @@ const DrawableVideoPlayer = ({
 					url={ url }
 					width={ width }
 					isPlaying={ isPlaying }
-					loop={ loop }
+					isLoop={ isLoop }
 					playbackRate={ playbackRate }
 				/>
 				<Canvas
