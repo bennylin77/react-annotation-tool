@@ -10,7 +10,7 @@ import './control.scss';
 
 const Control = ({
 	className,
-	playing,
+	isPlaying,
 	played,
 	playbackRate,
 	duration,
@@ -37,7 +37,7 @@ const Control = ({
 							<MdReplay className='player-control__icon' />
 						</Button>
 						<Button className='player-control__button d-flex align-items-center' color='link' onClick={ onPlayPause }>
-							{playing ? <MdPause className='player-control__icon' /> : <MdPlayArrow className='player-control__icon' />}
+							{isPlaying ? <MdPause className='player-control__icon' /> : <MdPlayArrow className='player-control__icon' />}
 						</Button>
 					</ButtonGroup>
 					<Dropdown isOpen={ isDropdownOpen } toggle={ () => setIsDropdownOpen(!isDropdownOpen) } size='sm'>
@@ -71,7 +71,7 @@ const Control = ({
 
 Control.propTypes = {
 	className: PropTypes.string,
-	playing: PropTypes.bool,
+	isPlaying: PropTypes.bool,
 	played: PropTypes.number,
 	playbackRate: PropTypes.number,
 	duration: PropTypes.number,
@@ -84,7 +84,7 @@ Control.propTypes = {
 };
 Control.defaultProps = {
 	className: '',
-	playing: false,
+	isPlaying: false,
 	played: 0,
 	playbackRate: 1,
 	duration: 0,

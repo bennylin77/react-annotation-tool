@@ -13,7 +13,7 @@ const DrawableVideoPlayer = ({
 	const {
 		url,
 		played,
-		playing,
+		isPlaying,
 		playbackRate,
 		loop,
 		entities,
@@ -54,7 +54,7 @@ const DrawableVideoPlayer = ({
 					onEnded={ onVideoEnded }
 					url={ url }
 					width={ width }
-					playing={ playing }
+					isPlaying={ isPlaying }
 					loop={ loop }
 					playbackRate={ playbackRate }
 				/>
@@ -75,7 +75,7 @@ const DrawableVideoPlayer = ({
 				/>
 			</div>
 			<VideoPlayerControl
-				playing={ playing }
+				isPlaying={ isPlaying }
 				played={ played }
 				playbackRate={ playbackRate }
 				duration={ duration }

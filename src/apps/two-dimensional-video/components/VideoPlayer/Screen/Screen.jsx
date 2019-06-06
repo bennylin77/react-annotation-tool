@@ -5,7 +5,7 @@ import './screen.scss';
 
 const Screen = ({
 	className,
-	playing,
+	isPlaying,
 	width,
 	progressInterval,
 	url,
@@ -19,7 +19,7 @@ const Screen = ({
 }) => (
 	<ReactPlayer
 		url={ url }
-		playing={ playing }
+		playing={ isPlaying }
 		id='react-player'
 		ref={ playerRef }
 		onReady={ onReady }
@@ -39,7 +39,7 @@ const Screen = ({
 
 Screen.propTypes = {
 	className: PropTypes.string,
-	playing: PropTypes.bool,
+	isPlaying: PropTypes.bool,
 	width: PropTypes.number,
 	progressInterval: PropTypes.number,
 	url: PropTypes.string,
@@ -53,7 +53,7 @@ Screen.propTypes = {
 };
 Screen.defaultProps = {
 	className: '',
-	playing: false,
+	isPlaying: false,
 	width: 0,
 	progressInterval: 100,
 	url: '',
