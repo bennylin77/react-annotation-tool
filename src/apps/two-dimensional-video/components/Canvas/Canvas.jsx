@@ -50,38 +50,38 @@ const Canvas = ({
 	const layerItems = [];
 	annotations.slice().reverse().forEach((annotationId) => {
 		const {
-			trajectories, color, id, name, label, isManipulatable,
+			incidents, color, id, name, label, isManipulatable,
 		} = entities.annotations[annotationId];
 
-		for (let i = 0; i < trajectories.length; i++) {
+		for (let i = 0; i < incidents.length; i++) {
 			let x;
 			let y;
 			let width;
 			let height;
 
-			if (played >= trajectories[i].time) {
-				if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) {
+			if (played >= incidents[i].time) {
+				if (i !== incidents.length - 1 && played >= incidents[i + 1].time) {
 					continue;
 				}
-				if (trajectories[i].status !== SHOW) break; // todo
+				if (incidents[i].status !== SHOW) break; // todo
 
-				if (i === trajectories.length - 1) {
+				if (i === incidents.length - 1) {
 					({
 						x,
 						y,
 						width,
 						height,
-					} = trajectories[i]);
+					} = incidents[i]);
 				} else {
 					const interpoArea = getInterpolatedData({
-						startIncident: trajectories[i],
-						endIncident: trajectories[i + 1],
+						startIncident: incidents[i],
+						endIncident: incidents[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.LENGTH,
 					});
 					const interpoPos = getInterpolatedData({
-						startIncident: trajectories[i],
-						endIncident: trajectories[i + 1],
+						startIncident: incidents[i],
+						endIncident: incidents[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});
@@ -123,7 +123,7 @@ const Canvas = ({
 						fill='#fff'
 					/>
 				);
-				const warningText = isEmptyCheckEnable && trajectories.length < 2 && (
+				const warningText = isEmptyCheckEnable && incidents.length < 2 && (
 					<Text
 						offsetY={ -5 }
 						x={ 0 }

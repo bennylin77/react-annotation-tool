@@ -10,7 +10,7 @@ const getSubAnnotations = (i, annotations, entities) => {
 	}
 	while (queue.length > 0) {
 		const ann = queue.shift();
-		for (const c of entities.annotations[ann].children) {
+		for (const c of entities.annotations[ann].childrenNames) {
 			result.push(c);
 			queue.push(c);
 		}

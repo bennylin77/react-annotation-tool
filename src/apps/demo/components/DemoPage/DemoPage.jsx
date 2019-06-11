@@ -75,7 +75,7 @@ const DemoPage = () => {
 		name: 'jt192wyd',
 		label: '1-2',
 		color: 'rgba(255,0,0,1)',
-		trajectories: [{
+		incidents: [{
 			id: 'jt192wyb', name: 'jt192wyb', x: 295.00402335586875, y: 193.3689649661968, width: 40.75402335586878, height: 41.63103503380317, time: 0.0308226495726496, status: 'Show',
 		}, {
 			id: 'jt1930nb', name: 'jt1930nb', x: 304.00402335586875, y: 202.3689649661968, width: 58.75402335586875, height: 60.63103503380319, time: 0.03178472222222222, status: 'Show',
@@ -106,14 +106,14 @@ const DemoPage = () => {
 		}, {
 			id: 'jt195v9l', name: 'jt195v9l', x: 318.00402335586875, y: 228.3689649661968, width: 75.75402335586875, height: 54.63103503380319, time: 0.34623937007874017, status: 'Hide',
 		}],
-		children: [],
-		parent: 'jt1922xu',
+		childrenNames: [],
+		parentName: 'jt1922xu',
 	}, {
 		id: 'jt192wyc',
 		name: 'jt192wyc',
 		label: '1-1',
 		color: 'rgba(255,0,0,1)',
-		trajectories: [{
+		incidents: [{
 			id: 'jt192wyb', name: 'jt192wyb', x: 274.25, y: 171.73792993239366, width: 40.75402335586878, height: 41.63103503380317, time: 0.0308226495726496, status: 'Show',
 		}, {
 			id: 'jt19349x', name: 'jt19349x', x: 271.25, y: 167.73792993239366, width: 60.75402335586875, height: 58.63103503380316, time: 0.03178472222222222, status: 'Show',
@@ -154,20 +154,20 @@ const DemoPage = () => {
 		}, {
 			id: 'jt196k7h', name: 'jt196k7h', x: 273.25, y: 157.73792993239366, width: 47.75402335586875, height: 49.63103503380316, time: 0.8626350393700787, status: 'Show',
 		}],
-		children: [],
-		parent: 'jt1922xu',
+		childrenNames: [],
+		parentName: 'jt1922xu',
 	}, {
 		id: 'jt1922xu',
 		name: 'jt1922xu',
 		label: '1',
 		color: 'rgba(255,219,0,1)',
-		trajectories: [{
+		incidents: [{
 			id: 'jt1922xu', name: 'jt1922xu', x: 274.25, y: 174, width: 80, height: 81, time: 0, status: 'Show',
 		}, {
 			id: 'jt192wyb', name: 'jt192wyb', x: 274.25, y: 171.73792993239366, width: 81.50804671173756, height: 83.26207006760634, time: 0.0308226495726496, status: 'Split',
 		}],
-		children: ['jt192wyc', 'jt192wyd'],
-		parent: '',
+		childrenNames: ['jt192wyc', 'jt192wyd'],
+		parentName: '',
 	}];
 	const previewNoticeList = [
 		'Cells\' body range.',

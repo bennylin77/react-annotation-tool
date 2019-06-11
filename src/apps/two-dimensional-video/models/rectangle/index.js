@@ -11,7 +11,7 @@ const canClearRedundantIncidents = state => ({
 	},
 });
 
-const rectangle = ({
+const Rectangle = ({
 	id,
 	name,
 	label,
@@ -32,5 +32,5 @@ const rectangle = ({
 };
 
 export {
-	rectangle,
+	Rectangle,
 };

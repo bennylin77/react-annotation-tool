@@ -11,7 +11,7 @@ import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt, getFixedNumber } from 'shared/utils/mathUtils';
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
 import { VideoAnnotation, Trajectory } from 'models/2DVideo.js';
-import { rectangle } from '../../models/rectangle';
+import { Rectangle } from '../../models/rectangle';
 import { Incident } from '../../models/incident';
 import { UndoRedo } from 'models/UndoRedo.js';
 import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
@@ -120,13 +120,13 @@ class TwoDimensionalVideo extends Component {
 			const { entities } = prevState;
 			let { focusing } = prevState;
 			if (focusing) {
-				const { trajectories } = entities.annotations[focusing];
-				for (let i = 0; i < trajectories.length; i += 1) {
-					if (played >= trajectories[i].time) {
-						if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-						if (trajectories[i].status !== SHOW) focusing = '';
+				const { incidents } = entities.annotations[focusing];
+				for (let i = 0; i < incidents.length; i += 1) {
+					if (played >= incidents[i].time) {
+						if (i !== incidents.length - 1 && played >= incidents[i + 1].time) continue;
+						if (incidents[i].status !== SHOW) focusing = '';
 						break;
-					} else if (i === trajectories.length - 1) focusing = '';
+					} else if (i === incidents.length - 1) focusing = '';
 				}
 			}
 			return { played, focusing };
@@ -147,12 +147,12 @@ class TwoDimensionalVideo extends Component {
 			const {
 				annotations, entities,
 			} = prevState;
-			const trajectories = [];
-			trajectories.push(Incident({
+			const incidents = [];
+			incidents.push(Incident({
 				id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, height: 1, width: 1, time: prevState.played,
 			}));
-			entities.annotations[`${uniqueKey}`] = new VideoAnnotation({
-				id: `${uniqueKey}`, name: `${uniqueKey}`, label: `${getLastAnnotationLabel(annotations, entities) + 1}`, color, trajectories,
+			entities.annotations[`${uniqueKey}`] = Rectangle({
+				id: `${uniqueKey}`, name: `${uniqueKey}`, label: `${getLastAnnotationLabel(annotations, entities) + 1}`, color, incidents,
 			});
 			return {
 				isAdding: false,
@@ -183,22 +183,22 @@ class TwoDimensionalVideo extends Component {
 		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { entities, played } = prevState;
-			const { trajectories } = entities.annotations[group.name()];
-			for (let i = 0; i < trajectories.length; i += 1) {
-				if (played >= trajectories[i].time) {
-					// skip elapsed trajectories
-					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-					if (played === trajectories[i].time) {
-						trajectories[i].x = position.x; trajectories[i].y = position.y; trajectories[i].width = rect.width(); trajectories[i].height = rect.height();
+			const { incidents } = entities.annotations[group.name()];
+			for (let i = 0; i < incidents.length; i += 1) {
+				if (played >= incidents[i].time) {
+					// skip elapsed incidents
+					if (i !== incidents.length - 1 && played >= incidents[i + 1].time) continue;
+					if (played === incidents[i].time) {
+						incidents[i].x = position.x; incidents[i].y = position.y; incidents[i].width = rect.width(); incidents[i].height = rect.height();
 						break;
 					}
-					if (i === trajectories.length - 1) {
-						trajectories.push(Incident({
+					if (i === incidents.length - 1) {
+						incidents.push(Incident({
 							id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, width: rect.width(), height: rect.height(), time: played,
 						}));
 						break;
 					}
-					trajectories.splice(i + 1, 0, Incident({
+					incidents.splice(i + 1, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, height: rect.height(), width: rect.width(), time: played,
 					}));
 					break;
@@ -228,22 +228,22 @@ class TwoDimensionalVideo extends Component {
 			this.UndoRedoState.save(prevState);
 			const { entities, played } = prevState;
 			const { annotations } = entities;
-			const { trajectories } = entities.annotations[group.name()];
-			for (let i = 0; i < trajectories.length; i += 1) {
-				if (played >= trajectories[i].time) {
-					// skip elapsed trajectories
-					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-					if (played === trajectories[i].time) {
-						trajectories[i].x = minX; trajectories[i].y = minY; trajectories[i].height = maxY - minY; trajectories[i].width = maxX - minX;
+			const { incidents } = entities.annotations[group.name()];
+			for (let i = 0; i < incidents.length; i += 1) {
+				if (played >= incidents[i].time) {
+					// skip elapsed incidents
+					if (i !== incidents.length - 1 && played >= incidents[i + 1].time) continue;
+					if (played === incidents[i].time) {
+						incidents[i].x = minX; incidents[i].y = minY; incidents[i].height = maxY - minY; incidents[i].width = maxX - minX;
 						break;
 					}
-					trajectories.splice(i + 1, 0, Incident({
+					incidents.splice(i + 1, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: minX, y: minY, height: maxY - minY, width: maxX - minX, time: played,
 					}));
 					break;
 				}
 			}
-			annotations[group.name()].trajectories = trajectories;
+			annotations[group.name()].incidents = incidents;
 			return { entities: { ...entities, annotations } };
 		});
 	}
@@ -262,11 +262,11 @@ class TwoDimensionalVideo extends Component {
 			this.UndoRedoState.save(prevState);
 			const { entities } = prevState;
 			const { annotations } = entities;
-			const trajectories = entities.annotations[annotationName].trajectories.filter((t) => {
+			const incidents = entities.annotations[annotationName].incidents.filter((t) => {
 				if (t.name !== incidentName) return true;
 				return false;
 			});
-			annotations[annotationName].trajectories = trajectories;
+			annotations[annotationName].incidents = incidents;
 			return { entities: { ...entities, annotations } };
 		});
 	}
@@ -286,13 +286,13 @@ class TwoDimensionalVideo extends Component {
 					this.renameLabel(annotations, entitiesAnnotations, lastName, label);
 				}
 			}
-			// remove name from the parent's children
-			if (entitiesAnnotations[name].parent) {
-				const parent = entitiesAnnotations[entitiesAnnotations[name].parent];
-				const i = parent.children.indexOf(name);
+			// remove name from the parent's childrenNames
+			if (entitiesAnnotations[name].parentName) {
+				const parent = entitiesAnnotations[entitiesAnnotations[name].parentName];
+				const i = parent.childrenNames.indexOf(name);
 				if (i !== -1) {
-					parent.children.splice(i, 1);
-					if (parent.children.length == 0 && parent.trajectories[parent.trajectories.length - 1].status === SPLIT) parent.trajectories[parent.trajectories.length - 1].status = SHOW;
+					parent.childrenNames.splice(i, 1);
+					if (parent.childrenNames.length == 0 && parent.incidents[parent.incidents.length - 1].status === SPLIT) parent.incidents[parent.incidents.length - 1].status = SHOW;
 				}
 			}
 			// remove all its children and itself recusively
@@ -302,8 +302,8 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	removeAnnotation = (annotations, entitiesAnnotations, name) => {
-		if (entitiesAnnotations[name].children.length !== 0) {
-			entitiesAnnotations[name].children.forEach((c) => {
+		if (entitiesAnnotations[name].childrenNames.length !== 0) {
+			entitiesAnnotations[name].childrenNames.forEach((c) => {
 				this.removeAnnotation(annotations, entitiesAnnotations, c);
 			});
 		}
@@ -313,8 +313,8 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	renameLabel = (annotations, entitiesAnnotations, name, label) => {
-		if (entitiesAnnotations[name].children.length !== 0) {
-			entitiesAnnotations[name].children.forEach((c, index) => {
+		if (entitiesAnnotations[name].childrenNames.length !== 0) {
+			entitiesAnnotations[name].childrenNames.forEach((c, index) => {
 				this.renameLabel(annotations, entitiesAnnotations, c, `${label}-${index + 1}`);
 			});
 		}
@@ -328,48 +328,48 @@ class TwoDimensionalVideo extends Component {
 		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { played, entities } = prevState;
-			const { trajectories } = entities.annotations[name];
-			for (let i = 0; i < trajectories.length; i += 1) {
-				if (i === 0 && played < trajectories[i].time) {
-					trajectories.splice(0, 0, Incident({
-						id: `${uniqueKey}`, name: `${uniqueKey}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
+			const { incidents } = entities.annotations[name];
+			for (let i = 0; i < incidents.length; i += 1) {
+				if (i === 0 && played < incidents[i].time) {
+					incidents.splice(0, 0, Incident({
+						id: `${uniqueKey}`, name: `${uniqueKey}`, x: incidents[i].x, y: incidents[i].y, height: incidents[i].height, width: incidents[i].width, time: played, status,
 					}));
 					break;
 				}
-				if (played >= trajectories[i].time) {
-					// skip elapsed trajectories
-					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-					if (played === trajectories[i].time) {
-						trajectories.splice(i, 1, Incident({
-							...trajectories[i], id: `${uniqueKey}`, name: `${uniqueKey}`, status,
+				if (played >= incidents[i].time) {
+					// skip elapsed incidents
+					if (i !== incidents.length - 1 && played >= incidents[i + 1].time) continue;
+					if (played === incidents[i].time) {
+						incidents.splice(i, 1, Incident({
+							...incidents[i], id: `${uniqueKey}`, name: `${uniqueKey}`, status,
 						}));
 						break;
 					}
-					if (i === trajectories.length - 1) {
-						trajectories.push(Incident({
-							id: `${uniqueKey}`, name: `${uniqueKey}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
+					if (i === incidents.length - 1) {
+						incidents.push(Incident({
+							id: `${uniqueKey}`, name: `${uniqueKey}`, x: incidents[i].x, y: incidents[i].y, height: incidents[i].height, width: incidents[i].width, time: played, status,
 						}));
 						break;
 					}
 					const interpoArea = getInterpolatedData({
-						startIncident: trajectories[i],
-						endIncident: trajectories[i + 1],
+						startIncident: incidents[i],
+						endIncident: incidents[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.LENGTH,
 					});
 					const interpoPos = getInterpolatedData({
-						startIncident: trajectories[i],
-						endIncident: trajectories[i + 1],
+						startIncident: incidents[i],
+						endIncident: incidents[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});
-					trajectories.splice(i + 1, 0, Incident({
+					incidents.splice(i + 1, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
 					}));
 					break;
 				}
 			}
-			if (status === HIDE) Trajectory.clearRedundantTrajectories(trajectories, status);
+			if (status === HIDE) entities.annotations[name].clearRedundantIncidents(status);
 			return { entities: { ...entities, annotations: entities.annotations } };
 		});
 	}
@@ -384,9 +384,9 @@ class TwoDimensionalVideo extends Component {
 			this.UndoRedoState.save(prevState);
 			const { played, entities, annotations } = prevState;
 			const parent = entities.annotations[name];
-			// remove ex-children
-			if (parent.children.length !== 0) {
-				for (const c of parent.children) {
+			// remove ex-childrenNames
+			if (parent.childrenNames.length !== 0) {
+				for (const c of parent.childrenNames) {
 					delete entities.annotations[c];
 					const i = annotations.indexOf(c);
 					annotations.splice(i, 1);
@@ -399,36 +399,36 @@ class TwoDimensionalVideo extends Component {
 
 			let parentX; let parentY; let parentWidth; let
 				parentHeight;
-			let { trajectories } = parent;
-			for (let i = 0; i < trajectories.length; i++) {
-				if (played >= trajectories[i].time) {
-					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
-					parentX = trajectories[i].x;
-					parentY = trajectories[i].y;
-					parentWidth = trajectories[i].width;
-					parentHeight = trajectories[i].height;
-					if (played === trajectories[i].time) {
-						trajectories.splice(i, 1, Incident({
-							...trajectories[i], id: `${timeNow}`, name: `${timeNow}`, status,
+			let { incidents } = parent;
+			for (let i = 0; i < incidents.length; i++) {
+				if (played >= incidents[i].time) {
+					if (i !== incidents.length - 1 && played >= incidents[i + 1].time) continue;
+					parentX = incidents[i].x;
+					parentY = incidents[i].y;
+					parentWidth = incidents[i].width;
+					parentHeight = incidents[i].height;
+					if (played === incidents[i].time) {
+						incidents.splice(i, 1, Incident({
+							...incidents[i], id: `${timeNow}`, name: `${timeNow}`, status,
 						}));
-						trajectories = trajectories.slice(0, i + 1);
+						incidents = incidents.slice(0, i + 1);
 						break;
 					}
-					if (i === trajectories.length - 1) {
-						trajectories.push(Incident({
-							id: `${timeNow}`, name: `${timeNow}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
+					if (i === incidents.length - 1) {
+						incidents.push(Incident({
+							id: `${timeNow}`, name: `${timeNow}`, x: incidents[i].x, y: incidents[i].y, height: incidents[i].height, width: incidents[i].width, time: played, status,
 						}));
 						break;
 					}
 					const interpoArea = getInterpolatedData({
-						startIncident: trajectories[i],
-						endIncident: trajectories[i + 1],
+						startIncident: incidents[i],
+						endIncident: incidents[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.LENGTH,
 					});
 					const interpoPos = getInterpolatedData({
-						startIncident: trajectories[i],
-						endIncident: trajectories[i + 1],
+						startIncident: incidents[i],
+						endIncident: incidents[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});
@@ -436,26 +436,26 @@ class TwoDimensionalVideo extends Component {
 					parentY = interpoPos.y;
 					parentWidth = interpoArea.width;
 					parentHeight = interpoArea.height;
-					trajectories.splice(i + 1, 0, Incident({
+					incidents.splice(i + 1, 0, Incident({
 						id: `${timeNow}`, name: `${timeNow}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
 					}));
-					trajectories = trajectories.slice(0, i + 2);
+					incidents = incidents.slice(0, i + 2);
 					break;
 				}
 			}
-			parent.children = [`${timeNowChild1}`, `${timeNowChild2}`];
-			parent.trajectories = trajectories;
-			const childTrajectories1 = [Incident({
+			parent.childrenNames = [`${timeNowChild1}`, `${timeNowChild2}`];
+			parent.incidents = incidents;
+			const childIncidents1 = [Incident({
 				id: `${timeNow}`, name: `${timeNow}`, x: parentX, y: parentY, height: parentHeight / 2, width: parentWidth / 2, time: played,
 			})];
-			const childTrajectories2 = [Incident({
+			const childIncidents2 = [Incident({
 				id: `${timeNow}`, name: `${timeNow}`, x: parentX + parentWidth / 2 - 20, y: parentY + parentHeight / 2 - 20, height: parentHeight / 2, width: parentWidth / 2, time: played,
 			})];
-			entities.annotations[`${timeNowChild1}`] = new VideoAnnotation({
-				id: `${timeNowChild1}`, name: `${timeNowChild1}`, label: `${parent.label}-1`, color: childrenColor, trajectories: childTrajectories1, parent: parent.name,
+			entities.annotations[`${timeNowChild1}`] = Rectangle({
+				id: `${timeNowChild1}`, name: `${timeNowChild1}`, label: `${parent.label}-1`, color: childrenColor, incidents: childIncidents1, parentName: parent.name,
 			});
-			entities.annotations[`${timeNowChild2}`] = new VideoAnnotation({
-				id: `${timeNowChild2}`, name: `${timeNowChild2}`, label: `${parent.label}-2`, color: childrenColor, trajectories: childTrajectories2, parent: parent.name,
+			entities.annotations[`${timeNowChild2}`] = Rectangle({
+				id: `${timeNowChild2}`, name: `${timeNowChild2}`, label: `${parent.label}-2`, color: childrenColor, incidents: childIncidents2, parentName: parent.name,
 			});
 			const parentIndex = annotations.find(a => a === parent.name);
 			annotations.splice(parentIndex, 0, `${timeNowChild1}`);
@@ -494,7 +494,7 @@ class TwoDimensionalVideo extends Component {
 		if (!isEmptyCheckEnable) return false;
 		if (annotations.length !== 0 && defaultNumAnnotations < annotations.length) {
 			for (const ann of annotations) {
-				if (entities.annotations[ann].trajectories.length < 2) return true;
+				if (entities.annotations[ann].incidents.length < 2) return true;
 			}
 			return false;
 		}

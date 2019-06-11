@@ -36,15 +36,15 @@ const AnnotationItem = ({
 	const { t } = useTranslation();
 
 	const {
-		trajectories,
+		incidents,
 		name,
 		label,
 		color,
-		parent,
-		children,
+		parentName,
+		childrenNames,
 	} = itemData;
-	const parentAnnotation = entities.annotations[parent];
-	const childrenUI = children.map(c => (
+	const parentAnnotation = entities.annotations[parentName];
+	const childrenUI = childrenNames.map(c => (
 		<Button color='link' key={ c } onClick={ () => onAnnotationItemClick(c) } className='video-ann-relatives'>
 			{`${entities.annotations[c].label} `}
 		</Button>
@@ -91,7 +91,7 @@ const AnnotationItem = ({
 			{SPLIT}
 		</OpenDialogButton>
 	);
-	const currentIncident = [...trajectories].reverse().find(incident => played >= incident.time) || {};
+	const currentIncident = [...incidents].reverse().find(incident => played >= incident.time) || {};
 
 	switch (currentIncident.status) {
 	case SHOW:
@@ -112,7 +112,7 @@ const AnnotationItem = ({
 		break;
 	}
 
-	const warningText = isEmptyCheckEnable && trajectories.length < 2 && <span className='text-danger'>You should track the cell bound by this box</span>;
+	const warningText = isEmptyCheckEnable && incidents.length < 2 && <span className='text-danger'>You should track the cell bound by this box</span>;
 	let rootClassName = `annotation-item${className ? ` ${className}` : ''}`;
 	if (name !== focusing) {
 		return (
@@ -186,7 +186,7 @@ const AnnotationItem = ({
 				{isIncidentListOpen ? <FaChevronUp /> : <FaChevronDown />}
 			</Button>
 			<Collapse isOpen={ isIncidentListOpen }>
-				<IncidentList incidents={ trajectories } annotationName={ name } />
+				<IncidentList incidents={ incidents } annotationName={ name } />
 			</Collapse>
 			<div className='mt-3'>
 				{warningText}
