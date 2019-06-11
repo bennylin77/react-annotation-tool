@@ -6,17 +6,17 @@ const INTERPOLATION_TYPE = {
 };
 
 const getInterpolatedData = ({
-	startEvent, endEvent, currentTime, type,
+	startIncident, endIncident, currentTime, type,
 }) => {
 	const interpolated = {};
 	switch (type) {
 	case INTERPOLATION_TYPE.LENGTH:
-		interpolated.width = getLinearInterpolatedValue(endEvent.time, startEvent.time, endEvent.width, startEvent.width, currentTime);
-		interpolated.height = getLinearInterpolatedValue(endEvent.time, startEvent.time, endEvent.height, startEvent.height, currentTime);
+		interpolated.width = getLinearInterpolatedValue(endIncident.time, startIncident.time, endIncident.width, startIncident.width, currentTime);
+		interpolated.height = getLinearInterpolatedValue(endIncident.time, startIncident.time, endIncident.height, startIncident.height, currentTime);
 		break;
 	case INTERPOLATION_TYPE.POSITION:
-		interpolated.x = getLinearInterpolatedValue(endEvent.time, startEvent.time, endEvent.x, startEvent.x, currentTime);
-		interpolated.y = getLinearInterpolatedValue(endEvent.time, startEvent.time, endEvent.y, startEvent.y, currentTime);
+		interpolated.x = getLinearInterpolatedValue(endIncident.time, startIncident.time, endIncident.x, startIncident.x, currentTime);
+		interpolated.y = getLinearInterpolatedValue(endIncident.time, startIncident.time, endIncident.y, startIncident.y, currentTime);
 		break;
 	default:
 		break;

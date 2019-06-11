@@ -11,6 +11,8 @@ import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt } from 'shared/utils/mathUtils';
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
 import { VideoAnnotation, Trajectory } from 'models/2DVideo.js';
+import { rectangle } from '../../models/rectangle';
+import { incident } from '../../models/incident';
 import { UndoRedo } from 'models/UndoRedo.js';
 import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
@@ -18,7 +20,7 @@ import Preview from '../Preview/Preview.jsx';
 import Review from '../Review/Review.jsx';
 import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import DrawableVideoPlayer from '../DrawableVideoPlayer/DrawableVideoPlayer.jsx';
-import { getLastAnnotationLabel } from '../../utils/utils';
+import { getLastAnnotationLabel, getUniqueKey } from '../../utils/utils';
 import './twoDimensionalVideo.scss';
 
 class TwoDimensionalVideo extends Component {
@@ -133,36 +135,33 @@ class TwoDimensionalVideo extends Component {
 
 	/* ==================== canvas ==================== */
 
-	handleAddClick = () => {
-		this.setState(prevState => ({ isAdding: !prevState.isAdding, isPlaying: false }));
-	}
-
 	handleCanvasStageMouseDown = (e) => {
-		if (!this.state.isAdding) return;
+		const { isAdding } = this.state;
+		if (!isAdding) return;
 		const stage = e.target.getStage();
 		const position = stage.getPointerPosition();
-		const timeNow = new Date().getTime().toString(36);
+		const uniqueKey = getUniqueKey();
 		const color = colors[getRandomInt(colors.length)];
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			this.UndoRedoState.save({ ...prevState, isAdding: false }); // Undo/Redo
 			const {
-				isAdding, focusing, annotations, entities,
+				annotations, entities,
 			} = prevState;
 			const trajectories = [];
 			trajectories.push(new Trajectory({
-				id: `${timeNow}`, name: `${timeNow}`, x: position.x, y: position.y, height: 1, width: 1, time: prevState.played,
+				id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, height: 1, width: 1, time: prevState.played,
 			}));
-			entities.annotations[`${timeNow}`] = new VideoAnnotation({
-				id: `${timeNow}`, name: `${timeNow}`, label: `${getLastAnnotationLabel(annotations, entities) + 1}`, color, trajectories,
+			entities.annotations[`${uniqueKey}`] = new VideoAnnotation({
+				id: `${uniqueKey}`, name: `${uniqueKey}`, label: `${getLastAnnotationLabel(annotations, entities) + 1}`, color, trajectories,
 			});
 			return {
-				isAdding: !prevState.isAdding,
-							 focusing: `${timeNow}`,
-							 annotations: [...annotations, `${timeNow}`],
-							 entities: { ...entities, annotations: entities.annotations },
+				isAdding: false,
+				focusing: `${uniqueKey}`,
+				annotations: [...annotations, `${uniqueKey}`],
+				entities: { ...entities, annotations: entities.annotations },
 			};
 		}, () => {
-			const group = stage.find(`.${timeNow}`)[0];
+			const group = stage.find(`.${uniqueKey}`)[0];
 			const bottomRight = group.get('.bottomRight')[0];
 			group.moveToTop();
 			bottomRight.moveToTop();
@@ -179,16 +178,13 @@ class TwoDimensionalVideo extends Component {
 		if (e.target.getClassName() !== 'Group') return;
 		const group = e.target;
 		const rect = group.get('Rect')[0];
-		const topLeft = group.get('.topLeft')[0];
 		const position = group.position();
-
-		const timeNow = new Date().getTime().toString(36);
-		this.setState((prevState, props) => {
+		const uniqueKey = getUniqueKey();
+		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { entities, played } = prevState;
-			const { annotations } = entities;
 			const { trajectories } = entities.annotations[group.name()];
-			for (let i = 0; i < trajectories.length; i++) {
+			for (let i = 0; i < trajectories.length; i += 1) {
 				if (played >= trajectories[i].time) {
 					// skip elapsed trajectories
 					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
@@ -198,18 +194,17 @@ class TwoDimensionalVideo extends Component {
 					}
 					if (i === trajectories.length - 1) {
 						trajectories.push(new Trajectory({
-							id: `${timeNow}`, name: `${timeNow}`, x: position.x, y: position.y, width: rect.width(), height: rect.height(), time: played,
+							id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, width: rect.width(), height: rect.height(), time: played,
 						}));
 						break;
 					}
 					trajectories.splice(i + 1, 0, new Trajectory({
-						id: `${timeNow}`, name: `${timeNow}`, x: position.x, y: position.y, height: rect.height(), width: rect.width(), time: played,
+						id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, height: rect.height(), width: rect.width(), time: played,
 					}));
 					break;
 				}
 			}
 			return {};
-			// return { entities: {...entities, ['annotations']: ...annotations }}
 		});
 	}
 
@@ -221,7 +216,7 @@ class TwoDimensionalVideo extends Component {
 	handleCanvasDotDragEnd = (e) => {
 		const activeAnchor = e.target;
 		const group = activeAnchor.getParent();
-		const timeNow = new Date().getTime().toString(36);
+		const uniqueKey = getUniqueKey();
 		group.draggable(true);
 		const topLeft = group.get('.topLeft')[0]; const topRight = group.get('.topRight')[0]; const bottomRight = group.get('.bottomRight')[0]; const
 			bottomLeft = group.get('.bottomLeft')[0];
@@ -234,7 +229,7 @@ class TwoDimensionalVideo extends Component {
 			const { entities, played } = prevState;
 			const { annotations } = entities;
 			const { trajectories } = entities.annotations[group.name()];
-			for (let i = 0; i < trajectories.length; i++) {
+			for (let i = 0; i < trajectories.length; i += 1) {
 				if (played >= trajectories[i].time) {
 					// skip elapsed trajectories
 					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
@@ -243,7 +238,7 @@ class TwoDimensionalVideo extends Component {
 						break;
 					}
 					trajectories.splice(i + 1, 0, new Trajectory({
-						id: `${timeNow}`, name: `${timeNow}`, x: minX, y: minY, height: maxY - minY, width: maxX - minX, time: played,
+						id: `${uniqueKey}`, name: `${uniqueKey}`, x: minX, y: minY, height: maxY - minY, width: maxX - minX, time: played,
 					}));
 					break;
 				}
@@ -253,26 +248,24 @@ class TwoDimensionalVideo extends Component {
 		});
 	}
 
-	handleListAnnotationClick = (name) => {
-		this.setState({ focusing: name });
-	}
+	handleAnnotationItemClick = name => this.setState({ focusing: name });
 
-	handleListTrajectoryJump = (e) => {
-		const { annotationName, time } = e;
+	handleIncidentItemClick = (incident) => {
+		const { annotationName, time } = incident;
 		this.setState({ isPlaying: false, focusing: annotationName },
 			() => { this.player.seekTo(parseFloat(time)); });
 	}
 
-	handleListTrajectoryDelete = (e) => {
-		const { annotationName, eventName } = e;
+	handleIncidentItemDelete = (e) => {
+		const { annotationName, incidentName } = e;
 		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { entities } = prevState;
 			const { annotations } = entities;
 			const trajectories = entities.annotations[annotationName].trajectories.filter((t) => {
-				if (t.name !== eventName) return true;
+				if (t.name !== incidentName) return true;
 				return false;
-		  });
+			});
 			annotations[annotationName].trajectories = trajectories;
 			return { entities: { ...entities, annotations } };
 		});
@@ -290,9 +283,7 @@ class TwoDimensionalVideo extends Component {
 				const lastLabel = getLastAnnotationLabel(annotations, entities) - 1;
 				if (`${lastLabel}` !== '1' && `${lastLabel}` !== label) {
 					const lastName = annotations.find(a => entitiesAnnotations[a].label === `${lastLabel}`);
-					// console.log(lastName)
 					this.renameLabel(annotations, entitiesAnnotations, lastName, label);
-					// console.log(lastLabel);
 				}
 			}
 			// remove name from the parent's children
@@ -306,8 +297,6 @@ class TwoDimensionalVideo extends Component {
 			}
 			// remove all its children and itself recusively
 			this.removeAnnotation(annotations, entitiesAnnotations, name);
-
-
 			return { annotations, entities: { ...entities, annotations: entitiesAnnotations }, focusing: '' };
 		});
 	}
@@ -335,15 +324,15 @@ class TwoDimensionalVideo extends Component {
 	handleListAnnotationShowHide = (e) => {
 		const { name } = e;
 		const { status } = e;
-		const timeNow = new Date().getTime().toString(36);
-		this.setState((prevState, props) => {
+		const uniqueKey = new Date().getTime().toString(36);
+		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { played, entities } = prevState;
 			const { trajectories } = entities.annotations[name];
-			for (let i = 0; i < trajectories.length; i++) {
+			for (let i = 0; i < trajectories.length; i += 1) {
 				if (i === 0 && played < trajectories[i].time) {
 					trajectories.splice(0, 0, new Trajectory({
-						id: `${timeNow}`, name: `${timeNow}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
+						id: `${uniqueKey}`, name: `${uniqueKey}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
 					}));
 					break;
 				}
@@ -352,30 +341,30 @@ class TwoDimensionalVideo extends Component {
 					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
 					if (played === trajectories[i].time) {
 						trajectories.splice(i, 1, new Trajectory({
-							...trajectories[i], id: `${timeNow}`, name: `${timeNow}`, status,
+							...trajectories[i], id: `${uniqueKey}`, name: `${uniqueKey}`, status,
 						}));
 						break;
 					}
 					if (i === trajectories.length - 1) {
 						trajectories.push(new Trajectory({
-							id: `${timeNow}`, name: `${timeNow}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
+							id: `${uniqueKey}`, name: `${uniqueKey}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
 						}));
 						break;
 					}
 					const interpoArea = getInterpolatedData({
-						startEvent: trajectories[i],
-						endEvent: trajectories[i + 1],
+						startIncident: trajectories[i],
+						endIncident: trajectories[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.LENGTH,
 					});
 					const interpoPos = getInterpolatedData({
-						startEvent: trajectories[i],
-						endEvent: trajectories[i + 1],
+						startIncident: trajectories[i],
+						endIncident: trajectories[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});
 					trajectories.splice(i + 1, 0, new Trajectory({
-						id: `${timeNow}`, name: `${timeNow}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
+						id: `${uniqueKey}`, name: `${uniqueKey}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
 					}));
 					break;
 				}
@@ -391,7 +380,7 @@ class TwoDimensionalVideo extends Component {
 		const timeNowChild1 = ((new Date()).getTime() + 1).toString(36);
 		const timeNowChild2 = ((new Date()).getTime() + 2).toString(36);
 		const status = SPLIT;
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			this.UndoRedoState.save(prevState);
 			const { played, entities, annotations } = prevState;
 			const parent = entities.annotations[name];
@@ -432,14 +421,14 @@ class TwoDimensionalVideo extends Component {
 						break;
 					}
 					const interpoArea = getInterpolatedData({
-						startEvent: trajectories[i],
-						endEvent: trajectories[i + 1],
+						startIncident: trajectories[i],
+						endIncident: trajectories[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.LENGTH,
 					});
 					const interpoPos = getInterpolatedData({
-						startEvent: trajectories[i],
-						endEvent: trajectories[i + 1],
+						startIncident: trajectories[i],
+						endIncident: trajectories[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});
@@ -475,14 +464,10 @@ class TwoDimensionalVideo extends Component {
 		});
 	}
 
-	handleListVideoPause = () => {
-		this.setState({ isPlaying: false });
-	}
-
 	/* ==================== undo/redo ==================== */
 	handleUndo = () => {
 		if (this.UndoRedoState.previous.length === 0) return;
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const state = this.UndoRedoState.undo(prevState);
 			return { ...state };
 		});
@@ -490,24 +475,20 @@ class TwoDimensionalVideo extends Component {
 
 	handleRedo = () => {
 		if (this.UndoRedoState.next.length === 0) return;
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const state = this.UndoRedoState.redo(prevState);
 			return { ...state };
 		});
 	}
 
 	/* ==================== preview ================ */
-	handlePreviewClick = () => {
-		this.setState({ isPreviewed: true });
-	}
+	handlePreviewClick = () => this.setState({ isPreviewed: true });
 
 	/* ==================== review ==================== */
-	handleReviewCancelSubmission = () => {
-		this.setState({ isLoop: false, isSubmitted: false, isPlaying: false });
-	}
+	handleReviewCancelSubmission = () => this.setState({ isLoop: false, isSubmitted: false, isPlaying: false });
 
 	/* ==================== others ==================== */
-	isEmptyAnnotationOrEvent = () => {
+	isEmptyAnnotationOrIncident = () => {
 		const { annotations, defaultNumAnnotations, entities } = this.state;
 		const { isEmptyCheckEnable } = this.props;
 		if (!isEmptyCheckEnable) return false;
@@ -524,7 +505,7 @@ class TwoDimensionalVideo extends Component {
 		const { annotations, isSubmitted } = this.state;
 		const { onSubmit, hasReview } = this.props;
 
-		if (this.isEmptyAnnotationOrEvent()) {
+		if (this.isEmptyAnnotationOrIncident()) {
 			this.setState({ isDialogOpen: true, dialogTitle: 'Submission warning', dialogMessage: 'You must annotate and track one cell' });
 			return;
 		}
@@ -548,6 +529,8 @@ class TwoDimensionalVideo extends Component {
 	}
 
     handleDialogToggle = () => this.setState(prevState => ({ isDialogOpen: !prevState.isDialogOpen }));
+
+	handleAddClick = () => this.setState(prevState => ({ isAdding: !prevState.isAdding, isPlaying: false }));
 
 	renderAddButtonUI = () => {
 		const {
@@ -631,12 +614,12 @@ class TwoDimensionalVideo extends Component {
 			onCanvasGroupDragEnd: this.handleCanvasGroupDragEnd,
 			onCanvasDotMouseDown: this.handleCanvasDotMouseDown,
 			onCanvasDotDragEnd: this.handleCanvasDotDragEnd,
-			onAnnotationItemClick: this.handleListAnnotationClick,
+			onAnnotationItemClick: this.handleAnnotationItemClick,
 			onAnnotationDeleteClick: this.handleListAnnotationDelete,
 			onAnnotationShowHideClick: this.handleListAnnotationShowHide,
 			onAnnotationSplitClick: this.handleListAnnotationSplit,
-			onEventItemClick: this.handleListTrajectoryJump,
-			onEventDeleteClick: this.handleListTrajectoryDelete,
+			onIncidentItemClick: this.handleIncidentItemClick,
+			onIncidentItemDeleteClick: this.handleIncidentItemDelete,
 		};
 
 		let controlPanelUI = null;

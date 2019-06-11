@@ -6,9 +6,9 @@ const resources = {
 		translation: {
 			addingBox: 'Adding a New Box',
 			addBox: 'Add a New Box',
-			eventStatus: '<0>{{status}}</0> at <1/>',
-			eventSize: '<0>Size</0> <1/>x<2/>',
-			eventPosition: '<0>Position</0> <1/>, <2/>',
+			incidentStatus: '<0>{{status}}</0> at <1/>',
+			incidentSize: '<0>Size</0> <1/>x<2/>',
+			incidentPosition: '<0>Position</0> <1/>, <2/>',
 			dialogTitleDelete: 'Delete this annotation',
 			dialogTitleShow: 'Show this annotation',
 			dialogTitleHide: 'Hide this annotation',
@@ -20,7 +20,7 @@ const resources = {
 			AnnotationListEmptyHint: 'Click the button above to begin tracking a new cell',
 			AnnotationItemParent: 'Parent',
 			AnnotationItemChildren: 'Children',
-			AnnotationItemEventHistory: 'Resizing & Tracking History',
+			AnnotationItemIncidentHistory: 'Resizing & Tracking History',
 		},
 	},
 };

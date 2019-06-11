@@ -10,8 +10,8 @@ const TwoDimensionalVideoContext = React.createContext({
 	isEmptyCheckEnable: false,
 	onAnnotationItemClick: () => {},
 	onAnnotationDeleteClick: () => {},
-	onEventItemClick: () => {},
-	onEventDeleteClick: () => {},
+	onIncidentItemClick: () => {},
+	onIncidentItemDeleteClick: () => {},
 });
 
 export default TwoDimensionalVideoContext;

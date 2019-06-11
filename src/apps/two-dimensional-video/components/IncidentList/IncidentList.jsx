@@ -10,21 +10,21 @@ import RoundedNumber from 'shared/components/Math/RoundedNumber/RoundedNumber.js
 import TwoDimensionalVideoContext from '../TwoDimensionalVideo/twoDimensionalVideoContext';
 import Duration from '../VideoPlayer/FormattedTime/FormattedTime.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
-import './eventList.scss';
+import './incidentList.scss';
 
-const EventList = ({
+const IncidentList = ({
 	className,
 	annotationName,
-	events,
+	incidents,
 }) => {
 	const twoDimensionalVideoContext = useContext(TwoDimensionalVideoContext);
 	const {
 		played,
 		duration,
-		onEventItemClick,
-		onEventDeleteClick,
+		onIncidentItemClick,
+		onIncidentItemDeleteClick,
 	} = twoDimensionalVideoContext;
-	const eventListUI = events.map((event, index) => {
+	const incidentListUI = incidents.map((incident, index) => {
 		const {
 			name,
 			time,
@@ -33,21 +33,21 @@ const EventList = ({
 			status,
 			x,
 			y,
-		} = event;
+		} = incident;
 
 		const itemButtonStyle = {};
 		if (time === played) {
 			itemButtonStyle.color = 'rgb(33, 37, 41)';
 		}
-		const isNotLastEventAndPlayedBetweenCurrentAndNext = (
-			index !== events.length - 1 &&
+		const isNotLastIncidentAndPlayedBetweenCurrentAndNext = (
+			index !== incidents.length - 1 &&
 			played > time &&
-			played < events[index + 1].time
+			played < incidents[index + 1].time
 		);
-		const isLastEventAndPlayedOverCurrent = (index === events.length - 1 && played > time);
-		const arrowDown = isNotLastEventAndPlayedBetweenCurrentAndNext || isLastEventAndPlayedOverCurrent ?
+		const isLastIncidentAndPlayedOverCurrent = (index === incidents.length - 1 && played > time);
+		const arrowDown = isNotLastIncidentAndPlayedBetweenCurrentAndNext || isLastIncidentAndPlayedOverCurrent ?
 			(
-				<ListGroupItem key={ time + 1 } className='event-list__item'>
+				<ListGroupItem key={ time + 1 } className='incident-list__item'>
 					<FaArrowDown style={ { color: '', fontSize: '1em' } } />
 				</ListGroupItem>
 			) : null;
@@ -56,29 +56,29 @@ const EventList = ({
 			<Fragment key={ time }>
 				<ListGroupItem
 					key={ time }
-					className='event-list__item d-flex align-items-center justify-content-between'
+					className='incident-list__item d-flex align-items-center justify-content-between'
 				>
 					<Button
 						color='link'
-						className='event-list__item-button d-flex justify-content-between'
+						className='incident-list__item-button d-flex justify-content-between'
 						style={ itemButtonStyle }
-						onClick={ () => onEventItemClick({ time, annotationName }) }
+						onClick={ () => onIncidentItemClick({ time, annotationName }) }
 					>
-						<div className='event-list__item-status pr-1'>
-							<Trans i18nKey='eventStatus'>
+						<div className='incident-list__item-status pr-1'>
+							<Trans i18nKey='incidentStatus'>
 								<b>{{ status }}</b>
 								<Duration seconds={ duration * time } />
 							</Trans>
 						</div>
-						<div className='event-list__item-size pr-1'>
-							<Trans i18nKey='eventSize'>
+						<div className='incident-list__item-size pr-1'>
+							<Trans i18nKey='incidentSize'>
 								<b>Size</b>
 								<RoundedNumber number={ width } />
 								<RoundedNumber number={ height } />
 							</Trans>
 						</div>
-						<div className='event-list__item-position'>
-							<Trans i18nKey='eventPosition'>
+						<div className='incident-list__item-position'>
+							<Trans i18nKey='incidentPosition'>
 								<b>Position</b>
 								<RoundedNumber number={ x } />
 								<RoundedNumber number={ y } />
@@ -86,9 +86,9 @@ const EventList = ({
 						</div>
 					</Button>
 					<Button
-						className='event-list__item-delete-button'
+						className='incident-list__item-delete-button'
 						color='link'
-						onClick={ () => onEventDeleteClick({ annotationName, eventName: name }) }
+						onClick={ () => onIncidentItemDeleteClick({ annotationName, incidentName: name }) }
 					>
 						<MdDelete />
 					</Button>
@@ -98,22 +98,22 @@ const EventList = ({
 		);
 	});
 
-	const rootClassName = `event-list px-3 py-2 text-center${className ? ` ${className}` : ''}`;
+	const rootClassName = `incident-list px-3 py-2 text-center${className ? ` ${className}` : ''}`;
 	return (
 		<ListGroup className={ rootClassName }>
-			{eventListUI}
+			{incidentListUI}
 		</ListGroup>
 	);
 };
 
-EventList.propTypes = {
+IncidentList.propTypes = {
 	className: PropTypes.string,
 	annotationName: PropTypes.string,
-	events: PropTypes.arrayOf(PropTypes.object),
+	incidents: PropTypes.arrayOf(PropTypes.object),
 };
-EventList.defaultProps = {
+IncidentList.defaultProps = {
 	className: '',
 	annotationName: '',
-	events: [],
+	incidents: [],
 };
-export default EventList;
+export default IncidentList;

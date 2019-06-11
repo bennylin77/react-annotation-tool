@@ -74,14 +74,14 @@ const Canvas = ({
 					} = trajectories[i]);
 				} else {
 					const interpoArea = getInterpolatedData({
-						startEvent: trajectories[i],
-						endEvent: trajectories[i + 1],
+						startIncident: trajectories[i],
+						endIncident: trajectories[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.LENGTH,
 					});
 					const interpoPos = getInterpolatedData({
-						startEvent: trajectories[i],
-						endEvent: trajectories[i + 1],
+						startIncident: trajectories[i],
+						endIncident: trajectories[i + 1],
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});

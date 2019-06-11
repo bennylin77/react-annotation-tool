@@ -8,7 +8,7 @@ import { MdCallSplit, MdDelete } from 'react-icons/md';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { IoMdEyeOff, IoMdEye } from 'react-icons/io';
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo';
-import EventList from '../../EventList/EventList.jsx';
+import IncidentList from '../../IncidentList/IncidentList.jsx';
 import TwoDimensionalVideoContext from '../../TwoDimensionalVideo/twoDimensionalVideoContext';
 import OpenDialogButton from '../../OpenDialogButton/OpenDialogButton.jsx';
 import { isDialogDisabledConst } from '../isDialogDisabledReducer';
@@ -32,7 +32,7 @@ const AnnotationItem = ({
 		onAnnotationShowHideClick,
 		onAnnotationSplitClick,
 	} = twoDimensionalVideoContext;
-	const [isEventListOpen, setIsEventListOpen] = useState(false);
+	const [isIncidentListOpen, setIsIncidentListOpen] = useState(false);
 	const { t } = useTranslation();
 
 	const {
@@ -91,9 +91,9 @@ const AnnotationItem = ({
 			{SPLIT}
 		</OpenDialogButton>
 	);
-	const currentEvent = [...trajectories].reverse().find(event => played >= event.time) || {};
+	const currentIncident = [...trajectories].reverse().find(incident => played >= incident.time) || {};
 
-	switch (currentEvent.status) {
+	switch (currentIncident.status) {
 	case SHOW:
 		showButtonUI = null;
 		break;
@@ -178,15 +178,15 @@ const AnnotationItem = ({
 			</div>
 			<Button
 				color='link'
-				className='d-flex align-items-center justify-content-between event-list-toggle-button p-3 mt-2'
-				onClick={ () => setIsEventListOpen(!isEventListOpen) }
+				className='d-flex align-items-center justify-content-between incident-list-toggle-button p-3 mt-2'
+				onClick={ () => setIsIncidentListOpen(!isIncidentListOpen) }
 				style={ { marginBottom: 0 } }
 			>
-				<div>{ t('AnnotationItemEventHistory') }</div>
-				{isEventListOpen ? <FaChevronUp /> : <FaChevronDown />}
+				<div>{ t('AnnotationItemIncidentHistory') }</div>
+				{isIncidentListOpen ? <FaChevronUp /> : <FaChevronDown />}
 			</Button>
-			<Collapse isOpen={ isEventListOpen }>
-				<EventList events={ trajectories } annotationName={ name } />
+			<Collapse isOpen={ isIncidentListOpen }>
+				<IncidentList incidents={ trajectories } annotationName={ name } />
 			</Collapse>
 			<div className='mt-3'>
 				{warningText}

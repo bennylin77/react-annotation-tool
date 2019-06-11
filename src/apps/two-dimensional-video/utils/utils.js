@@ -39,7 +39,10 @@ const getLastAnnotationLabel = (annotations, entities) => {
 	return i;
 };
 
+const getUniqueKey = () => new Date().getTime().toString(36);
+
 export {
 	getSortedAnnotationsByLabel,
 	getLastAnnotationLabel,
+	getUniqueKey,
 };
