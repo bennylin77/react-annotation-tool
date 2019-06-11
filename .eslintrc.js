@@ -32,6 +32,7 @@ module.exports = {
         "import/extensions": ["error", "never", {"jsx": "always"}],
         "jsx-quotes": ["error", "prefer-single"],
         "operator-linebreak": ["error", "after"],
+        "object-curly-newline": ["error", { "multiline": true, "consistent": true }],
         "react/jsx-indent-props": "off",
         "react/jsx-indent": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

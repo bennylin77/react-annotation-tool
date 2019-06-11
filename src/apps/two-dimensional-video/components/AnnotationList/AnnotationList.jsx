@@ -54,7 +54,7 @@ const AnnotationList = ({ className }) => {
 	if (itemsUI.length === 0) {
 		return (
 			<div className='d-flex align-items-center justify-content-center' style={ { height: height - 60 } }>
-				{t('AnnotationListEmptyHint')}
+				{t('annotationListEmptyHint')}
 			</div>
 		);
 	}

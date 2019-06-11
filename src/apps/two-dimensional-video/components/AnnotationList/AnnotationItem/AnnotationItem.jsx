@@ -157,7 +157,7 @@ const AnnotationItem = ({
 			<div>
 				{parentAnnotation && (
 					<div>
-						<Badge color='secondary'>{ t('AnnotationItemParent') }</Badge>
+						<Badge color='secondary'>{ t('annotationItemParent') }</Badge>
 						<Button
 							color='link'
 							onClick={ () => onAnnotationItemClick(parentAnnotation.name) }
@@ -171,7 +171,7 @@ const AnnotationItem = ({
 			<div>
 				{childrenUI.length > 0 && (
 					<div>
-						<Badge color='secondary'>{ t('AnnotationItemChildren') }</Badge>
+						<Badge color='secondary'>{ t('annotationItemChildren') }</Badge>
 						{childrenUI}
 					</div>
 				)}
@@ -182,7 +182,7 @@ const AnnotationItem = ({
 				onClick={ () => setIsIncidentListOpen(!isIncidentListOpen) }
 				style={ { marginBottom: 0 } }
 			>
-				<div>{ t('AnnotationItemIncidentHistory') }</div>
+				<div>{ t('annotationItemIncidentHistory') }</div>
 				{isIncidentListOpen ? <FaChevronUp /> : <FaChevronDown />}
 			</Button>
 			<Collapse isOpen={ isIncidentListOpen }>

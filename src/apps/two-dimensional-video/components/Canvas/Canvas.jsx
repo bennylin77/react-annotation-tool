@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {
 	Stage, Layer, Rect, Group, Text,
 } from 'react-konva';
-import { SHOW } from 'models/2DVideo';
-
+import { useTranslation } from 'react-i18next';
+import { SHOW } from '../../models/incident';
 import ResizingAnchor from './ResizingAnchor/ResizingAnchor.jsx';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
 import './canvas.scss';
@@ -46,7 +46,7 @@ const Canvas = ({
 	onDotDragEnd,
 	onDotMouseDown,
 }) => {
-
+	const { t } = useTranslation();
 	const layerItems = [];
 	annotations.slice().reverse().forEach((annotationId) => {
 		const {
@@ -93,7 +93,6 @@ const Canvas = ({
 					} = interpoArea);
 				}
 
-				const dots = [];
 				const fill = (focusing === name) ? color.replace(/,1\)/, ',.3)') : '';
 				const rect = (
 					<Rect
@@ -135,127 +134,34 @@ const Canvas = ({
 						fill='#fff'
 					/>
 				);
+
+				let resizingAnchorsUI = null;
+				const resizingAnchorsData = [
+					{ x: 0, y: 0, key: 'topLeft', name: 'topLeft' },
+					{ x: width, y: 0, key: 'topRight', name: 'topRight' },
+					{ x: width, y: height, key: 'bottomRight', name: 'bottomRight' },
+					{ x: 0, y: height, key: 'bottomLeft', name: 'bottomLeft' },
+					{ x: width / 2, y: 0, key: 'top', name: 'top' },
+					{ x: 0, y: height / 2, key: 'left', name: 'left' },
+					{ x: width, y: height / 2, key: 'right', name: 'right' },
+					{ x: width / 2, y: height, key: 'bottom', name: 'bottom' },
+				];
 				if (isManipulatable) {
-					dots.push(
+					resizingAnchorsUI = resizingAnchorsData.map(data => (
 						<ResizingAnchor
 							dotLength={ dotLength }
 							color={ color }
 							isManipulatable={ isManipulatable }
-							x={ 0 }
-							y={ 0 }
-							key='topLeft'
-							name='topLeft'
+							x={ data.x }
+							y={ data.y }
+							key={ data.key }
+							name={ data.name }
 							canvasWidth={ canvasWidth }
 							canvasHeight={ canvasHeight }
 							onDragEnd={ onDotDragEnd }
 							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ width }
-							y={ 0 }
-							key='topRight'
-							name='topRight'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ width }
-							y={ height }
-							key='bottomRight'
-							name='bottomRight'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ 0 }
-							y={ height }
-							key='bottomLeft'
-							name='bottomLeft'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ width / 2 }
-							y={ 0 }
-							key='top'
-							name='top'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ 0 }
-							y={ height / 2 }
-							key='left'
-							name='left'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ width }
-							y={ height / 2 }
-							key='right'
-							name='right'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
-					dots.push(
-						<ResizingAnchor
-							dotLength={ dotLength }
-							color={ color }
-							isManipulatable={ isManipulatable }
-							x={ width / 2 }
-							y={ height }
-							key='bottom'
-							name='bottom'
-							canvasWidth={ canvasWidth }
-							canvasHeight={ canvasHeight }
-							onDragEnd={ onDotDragEnd }
-							onMouseDown={ onDotMouseDown }
-						/>,
-					);
+						/>
+					));
 				}
 				layerItems.push(
 					<Group
@@ -279,44 +185,32 @@ const Canvas = ({
 					>
 						{labelText}
 						{rect}
-						{dots}
+						{resizingAnchorsUI}
 						{warningText}
-					</Group>
+					</Group>,
 				);
 				break;
 			}
 		}
 	});
-	let addingLayer;
-	if (isAdding) {
-		addingLayer = (
-			<Layer>
-				<Rect fill='#ffffff' width={ canvasWidth } height={ canvasHeight } opacity={ 0.3 } />
-				<Text y={ canvasHeight / 2 } width={ canvasWidth } text='Click and Drag here to add new box' align='center' fontSize={ 16 } fill='#fff' />
-			</Layer>
-		);
-	}
 	return (
 		<Stage
 			width={ canvasWidth }
 			height={ canvasHeight }
 			className='konva-wrapper'
 			onMouseDown={ e => onStageMouseDown(e) }
-			onMouseOver={ () => {
-				if (isAdding) {
-					document.body.style.cursor = 'crosshair';
-				}
-			} }
-			onMouseLeave={ () => {
-				document.body.style.cursor = 'default';
-			} }
-			onMouseOut={ () => {
-				document.body.style.cursor = 'default';
-			} }
+			onMouseOver={ () => { if (isAdding) { document.body.style.cursor = 'crosshair'; } } }
+			onMouseLeave={ () => { document.body.style.cursor = 'default'; } }
+			onMouseOut={ () => { document.body.style.cursor = 'default'; } }
 			onBlur={ () => {} }
 			onFocus={ () => {} }
 		>
-			{addingLayer}
+			{ isAdding && (
+				<Layer>
+					<Rect fill='#ffffff' width={ canvasWidth } height={ canvasHeight } opacity={ 0.3 } />
+					<Text y={ canvasHeight / 2 } width={ canvasWidth } text={ t('canvasAddingHint') } align='center' fontSize={ 16 } fill='#fff' />
+				</Layer>
+			)}
 			<Layer>{layerItems}</Layer>
 		</Stage>
 	);
