@@ -8,11 +8,11 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './i18n';
 import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
-import { getRandomInt } from 'shared/utils/mathUtils';
+import { getRandomInt, getFixedNumber } from 'shared/utils/mathUtils';
 import { SPLIT, HIDE, SHOW } from 'models/2DVideo.js';
 import { VideoAnnotation, Trajectory } from 'models/2DVideo.js';
 import { rectangle } from '../../models/rectangle';
-import { incident } from '../../models/incident';
+import { Incident } from '../../models/incident';
 import { UndoRedo } from 'models/UndoRedo.js';
 import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
@@ -81,7 +81,7 @@ class TwoDimensionalVideo extends Component {
 		const { played } = state;
 		this.setState((prevState) => {
 			if (prevState.isSeeking) return null;
-			return { played };
+			return { played: getFixedNumber(played, 5) };
 		});
 	}
 
@@ -115,7 +115,7 @@ class TwoDimensionalVideo extends Component {
 	}
 
 	handleVideoSliderChange = (e) => {
-		const played = parseFloat(e.target.value);
+		const played = getFixedNumber(e.target.value, 5);
 		this.setState((prevState) => {
 			const { entities } = prevState;
 			let { focusing } = prevState;
@@ -148,7 +148,7 @@ class TwoDimensionalVideo extends Component {
 				annotations, entities,
 			} = prevState;
 			const trajectories = [];
-			trajectories.push(new Trajectory({
+			trajectories.push(Incident({
 				id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, height: 1, width: 1, time: prevState.played,
 			}));
 			entities.annotations[`${uniqueKey}`] = new VideoAnnotation({
@@ -193,12 +193,12 @@ class TwoDimensionalVideo extends Component {
 						break;
 					}
 					if (i === trajectories.length - 1) {
-						trajectories.push(new Trajectory({
+						trajectories.push(Incident({
 							id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, width: rect.width(), height: rect.height(), time: played,
 						}));
 						break;
 					}
-					trajectories.splice(i + 1, 0, new Trajectory({
+					trajectories.splice(i + 1, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: position.x, y: position.y, height: rect.height(), width: rect.width(), time: played,
 					}));
 					break;
@@ -237,7 +237,7 @@ class TwoDimensionalVideo extends Component {
 						trajectories[i].x = minX; trajectories[i].y = minY; trajectories[i].height = maxY - minY; trajectories[i].width = maxX - minX;
 						break;
 					}
-					trajectories.splice(i + 1, 0, new Trajectory({
+					trajectories.splice(i + 1, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: minX, y: minY, height: maxY - minY, width: maxX - minX, time: played,
 					}));
 					break;
@@ -280,7 +280,7 @@ class TwoDimensionalVideo extends Component {
 			const { label } = entitiesAnnotations[name];
 			// reorder the list
 			if (!isNaN(label)) {
-				const lastLabel = getLastAnnotationLabel(annotations, entities) - 1;
+				const lastLabel = getLastAnnotationLabel(annotations, entities);
 				if (`${lastLabel}` !== '1' && `${lastLabel}` !== label) {
 					const lastName = annotations.find(a => entitiesAnnotations[a].label === `${lastLabel}`);
 					this.renameLabel(annotations, entitiesAnnotations, lastName, label);
@@ -331,7 +331,7 @@ class TwoDimensionalVideo extends Component {
 			const { trajectories } = entities.annotations[name];
 			for (let i = 0; i < trajectories.length; i += 1) {
 				if (i === 0 && played < trajectories[i].time) {
-					trajectories.splice(0, 0, new Trajectory({
+					trajectories.splice(0, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
 					}));
 					break;
@@ -340,13 +340,13 @@ class TwoDimensionalVideo extends Component {
 					// skip elapsed trajectories
 					if (i !== trajectories.length - 1 && played >= trajectories[i + 1].time) continue;
 					if (played === trajectories[i].time) {
-						trajectories.splice(i, 1, new Trajectory({
+						trajectories.splice(i, 1, Incident({
 							...trajectories[i], id: `${uniqueKey}`, name: `${uniqueKey}`, status,
 						}));
 						break;
 					}
 					if (i === trajectories.length - 1) {
-						trajectories.push(new Trajectory({
+						trajectories.push(Incident({
 							id: `${uniqueKey}`, name: `${uniqueKey}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
 						}));
 						break;
@@ -363,7 +363,7 @@ class TwoDimensionalVideo extends Component {
 						currentTime: played,
 						type: INTERPOLATION_TYPE.POSITION,
 					});
-					trajectories.splice(i + 1, 0, new Trajectory({
+					trajectories.splice(i + 1, 0, Incident({
 						id: `${uniqueKey}`, name: `${uniqueKey}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
 					}));
 					break;
@@ -408,14 +408,14 @@ class TwoDimensionalVideo extends Component {
 					parentWidth = trajectories[i].width;
 					parentHeight = trajectories[i].height;
 					if (played === trajectories[i].time) {
-						trajectories.splice(i, 1, new Trajectory({
+						trajectories.splice(i, 1, Incident({
 							...trajectories[i], id: `${timeNow}`, name: `${timeNow}`, status,
 						}));
 						trajectories = trajectories.slice(0, i + 1);
 						break;
 					}
 					if (i === trajectories.length - 1) {
-						trajectories.push(new Trajectory({
+						trajectories.push(Incident({
 							id: `${timeNow}`, name: `${timeNow}`, x: trajectories[i].x, y: trajectories[i].y, height: trajectories[i].height, width: trajectories[i].width, time: played, status,
 						}));
 						break;
@@ -436,7 +436,7 @@ class TwoDimensionalVideo extends Component {
 					parentY = interpoPos.y;
 					parentWidth = interpoArea.width;
 					parentHeight = interpoArea.height;
-					trajectories.splice(i + 1, 0, new Trajectory({
+					trajectories.splice(i + 1, 0, Incident({
 						id: `${timeNow}`, name: `${timeNow}`, x: interpoPos.x, y: interpoPos.y, height: interpoArea.height, width: interpoArea.width, time: played, status,
 					}));
 					trajectories = trajectories.slice(0, i + 2);
@@ -445,10 +445,10 @@ class TwoDimensionalVideo extends Component {
 			}
 			parent.children = [`${timeNowChild1}`, `${timeNowChild2}`];
 			parent.trajectories = trajectories;
-			const childTrajectories1 = [new Trajectory({
+			const childTrajectories1 = [Incident({
 				id: `${timeNow}`, name: `${timeNow}`, x: parentX, y: parentY, height: parentHeight / 2, width: parentWidth / 2, time: played,
 			})];
-			const childTrajectories2 = [new Trajectory({
+			const childTrajectories2 = [Incident({
 				id: `${timeNow}`, name: `${timeNow}`, x: parentX + parentWidth / 2 - 20, y: parentY + parentHeight / 2 - 20, height: parentHeight / 2, width: parentWidth / 2, time: played,
 			})];
 			entities.annotations[`${timeNowChild1}`] = new VideoAnnotation({
