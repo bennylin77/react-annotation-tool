@@ -17,11 +17,11 @@ const resources = {
 			dialogMessageShow: 'Does the object show up on the video and would you like to show its annotation?',
 			dialogMessageHide: 'Does the object leave the video or is obscured by other objects and would you like to hide its annotation?',
 			dialogMessageSplit: 'Does the object split into two and would you like to split this bounding box into two boxes?',
-			annotationListEmptyHint: 'Click the button above to begin tracking a new cell',
 			annotationItemParent: 'Parent',
 			annotationItemChildren: 'Children',
 			annotationItemIncidentHistory: 'Resizing & Tracking History',
 			canvasAddingHint: 'Click and Drag here to add new box',
+			playerControlSpeed: 'Speed',
 		},
 	},
 };

@@ -27,6 +27,7 @@ const AnnotationItem = ({
 		entities,
 		focusing,
 		isEmptyCheckEnable,
+		emptyCheckAnnotationItemWarningText,
 		onAnnotationItemClick,
 		onAnnotationDeleteClick,
 		onAnnotationShowHideClick,
@@ -112,7 +113,7 @@ const AnnotationItem = ({
 		break;
 	}
 
-	const warningText = isEmptyCheckEnable && incidents.length < 2 && <span className='text-danger'>You should track the cell bound by this box</span>;
+	const warningText = isEmptyCheckEnable && incidents.length < 2 && <span className='text-danger'>{emptyCheckAnnotationItemWarningText}</span>;
 	let rootClassName = `annotation-item${className ? ` ${className}` : ''}`;
 	if (name !== focusing) {
 		return (

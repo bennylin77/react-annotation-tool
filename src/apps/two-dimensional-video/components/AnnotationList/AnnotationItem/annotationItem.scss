@@ -30,9 +30,13 @@
 /* incident list */
 .incident-list-toggle-button {
 	background: #f6f6f6;
+	width: 100%;
 	cursor: pointer;
+	color: #212529;
 
-	&:hover {
+	&:hover,
+	&:focus {
+		text-decoration: none;
 		color: #000;
 	}
 }

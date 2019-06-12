@@ -67,7 +67,7 @@ const IncidentList = ({
 						<div className='incident-list__item-status pr-1'>
 							<Trans i18nKey='incidentStatus'>
 								<b>{{ status }}</b>
-								<Duration seconds={ duration * time } />
+								<Duration className='incident-list__item-duration' seconds={ duration * time } />
 							</Trans>
 						</div>
 						<div className='incident-list__item-size pr-1'>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { MdPlayArrow, MdPause, MdReplay } from 'react-icons/md';
 import {
 	Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, ButtonGroup,
@@ -22,6 +23,7 @@ const Control = ({
 	onSpeedChange,
 }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const { t } = useTranslation();
 	return (
 		<div className={ `player-control${className ? ` ${className}` : ''}` }>
 			<Slider
@@ -46,7 +48,7 @@ const Control = ({
 							{ playbackRate }
 						</DropdownToggle>
 						<DropdownMenu>
-							<DropdownItem header>Speed</DropdownItem>
+							<DropdownItem header>{t('playerControlSpeed')}</DropdownItem>
 							<DropdownItem className='player-control__speed-item' onClick={ () => onSpeedChange(0.25) }>0.25</DropdownItem>
 							<DropdownItem className='player-control__speed-item' onClick={ () => onSpeedChange(0.5) }>0.5</DropdownItem>
 							<DropdownItem className='player-control__speed-item' onClick={ () => onSpeedChange(1) }>1</DropdownItem>
@@ -56,11 +58,9 @@ const Control = ({
 					</Dropdown>
 				</div>
 				<div className='d-flex align-items-center'>
-					<div>
+					<div className='player-control__time'>
 						<FormattedTime seconds={ played * duration } />
-						{' '}
-						{'/'}
-						{' '}
+						{' / ' }
 						<FormattedTime seconds={ duration } />
 					</div>
 				</div>

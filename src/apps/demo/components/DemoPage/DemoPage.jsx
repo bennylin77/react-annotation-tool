@@ -174,7 +174,9 @@ const DemoPage = () => {
 		'The time that cells <u>split</u>, <u>leave</u>, <u>obscured</u> and <u>show up</u> (if applicable).',
 	];
 	const previewHeader = 'Please scan the video and observe the following to help you complete the task:';
-
+	const emptyCheckSubmissionWarningText = 'Please annotate AND track one unmarked cell to complete this task.';
+	const emptyCheckAnnotationItemWarningText = 'Step 2: Please track the cell bound by this box';
+	const emptyAnnotationReminderText = 'Step 1: Click the button above to add a new box around a cell';
 	return (
 		<div>
 			<div className='mb-5'>
@@ -184,6 +186,9 @@ const DemoPage = () => {
 					annotationWidth={ 500 }
 					hasReview
 					isEmptyCheckEnable
+					emptyCheckSubmissionWarningText={ emptyCheckSubmissionWarningText }
+					emptyCheckAnnotationItemWarningText={ emptyCheckAnnotationItemWarningText }
+					emptyAnnotationReminderText={ emptyAnnotationReminderText }
 					numAnnotationsToBeAdded={ 20 }
 					defaultAnnotations={ videoAnnotations }
 					previewHeader={ previewHeader }

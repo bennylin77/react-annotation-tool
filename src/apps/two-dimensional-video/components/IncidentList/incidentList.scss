@@ -5,15 +5,19 @@
     	line-height: 1;
     	border: none;
 
-        &:hover {
-            border: none;
-        }
+        &:hover,
+    	&:focus {
+    		border: none;
+    	}
     }
 
     &__item-button {
         color: #a2b0bc;
+        padding: 0;
 
-        &:hover {
+        &:hover,
+    	&:focus {
+            text-decoration: none;
             cursor: pointer;
         	color: #555c63;
         }
@@ -21,6 +25,10 @@
 
     &__item-status {
     	font-size: 0.85rem;
+    }
+
+    &__item-duration {
+        font-family: Courier, sans-serif;
     }
 
     &__item-size {

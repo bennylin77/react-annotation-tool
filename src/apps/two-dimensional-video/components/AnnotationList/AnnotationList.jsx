@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useTranslation } from 'react-i18next';
 import { ListGroup } from 'reactstrap';
 import { Events, scrollSpy, scroller } from 'react-scroll';
 import {
@@ -14,7 +13,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './annotationList.scss';
 
 const AnnotationList = ({ className }) => {
-	const { t } = useTranslation();
 	const [isDialogDisabled, dispatchIsDialogDisabled] = useReducer(isDialogDisabledReducer, initialIsDialogDisabledState);
 	const twoDimensionalVideoContext = useContext(TwoDimensionalVideoContext);
 	const {
@@ -22,6 +20,7 @@ const AnnotationList = ({ className }) => {
 		focusing,
 		annotations,
 		height,
+		emptyAnnotationReminderText,
 	} = twoDimensionalVideoContext;
 
 	useEffect(() => {
@@ -54,7 +53,7 @@ const AnnotationList = ({ className }) => {
 	if (itemsUI.length === 0) {
 		return (
 			<div className='d-flex align-items-center justify-content-center' style={ { height: height - 60 } }>
-				{t('annotationListEmptyHint')}
+				{emptyAnnotationReminderText}
 			</div>
 		);
 	}

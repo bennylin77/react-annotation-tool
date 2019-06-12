@@ -501,10 +501,10 @@ class TwoDimensionalVideo extends Component {
 
 	handleSubmit = () => {
 		const { annotations, isSubmitted } = this.state;
-		const { onSubmit, hasReview } = this.props;
+		const { onSubmit, hasReview, emptyCheckSubmissionWarningText } = this.props;
 
 		if (this.isEmptyAnnotationOrIncident()) {
-			this.setState({ isDialogOpen: true, dialogTitle: 'Submission warning', dialogMessage: 'You must annotate and track one cell' });
+			this.setState({ isDialogOpen: true, dialogTitle: 'Submission warning', dialogMessage: emptyCheckSubmissionWarningText });
 			return;
 		}
 		if (!isSubmitted && hasReview) {
@@ -544,7 +544,6 @@ class TwoDimensionalVideo extends Component {
 				<Button
 					disabled={ isAdding }
 					color='primary'
-					size='lg'
 					onClick={ this.handleAddClick }
 					className='d-flex align-items-center float-left'
 				>
@@ -581,6 +580,8 @@ class TwoDimensionalVideo extends Component {
 			previewHeader,
 			previewNoticeList,
 			isEmptyCheckEnable,
+			emptyCheckAnnotationItemWarningText,
+			emptyAnnotationReminderText,
 		} = this.props;
 		const twoDimensionalVideoContext = {
 			playerRef: this.handlePlayerRef,
@@ -597,6 +598,8 @@ class TwoDimensionalVideo extends Component {
 			isLoop,
 			playbackRate,
 			isAdding,
+			emptyCheckAnnotationItemWarningText,
+			emptyAnnotationReminderText,
 			onVideoReady: this.handleVideoReady,
 			onVideoProgress: this.handleVideoProgress,
 			onVideoDuration: this.handleVideoDuration,
@@ -632,7 +635,7 @@ class TwoDimensionalVideo extends Component {
 		} else if (isPreviewed) {
 			controlPanelUI = (
 				<div>
-					<div className='pb-3 clearfix' style={ { minWidth: '400px' } }>
+					<div className='pb-3 clearfix'>
 						{this.renderAddButtonUI()}
 						<ButtonGroup className='float-right'>
 							<Button disabled={ this.UndoRedoState.previous.length === 0 } outline onClick={ this.handleUndo }><MdUndo /></Button>
@@ -661,7 +664,7 @@ class TwoDimensionalVideo extends Component {
 						<div className='mb-3' style={ { width: annotationWidth } }>
 							<DrawableVideoPlayer />
 						</div>
-						<div className='mb-3'>
+						<div className='mb-3 two-dimensional-video__control-panel'>
 							{ controlPanelUI }
 						</div>
 					</div>
@@ -687,6 +690,9 @@ TwoDimensionalVideo.propTypes = {
 	url: PropTypes.string,
 	numAnnotationsToBeAdded: PropTypes.number,
 	onSubmit: PropTypes.func,
+	emptyCheckSubmissionWarningText: PropTypes.string,
+	emptyCheckAnnotationItemWarningText: PropTypes.string,
+	emptyAnnotationReminderText: PropTypes.string,
 };
 TwoDimensionalVideo.defaultProps = {
 	className: '',
@@ -700,5 +706,8 @@ TwoDimensionalVideo.defaultProps = {
 	url: '',
 	numAnnotationsToBeAdded: 1000,
 	onSubmit: () => {},
+	emptyCheckSubmissionWarningText: '',
+	emptyCheckAnnotationItemWarningText: '',
+	emptyAnnotationReminderText: '',
 };
 export default withTranslation()(TwoDimensionalVideo);

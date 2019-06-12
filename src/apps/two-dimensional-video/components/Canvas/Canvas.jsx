@@ -122,18 +122,6 @@ const Canvas = ({
 						fill='#fff'
 					/>
 				);
-				const warningText = isEmptyCheckEnable && incidents.length < 2 && (
-					<Text
-						offsetY={ -5 }
-						x={ 0 }
-						y={ height }
-						fontFamily='Calibri'
-						text='You should track the cell bound by this box'
-						fontSize={ 16 }
-						lineHeight={ 1.2 }
-						fill='#fff'
-					/>
-				);
 
 				let resizingAnchorsUI = null;
 				const resizingAnchorsData = [
@@ -186,7 +174,6 @@ const Canvas = ({
 						{labelText}
 						{rect}
 						{resizingAnchorsUI}
-						{warningText}
 					</Group>,
 				);
 				break;
