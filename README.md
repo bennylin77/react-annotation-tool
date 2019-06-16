@@ -13,7 +13,7 @@ npm i react-annotation-tool --save
 ```
 
 ### Usage
-Two tools are available now. They are Image Annotation Tool ([TwoDimensionalImage](#ImageAnnotationTool)) and TwoDimensionalVideo respectively. Import either one into your react component. 
+Two tools are available now. They are [Image Annotation Tool](#Image Annotation Tool) (TwoDimensionalImage) and [Video Annotation Tool](#Video Annotation Tool) (TwoDimensionalVideo respectively). Import either one into your react component. 
 ```js
 import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ```
