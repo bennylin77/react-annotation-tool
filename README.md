@@ -6,11 +6,14 @@ A react based video & image annotating tool. See [demo](https://chi-lin.com/proj
 ## Quick Start
 
 ### Installation
+
+Use npm to install the tool into your project. 
 ```
 npm i react-annotation-tool --save
 ```
 
 ### Usage
+Two tools are available now. They are Image Annotation Tool ([TwoDimensionalImage](#ImageAnnotationTool)) and TwoDimensionalVideo respectively. Import either one into your react component. 
 ```js
 import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ```
