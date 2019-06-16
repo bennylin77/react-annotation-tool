@@ -29,14 +29,12 @@ This tool allows to annotate image with polygon. Users could create new taxonomy
 | `url`              | Source of annotated image |String||
 | `annotationWidth`  | Set the width of image|Number|`400`|
 | `dynamicOptions`       | Enable annotators to add/delete menu options |Boolean|`false`|
-| `disabledOptionLevels` | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|[]|
+| `disabledOptionLevels` | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|`[]`|
 | `category`  | Category of the image |String|
-| `categoryOptions`  |  Options for categories. [Detail](#categoryOptions)| [String]|[]|
+| `categoryOptions`  |  Options for categories. [Detail](#categoryOptions)| [String]|`[]`|
 | `menu` | A set of options for tagging the image. [Detail](#menu)|Object||
-| `annotations` | Default annotations. [Detail](#annotations)|[Object]|[]|
+| `annotations` | Default annotations. [Detail](#annotations)|[Object]|`[]`|
 | `labeled` | Label the annotaions on the image |Boolean|`false`|
-
-### Config Props Detail
 
 #### `disabledOptionLevels`
 Array of Integer. Start from "1". e.g,
@@ -126,7 +124,29 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 
 
 ## Video Annotation Tool
+Vidoe tool allows you to annotate object in videos via bounding box. The tool originally is designed for annotating cell videos. 
 
-Coming soon in Dec 2018
+### Config Props
+
+| Prop             | Description   | Format | Default |
+| -------------    | ------------- | ------------- | -------------| 
+| `className`              | |String|`''`|
+| `url` | Video url |String|`''`|
+| `defaultAnnotations`  | Default annotations.[Detail](#defaultAnnotations)|[Objects]|`[]`|
+| `videoWidth`       | Video width |Number|`400`|
+| `isDefaultAnnotationsManipulatable` |Allow users to edit default annotations|Boolean|false|
+| `previewHeader`  | Header for preview |String|`''`|
+| `previewNoticeList`  | Content for preview | [String]|`[]`|
+| `isEmptyCheckEnable` | Force users to annotate at least one object|Boolean|`false`|
+| `hasReview` | Enable review after users click submit button |Boolean|`false`|
+| `numAnnotationsToBeAdded` | Number of annotations users can be added |Number|`1000`|
+| `onSubmit` | The callback function to handle submitted result |Function|`()=>{}`|
+| `emptyCheckSubmissionWarningText` | Text for warming empty annotaion |String|''|
+| `emptyCheckAnnotationItemWarningText` | Text for warming non-event anntation |String|''|
+| `emptyAnnotationReminderText` | Text for warming empty annotaion on the control panel |String|''|
+
+
+#### `defaultAnnotations`
+
 
 
