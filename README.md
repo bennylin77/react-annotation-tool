@@ -1,22 +1,21 @@
 # react-annotation-tool
 A react based video & image annotating tool. See [demo](https://chi-lin.com/projects/react-annotation-tool)
 
-
  [![NPM Version](https://img.shields.io/npm/v/react-annotation-tool.svg?branch=master)](https://www.npmjs.com/package/react-annotation-tool) 
 
 ## Quick Start
 
-Installation
+### Installation
 ```
 npm i react-annotation-tool --save
 ```
 
-Usage
+### Usage
 ```js
-import {ImageTool} from "react-annotation-tool"
+import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ```
 
-## Image Annotation
+## Image Annotation Tool
 
 ### Config Props
 
