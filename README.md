@@ -19,9 +19,7 @@ import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ```
 
 ## Image Annotation Tool
-This tool allows to annotate image with polygon. Users could create new taxonomy if they feel the annotated part of image is not fit into any default options. 
-
-It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
+This tool allows to annotate image with polygon. Users could create new taxonomy if they feel the annotated part of image is not fit into any default options. It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
 
 
 ### Config Props
@@ -37,6 +35,8 @@ It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the 
 | `menu` | A set of options for tagging the image. [Detail](#menu)|Object||
 | `annotations` | Default annotations. [Detail](#annotations)|[Object]|[]|
 | `labeled` | Label the annotaions on the image |Boolean|`false`|
+
+### Config Props Detail
 
 #### `disabledOptionLevels`
 Array of Integer. Start from "1". e.g,
