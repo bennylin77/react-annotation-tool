@@ -121,7 +121,7 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 
 
 ### ToDo
-- [ ] Refactorize all components
+- [ ] Refactorize all components.
 
 
 ## Video Annotation Tool
@@ -190,7 +190,11 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 ```
 
 ### ToDo
-- [ ] Makes Split and Hide optional
-- [ ] This is an incomplete item
+- [ ] Makes Split and Hide optional.
+- [ ] Enable other shapes (e.g., circle) to annotate.
+
+### License
 
 
+### Want to cooperate with me?
+I am seeking any sort of cooperation, especially, entrepreneurship and crowsourcing research. Please [contact me](https://www.linkedin.com/in/chi-benny-lin-508b841a/).
