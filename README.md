@@ -195,4 +195,4 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 - [ ] Enable other shapes (e.g., circle) to annotate.
 
 ### Want to talk with me?
-I am seeking any sort of cooperation, especially, entrepreneurship and crowsourcing research. Please [contact me](https://www.linkedin.com/in/chi-benny-lin-508b841a/).
+I am seeking for any sort of entrepreneurship and crowsourcing research opportunity. Please [contact me](https://www.linkedin.com/in/chi-benny-lin-508b841a/).
