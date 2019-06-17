@@ -1,5 +1,5 @@
-import TwoDimensionalImage from './components/TwoDimensionalImage/TwoDimensionalImage';
+import TwoDimensionalImage from './components/TwoDimensionalImage/TwoDimensionalImage.jsx';
 
-module.exports = {
+export {
 	TwoDimensionalImage,
 };

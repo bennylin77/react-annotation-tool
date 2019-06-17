@@ -6,6 +6,7 @@ const common = require('./webpack.common.js');
 module.exports = merge(common, {
 	entry: 'apps/index.js',
 	mode: 'production',
+	devtool: 'source-map',
 	output: {
 		path: path.resolve(__dirname, 'dist/'),
 		publicPath: '/dist/',
