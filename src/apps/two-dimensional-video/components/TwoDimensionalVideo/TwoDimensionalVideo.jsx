@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { Translation } from 'react-i18next';
 import { normalize, denormalize, schema } from 'normalizr';
 import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
@@ -9,9 +9,9 @@ import './i18n';
 import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt, getFixedNumber } from 'shared/utils/mathUtils';
+import { UndoRedo } from 'models/UndoRedo';
 import { Rectangle } from '../../models/rectangle';
 import { Incident, SPLIT, HIDE, SHOW } from '../../models/incident';
-import { UndoRedo } from 'models/UndoRedo.js';
 import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
 import { getInterpolatedData, INTERPOLATION_TYPE } from '../../utils/interpolationUtils';
 import Preview from '../Preview/Preview.jsx';
@@ -537,7 +537,7 @@ class TwoDimensionalVideo extends Component {
 			annotations,
 			entities,
 		} = this.state;
-		const { numAnnotationsCanBeAdded, t } = this.props;
+		const { numAnnotationsCanBeAdded } = this.props;
 		const isAddButtonAvailable = (defaultNumRootAnnotations + numAnnotationsCanBeAdded) > getLastAnnotationLabel(annotations, entities);
 		if (isAdding || (!isAdding && isAddButtonAvailable)) {
 			return (
@@ -548,7 +548,11 @@ class TwoDimensionalVideo extends Component {
 					className='d-flex align-items-center float-left'
 				>
 					<MdAdd />
-					{isAdding ? t('addingBox') : t('addBox')}
+					<Translation>
+						{
+							t => (isAdding ? t('addingBox') : t('addBox'))
+						}
+					</Translation>
 				</Button>
 			);
 		}
@@ -710,4 +714,4 @@ TwoDimensionalVideo.defaultProps = {
 	emptyCheckAnnotationItemWarningText: '',
 	emptyAnnotationReminderText: '',
 };
-export default withTranslation()(TwoDimensionalVideo);
+export default TwoDimensionalVideo;
