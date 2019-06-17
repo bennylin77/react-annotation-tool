@@ -2,6 +2,7 @@
 A react based video & image annotating tool. See [demo](https://chi-lin.com/projects/react-annotation-tool)
 
  [![NPM Version](https://img.shields.io/npm/v/react-annotation-tool.svg?branch=master)](https://www.npmjs.com/package/react-annotation-tool) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Quick Start
 
@@ -193,8 +194,5 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 - [ ] Makes Split and Hide optional.
 - [ ] Enable other shapes (e.g., circle) to annotate.
 
-### License
-
-
-### Want to cooperate with me?
+### Want to talk with me?
 I am seeking any sort of cooperation, especially, entrepreneurship and crowsourcing research. Please [contact me](https://www.linkedin.com/in/chi-benny-lin-508b841a/).
