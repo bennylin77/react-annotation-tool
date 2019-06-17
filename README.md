@@ -143,7 +143,7 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 | `hasReview` | Enable review after users click submit button |Boolean|`false`|
 | `numAnnotationsToBeAdded` | Number of annotations users can be added |Number|`1000`|
 | `onSubmit` | The callback function to handle submitted result |Function|`()=>{}`|
-| `emptyCheckSubmissionWarningText` | Text for warming empty annotaion |String|''|
+| `emptyCheckSubmissionWarningText` | Text for warming empty annotaion |String|`''`|
 | `emptyCheckAnnotationItemWarningText` | Text for warming non-event anntation |String|`''`|
 | `emptyAnnotationReminderText` | Text for warming empty annotaion on the control panel |String|`''`|
 
