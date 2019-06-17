@@ -183,14 +183,14 @@ const DemoPage = () => {
 				<TwoDimensionalVideo
 					onSubmit={ handleSubmit }
 					url='https://cildata.crbs.ucsd.edu/media/videos/15793/15793_web.mp4'
-					annotationWidth={ 500 }
+					videoWidth={ 500 }
 					hasReview
 					isEmptyCheckEnable
 					emptyCheckSubmissionWarningText={ emptyCheckSubmissionWarningText }
 					emptyCheckAnnotationItemWarningText={ emptyCheckAnnotationItemWarningText }
 					emptyAnnotationReminderText={ emptyAnnotationReminderText }
 					numAnnotationsToBeAdded={ 20 }
-					defaultAnnotations={ videoAnnotations }
+					defaultAnnotations={ [] }
 					previewHeader={ previewHeader }
 					previewNoticeList={ previewNoticeList }
 				/>

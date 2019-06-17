@@ -26,7 +26,7 @@ class TwoDimensionalVideo extends Component {
 		super(props);
 		const {
 			defaultAnnotations,
-			annotationWidth,
+			videoWidth,
 			previewHeader,
 			previewNoticeList,
 		} = props;
@@ -45,7 +45,7 @@ class TwoDimensionalVideo extends Component {
 		this.state = {
 			isPreviewed: previewNoticeList && previewNoticeList.length === 0 && !previewHeader,
 			isSubmitted: false,
-			annotationWidth,
+			videoWidth,
 			annotationHeight: 200,
 			entities,
 			annotations,
@@ -513,7 +513,7 @@ class TwoDimensionalVideo extends Component {
 			});
 			return;
 		}
-		const { annotationWidth, annotationHeight, entities } = this.state;
+		const { videoWidth, annotationHeight, entities } = this.state;
 		const { url } = this.props;
 		const annotation = new schema.Entity('annotations');
 		const denormalizedAnnotations = denormalize({ annotations }, { annotations: [annotation] }, entities).annotations;
@@ -521,7 +521,7 @@ class TwoDimensionalVideo extends Component {
 			delete ann.isManipulatable;
 		});
 		const data = {
-			url, annotationWidth, annotationHeight, annotations: denormalizedAnnotations,
+			url, videoWidth, annotationHeight, annotations: denormalizedAnnotations,
 		};
 		onSubmit(data);
 	}
@@ -537,8 +537,8 @@ class TwoDimensionalVideo extends Component {
 			annotations,
 			entities,
 		} = this.state;
-		const { numAnnotationsToBeAdded, t } = this.props;
-		const isAddButtonAvailable = (defaultNumRootAnnotations + numAnnotationsToBeAdded) > getLastAnnotationLabel(annotations, entities);
+		const { numAnnotationsCanBeAdded, t } = this.props;
+		const isAddButtonAvailable = (defaultNumRootAnnotations + numAnnotationsCanBeAdded) > getLastAnnotationLabel(annotations, entities);
 		if (isAdding || (!isAdding && isAddButtonAvailable)) {
 			return (
 				<Button
@@ -559,7 +559,7 @@ class TwoDimensionalVideo extends Component {
 		const {
 			isPreviewed,
 			isSubmitted,
-			annotationWidth,
+			videoWidth,
 			annotationHeight,
 			isPlaying,
 			played,
@@ -590,7 +590,7 @@ class TwoDimensionalVideo extends Component {
 			duration,
 			played,
 			focusing,
-			width: annotationWidth,
+			width: videoWidth,
 			height: annotationHeight,
 			isEmptyCheckEnable,
 			url,
@@ -661,7 +661,7 @@ class TwoDimensionalVideo extends Component {
 			<TwoDimensionalVideoContext.Provider value={ twoDimensionalVideoContext }>
 				<div className={ rootClassName }>
 					<div className='d-flex flex-wrap justify-content-around py-3 two-dimensional-video__main'>
-						<div className='mb-3' style={ { width: annotationWidth } }>
+						<div className='mb-3' style={ { width: videoWidth } }>
 							<DrawableVideoPlayer />
 						</div>
 						<div className='mb-3 two-dimensional-video__control-panel'>
@@ -681,14 +681,14 @@ class TwoDimensionalVideo extends Component {
 TwoDimensionalVideo.propTypes = {
 	className: PropTypes.string,
 	defaultAnnotations: PropTypes.arrayOf(PropTypes.object),
-	annotationWidth: PropTypes.number,
+	videoWidth: PropTypes.number,
 	isDefaultAnnotationsManipulatable: PropTypes.bool,
 	previewHeader: PropTypes.string,
 	previewNoticeList: PropTypes.arrayOf(PropTypes.string),
 	isEmptyCheckEnable: PropTypes.bool,
 	hasReview: PropTypes.bool,
 	url: PropTypes.string,
-	numAnnotationsToBeAdded: PropTypes.number,
+	numAnnotationsCanBeAdded: PropTypes.number,
 	onSubmit: PropTypes.func,
 	emptyCheckSubmissionWarningText: PropTypes.string,
 	emptyCheckAnnotationItemWarningText: PropTypes.string,
@@ -697,14 +697,14 @@ TwoDimensionalVideo.propTypes = {
 TwoDimensionalVideo.defaultProps = {
 	className: '',
 	defaultAnnotations: [],
-	annotationWidth: 400,
+	videoWidth: 400,
 	isDefaultAnnotationsManipulatable: false,
 	previewHeader: '',
 	previewNoticeList: [],
 	isEmptyCheckEnable: false,
 	hasReview: false,
 	url: '',
-	numAnnotationsToBeAdded: 1000,
+	numAnnotationsCanBeAdded: 1000,
 	onSubmit: () => {},
 	emptyCheckSubmissionWarningText: '',
 	emptyCheckAnnotationItemWarningText: '',
