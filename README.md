@@ -128,7 +128,7 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 ## Video Annotation Tool
 Vidoe tool allows you to annotate object in videos via bounding box. The tool originally is designed for annotating cell videos. 
 
-### Config Props
+### Props
 
 | Prop             | Description   | Format | Default |
 | -------------    | ------------- | ------------- | -------------| 
