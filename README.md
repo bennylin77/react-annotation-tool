@@ -136,7 +136,7 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 | `url` | Video url |String|`''`|
 | `defaultAnnotations`  | Default annotations. [Detail](#defaultAnnotations)|[Objects]|`[]`|
 | `videoWidth`       | Video width |Number|`400`|
-| `isDefaultAnnotationsManipulatable` |Allow users to edit default annotations|Boolean|false|
+| `isDefaultAnnotationsManipulatable` |Allow users to edit default annotations|Boolean|`false`|
 | `previewHeader`  | Header for preview |String|`''`|
 | `previewNoticeList`  | Content for preview | [String]|`[]`|
 | `isEmptyCheckEnable` | Force users to annotate at least one object|Boolean|`false`|
@@ -144,8 +144,8 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 | `numAnnotationsToBeAdded` | Number of annotations users can be added |Number|`1000`|
 | `onSubmit` | The callback function to handle submitted result |Function|`()=>{}`|
 | `emptyCheckSubmissionWarningText` | Text for warming empty annotaion |String|''|
-| `emptyCheckAnnotationItemWarningText` | Text for warming non-event anntation |String|''|
-| `emptyAnnotationReminderText` | Text for warming empty annotaion on the control panel |String|''|
+| `emptyCheckAnnotationItemWarningText` | Text for warming non-event anntation |String|`''`|
+| `emptyAnnotationReminderText` | Text for warming empty annotaion on the control panel |String|`''`|
 
 
 #### `defaultAnnotations`
