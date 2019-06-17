@@ -120,7 +120,8 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 ```
 
 
-
+### ToDo
+- [ ] Refactorize all components
 
 
 ## Video Annotation Tool
@@ -147,6 +148,49 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 
 
 #### `defaultAnnotations`
+```js
+[{
+  id: "jwzlwirv",
+  name: "jwzlwirv",
+  label: "1",
+  color: "rgba(255,219,0,1)",
+  parentName: "",
+  childrenNames: ["jwzlwrh3","jwzlwrh4"],
+  incidents:[
+   {x:198.25, y:137, width:101, height:99, time:0, status:"Show", id:"jwzlwirv", name:"jwzlwirv", label:""},   
+   {x:235.25, y:190, width:73, height:68, time:0.07694, status:"Show", id:"jwzlwlzl", name:"jwzlwlzl", label:""},
+   {x:235.25, y:190, width:73, height:68, time:0.11864, status:"Split", id:"jwzlwrh2", name:"jwzlwrh2", label:""}
+  ]
+ },
+ {
+   id: "jwzlwrh3",
+   name: "jwzlwrh3",
+   label: "1-1",
+   color: "rgba(0,255,81,1)",
+   parentName: "jwzlwirv",
+   childrenNames: [],
+   incidents: [
+    {x:235.25, y:190, width:36.5, height:34, time:0.11864, status:"Show", id:"jwzlwrh2", name:"jwzlwrh2", label:""}, 
+    {x:202.25, y:267, width:64.5, height:83, time:0.17467, status:"Show", id:"jwzlwy9h", name:"jwzlwy9h", label:""}
+   ]
+ },
+ { 
+   id: "jwzlwrh4",
+   name: "jwzlwrh4",
+   label: "1-2",
+   color: "rgba(0,255,81,1)",
+   parentName: "jwzlwirv",
+   childrenNames: [],
+   incidents: [
+    {x:251.75, y:204, width:36.5, height:34, time:0.11864, status:"Show", id:"jwzlwrh2", name:"jwzlwrh2", label:""}, 
+    {x:298.75, y:242, width:51.5, height:54, time:0.17467, status:"Show", id:"jwzlwwpj", name:"jwzlwwpj", label:""}
+   ]
+ }
+]
+```
 
+### ToDo
+- [ ] Makes Split and Hide optional
+- [ ] This is an incomplete item
 
 
