@@ -133,7 +133,7 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 | -------------    | ------------- | ------------- | -------------| 
 | `className`              | |String|`''`|
 | `url` | Video url |String|`''`|
-| `defaultAnnotations`  | Default annotations.[Detail](#defaultAnnotations)|[Objects]|`[]`|
+| `defaultAnnotations`  | Default annotations. [Detail](#defaultAnnotations)|[Objects]|`[]`|
 | `videoWidth`       | Video width |Number|`400`|
 | `isDefaultAnnotationsManipulatable` |Allow users to edit default annotations|Boolean|false|
 | `previewHeader`  | Header for preview |String|`''`|
