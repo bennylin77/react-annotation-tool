@@ -140,6 +140,8 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 | `previewHeader`  | Header for preview |String|`''`|
 | `previewNoticeList`  | Content for preview | [String]|`[]`|
 | `isEmptyCheckEnable` | Force users to annotate at least one object|Boolean|`false`|
+| `isSplitEnable` | Enable Split button for each annotation |Boolean|`false`|,
+| `isShowHideEnable` | Enable Delete button for each annotation |Boolean|`false`|,
 | `hasReview` | Enable review after users click submit button |Boolean|`false`|
 | `numAnnotationsToBeAdded` | Number of annotations users can be added |Number|`1000`|
 | `onSubmit` | The callback function to handle submitted result |Function|`()=>{}`|
@@ -191,7 +193,7 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 ```
 
 ### TODO
-- [ ] Makes Split and Hide optional.
+- [x] Makes Split and Hide optional.
 - [ ] Enable other shapes (e.g., circle) to annotate.
 
 ### Want to talk with me?
