@@ -27,6 +27,8 @@ const AnnotationItem = ({
 		entities,
 		focusing,
 		isEmptyCheckEnable,
+		isSplitEnable,
+		isShowHideEnable,
 		emptyCheckAnnotationItemWarningText,
 		onAnnotationItemClick,
 		onAnnotationDeleteClick,
@@ -140,8 +142,8 @@ const AnnotationItem = ({
 		>
 			<div className='d-flex align-items-center mb-2'>
 				<div className='mr-auto'><strong>{label}</strong></div>
-				{splitButtonUI}
-				{hideButtonUI}
+				{isSplitEnable && splitButtonUI}
+				{isShowHideEnable && hideButtonUI}
 				{showButtonUI}
 				<OpenDialogButton
 					className='d-flex align-items-center annotation-item__delete-button'

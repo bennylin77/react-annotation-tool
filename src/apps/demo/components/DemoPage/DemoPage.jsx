@@ -186,6 +186,8 @@ const DemoPage = () => {
 					videoWidth={ 500 }
 					hasReview
 					isEmptyCheckEnable
+					isSplitEnable
+					isShowHideEnable
 					emptyCheckSubmissionWarningText={ emptyCheckSubmissionWarningText }
 					emptyCheckAnnotationItemWarningText={ emptyCheckAnnotationItemWarningText }
 					emptyAnnotationReminderText={ emptyAnnotationReminderText }
