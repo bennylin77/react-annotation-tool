@@ -128,9 +128,17 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 ## Video Annotation Tool
 Vidoe tool allows you to annotate object in videos via bounding box. The tool originally is designed for annotating cell videos. 
 
+### Data Formats
+| Name             | Description   |
+| -------------    | ------------- |
+|Annotation|The basic unit of the annotation result.|
+|Incident|Each annotation contains mutiple incidents. Each incident records the time and some information (e.g., position, size, status...) when the annotation is manipulate by the users (e.g., split, move, resize...).|
+|Parent(parentName)|If you enable Split functionality, this property store the parent who generates current annotation.|
+|Children(childrenNames)|If you enable Split functionality, this property store the children belong to current annotation.|
+
 ### Props
 
-| Prop             | Description   | Format | Default |
+| Prop             | Description   | Data Type | Default |
 | -------------    | ------------- | ------------- | -------------| 
 | `className`              | |String|`''`|
 | `url` | Video url |String|`''`|
@@ -146,7 +154,7 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 | `numAnnotationsToBeAdded` | Number of annotations users can be added |Number|`1000`|
 | `onSubmit` | The callback function to handle submitted result |Function|`()=>{}`|
 | `emptyCheckSubmissionWarningText` | Text for warming empty annotaion |String|`''`|
-| `emptyCheckAnnotationItemWarningText` | Text for warming non-event anntation |String|`''`|
+| `emptyCheckAnnotationItemWarningText` | Text for warming non-incident anntation |String|`''`|
 | `emptyAnnotationReminderText` | Text for warming empty annotaion on the control panel |String|`''`|
 
 
