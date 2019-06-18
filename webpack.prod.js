@@ -16,8 +16,4 @@ module.exports = merge(common, {
 	plugins: [
 		new CleanWebpackPlugin(['dist/*.*']),
 	],
-	externals: {
-		react: 'react',
-		'react-dom': 'react-dom',
-	},
 });
