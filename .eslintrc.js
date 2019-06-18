@@ -18,7 +18,8 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "react-hooks"
     ],
     "rules": {
         "no-mixed-spaces-and-tabs": 2,
@@ -37,6 +38,8 @@ module.exports = {
         "react/jsx-indent": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "react/jsx-curly-spacing": [2, {"when": "always"}],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",        
         "import/prefer-default-export": "off",
         "import/no-extraneous-dependencies": [
             "error", {
