@@ -23,7 +23,7 @@ const Control = ({
 	onSpeedChange,
 }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const { t } = useTranslation();
+	const { t } = useTranslation('twoDimensionalVideo');
 	return (
 		<div className={ `player-control${className ? ` ${className}` : ''}` }>
 			<Slider

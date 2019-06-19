@@ -9,7 +9,6 @@ import { FaChevronDown, FaChevronUp, FaArrowDown } from 'react-icons/fa';
 import { IoEyeDisabled, IoEye } from 'react-icons/io';
 import { Rounding } from './helper.js';
 import Options from './Options';
-import Duration from './Duration';
 
 
 import './styles/List.css';
@@ -88,12 +87,12 @@ class List extends Component {
 Click
 
 
-					
+
 <Button disabled outline color='primary' className='d-flex align-items-center explanation-add-button'>
 						<MdAdd />
 						{' '}
 Add Annotation
-					
+
 </Button>
 					{' '}
 above to add an annotation

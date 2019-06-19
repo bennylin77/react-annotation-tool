@@ -36,7 +36,7 @@ const AnnotationItem = ({
 		onAnnotationSplitClick,
 	} = twoDimensionalVideoContext;
 	const [isIncidentListOpen, setIsIncidentListOpen] = useState(false);
-	const { t } = useTranslation();
+	const { t } = useTranslation('twoDimensionalVideo');
 
 	const {
 		incidents,

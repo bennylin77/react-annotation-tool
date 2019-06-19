@@ -180,6 +180,22 @@ const DemoPage = () => {
 	return (
 		<div>
 			<div className='mb-5'>
+				<TwoDimensionalImage
+					onNextClick={ handleSubmit }
+					onPreviousClick={ handleSubmit }
+					onSkipClick={ handleSubmit }
+					annotationWidth={ 500 }
+					menu={ menu }
+					category='Others'
+					categoryOptions={ ['No Objects', 'No Image'] }
+					annotations={ imageAnnotations }
+					disabledOptionLevels={ [] }
+					dynamicOptions
+					labeled
+					url='https://www.gtice.is/wp-content/uploads/2015/06/Snaefellsnes_Tour_Kirkjufell_by_KateI.jpg'
+				/>
+			</div>
+			<div className='mb-5'>
 				<TwoDimensionalVideo
 					onSubmit={ handleSubmit }
 					url='https://cildata.crbs.ucsd.edu/media/videos/15793/15793_web.mp4'
@@ -195,22 +211,6 @@ const DemoPage = () => {
 					defaultAnnotations={ [] }
 					previewHeader={ previewHeader }
 					previewNoticeList={ previewNoticeList }
-				/>
-			</div>
-			<div className='mb-5'>
-				<TwoDimensionalImage
-					onNextClick={ handleSubmit }
-					onPreviousClick={ handleSubmit }
-					onSkipClick={ handleSubmit }
-					annotationWidth={ 500 }
-					menu={ menu }
-					category='Others'
-					categoryOptions={ ['No Objects', 'No Image'] }
-					annotations={ imageAnnotations }
-					disabledOptionLevels={ [] }
-					dynamicOptions
-					labeled
-					url='https://www.gtice.is/wp-content/uploads/2015/06/Snaefellsnes_Tour_Kirkjufell_by_KateI.jpg'
 				/>
 			</div>
 		</div>

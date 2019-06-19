@@ -1,0 +1,35 @@
+.magnifier-dropdown .magnifier-dropdown {
+    &__toggle {
+    	color: #000;
+    	font-family: Courier, sans-serif;
+
+        &:hover,
+        &:active,
+        &:focus {
+            text-decoration: none;
+        }
+    }
+
+    &__item {
+        color: #000;
+    	font-family: Courier, sans-serif;
+
+        &:hover,
+        &:active,
+        &:focus {
+            color: #000;
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &:active {
+            background: #f8f9fa !important;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+}

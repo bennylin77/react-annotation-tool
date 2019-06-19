@@ -1,27 +1,33 @@
 import React, { Component } from 'react';
+import { I18nextProvider } from 'react-i18next';
 import { normalize, denormalize, schema } from 'normalizr';
 import {
 	Button,
 	ButtonGroup,
-	Dropdown,
-	DropdownToggle,
-	DropdownMenu,
-	DropdownItem,
 } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../Tmp/styles/ImageTool.css';
 
 import { MdAdd, MdUndo, MdRedo } from 'react-icons/md';
-import { GoSearch } from 'react-icons/go';
 import { FaCommentAlt } from 'react-icons/fa';
 import { ImageAnnotation } from 'models/2DImage.js';
 import { UndoRedo } from 'models/UndoRedo.js';
+import MagnifierDropdown from '../MagnifierDropdown/MagnifierDropdown.jsx';
 import { colors, getRandomInt } from '../Tmp/helper.js';
-
+import i18nextInstance from './i18n';
 
 import Canvas from '../Tmp/Canvas';
 import List from '../Tmp/List';
 
+
+const SHORTCUTS = {
+	MAGNIFIER: {
+		'1X': { key: '1', code: 49 },
+		'2X': { key: '2', code: 49 },
+		'3X': { key: '3', code: 49 },
+		'4X': { key: '4', code: 49 },
+	},
+};
 
 class TwoDimensionalImage extends Component {
 	constructor(props) {
@@ -100,29 +106,23 @@ class TwoDimensionalImage extends Component {
 			if (this.props.onNextClick) this.handleSubmit('Next');
 			break;
 		case 49:
-			this.handleClickMagnifier(1);
+			this.handleMagnifierChange(1);
 			break;
 		case 50:
-			this.handleClickMagnifier(2);
+			this.handleMagnifierChange(2);
 			break;
 		case 51:
-			this.handleClickMagnifier(3);
+			this.handleMagnifierChange(3);
 			break;
 		case 52:
-			this.handleClickMagnifier(4);
+			this.handleMagnifierChange(4);
 			break;
 		default:
 		}
 	}
 
-	handleClickMagnifier = (p) => {
+	handleMagnifierChange = (p) => {
 		this.setState((prevState, props) => ({ magnifyingPower: p }));
-	}
-
-	handleToggleMagnifier = () => {
-		this.setState(prevState => ({
-			magnifyingOpen: !prevState.magnifyingOpen,
-		}));
 	}
 
 	handleToggleLabel = () => {
@@ -357,6 +357,7 @@ class TwoDimensionalImage extends Component {
 		document.body.style.cursor = adding ? 'crosshair' : 'default';
 
 		return (
+			<I18nextProvider i18n={ i18nextInstance }>
 			<div>
 				{ !imageOnly
 				&& (
@@ -367,7 +368,7 @@ class TwoDimensionalImage extends Component {
 Previous
 
 
-									
+
 <small>(s)</small>
 								</Button>
 							)}
@@ -376,7 +377,7 @@ Previous
 Next
 
 
-									
+
 <small>(d)</small>
 								</Button>
 							)}
@@ -395,40 +396,7 @@ Next
 										{labeled ? 'On' : 'Off'}
 										<small className='pl-1'>(shift)</small>
 									</Button>
-									<Dropdown isOpen={ magnifyingOpen } toggle={ this.handleToggleMagnifier } size='md'>
-										<DropdownToggle className='mag-toggle d-flex align-items-center' color='link' caret>
-											<GoSearch className='pr-1' />
-											{' '}
-											{magnifyingPower > 1 ? `${magnifyingPower}X` : 'Off' }
-										</DropdownToggle>
-										<DropdownMenu>
-											<DropdownItem header className=''>Power</DropdownItem>
-											<DropdownItem className='mag-item' onClick={ () => this.handleClickMagnifier(1) }>
-Off
-
-
-												<small>(1)</small>
-											</DropdownItem>
-											<DropdownItem className='mag-item' onClick={ () => this.handleClickMagnifier(2) }>
-2X
-
-
-												<small>(2)</small>
-											</DropdownItem>
-											<DropdownItem className='mag-item' onClick={ () => this.handleClickMagnifier(3) }>
-3X
-
-
-												<small>(3)</small>
-											</DropdownItem>
-											<DropdownItem className='mag-item' onClick={ () => this.handleClickMagnifier(4) }>
-4X
-
-
-												<small>(4)</small>
-											</DropdownItem>
-										</DropdownMenu>
-									</Dropdown>
+									<MagnifierDropdown handleChange={ this.handleMagnifierChange } power={ magnifyingPower } shortcuts={ SHORTCUTS.MAGNIFIER } />
 								</div>
 								<ButtonGroup className=''>
 									<Button disabled={ this.UndoRedoState.previous.length == 0 } outline onClick={ this.handleUndo }>
@@ -506,7 +474,7 @@ Off
 Skip
 
 
-								
+
 <small>(a)</small>
 							</Button>
 						)}
@@ -514,6 +482,7 @@ Skip
 				)
 				}
 			</div>
+			</I18nextProvider>
 		);
 	}
 }

@@ -1,6 +1,6 @@
 import React, { Fragment, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import {
 	ListGroup, ListGroupItem, Button,
 } from 'reactstrap';
@@ -17,6 +17,7 @@ const IncidentList = ({
 	annotationName,
 	incidents,
 }) => {
+	const { t } = useTranslation('twoDimensionalVideo');
 	const twoDimensionalVideoContext = useContext(TwoDimensionalVideoContext);
 	const {
 		played,
@@ -65,24 +66,23 @@ const IncidentList = ({
 						onClick={ () => onIncidentItemClick({ time, annotationName }) }
 					>
 						<div className='incident-list__item-status pr-1'>
-							<Trans i18nKey='incidentStatus'>
-								<b>{{ status }}</b>
-								<Duration className='incident-list__item-duration' seconds={ duration * time } />
-							</Trans>
+							<b>{ status }</b>
+							{' '}
+							<Duration className='incident-list__item-duration' seconds={ duration * time } />
 						</div>
 						<div className='incident-list__item-size pr-1'>
-							<Trans i18nKey='incidentSize'>
-								<b>Size</b>
-								<RoundedNumber number={ width } />
-								<RoundedNumber number={ height } />
-							</Trans>
+							<b>{ t('incidentSize') }</b>
+							{' '}
+							<RoundedNumber number={ width } />
+							{'x'}
+							<RoundedNumber number={ height } />
 						</div>
 						<div className='incident-list__item-position'>
-							<Trans i18nKey='incidentPosition'>
-								<b>Position</b>
-								<RoundedNumber number={ x } />
-								<RoundedNumber number={ y } />
-							</Trans>
+							<b>{ t('incidentPosition') }</b>
+							{' '}
+							<RoundedNumber number={ x } />
+							{':'}
+							<RoundedNumber number={ y } />
 						</div>
 					</Button>
 					<Button

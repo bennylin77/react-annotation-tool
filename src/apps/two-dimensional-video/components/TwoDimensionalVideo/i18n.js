@@ -1,14 +1,12 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import { getI18nextInstance } from 'shared/utils/i18nextUtils';
 
 const resources = {
 	en: {
-		translation: {
+		twoDimensionalVideo: {
 			addingBox: 'Adding a New Box',
 			addBox: 'Add a New Box',
-			incidentStatus: '<0>{{status}}</0> at <1/>',
-			incidentSize: '<0>Size</0> <1/>x<2/>',
-			incidentPosition: '<0>Position</0> <1/>, <2/>',
+			incidentSize: 'Size',
+			incidentPosition: 'Position',
 			dialogTitleDelete: 'Delete this annotation',
 			dialogTitleShow: 'Show this annotation',
 			dialogTitleHide: 'Hide this annotation',
@@ -25,16 +23,4 @@ const resources = {
 		},
 	},
 };
-
-i18n
-	.use(initReactI18next)
-	.init({
-		resources,
-		lng: 'en',
-		keySeparator: false,
-		interpolation: {
-			escapeValue: false,
-		},
-	});
-
-export default i18n;
+export default getI18nextInstance({ ns: 'twoDimensionalVideo', resources });

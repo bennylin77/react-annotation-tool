@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Translation } from 'react-i18next';
+import { I18nextProvider, Translation } from 'react-i18next';
 import { normalize, denormalize, schema } from 'normalizr';
 import { Button, ButtonGroup } from 'reactstrap';
 import { MdRedo, MdUndo, MdAdd } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.css';
-import './i18n';
 import PopupDialog from 'shared/components/PopupDialog/PopupDialog.jsx';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt, getFixedNumber } from 'shared/utils/mathUtils';
 import { UndoRedo } from 'models/UndoRedo';
+import i18nextInstance from './i18n';
 import { Rectangle } from '../../models/rectangle';
 import { Incident, SPLIT, HIDE, SHOW } from '../../models/incident';
 import TwoDimensionalVideoContext from './twoDimensionalVideoContext';
@@ -548,7 +548,7 @@ class TwoDimensionalVideo extends Component {
 					className='d-flex align-items-center float-left'
 				>
 					<MdAdd />
-					<Translation>
+					<Translation ns='twoDimensionalVideo'>
 						{
 							t => (isAdding ? t('addingBox') : t('addBox'))
 						}
@@ -666,22 +666,24 @@ class TwoDimensionalVideo extends Component {
 
 		const rootClassName = `two-dimensional-video${className ? ` ${className}` : ''}`;
 		return (
-			<TwoDimensionalVideoContext.Provider value={ twoDimensionalVideoContext }>
-				<div className={ rootClassName }>
-					<div className='d-flex flex-wrap justify-content-around py-3 two-dimensional-video__main'>
-						<div className='mb-3' style={ { width: videoWidth } }>
-							<DrawableVideoPlayer />
+			<I18nextProvider i18n={ i18nextInstance }>
+				<TwoDimensionalVideoContext.Provider value={ twoDimensionalVideoContext }>
+					<div className={ rootClassName }>
+						<div className='d-flex flex-wrap justify-content-around py-3 two-dimensional-video__main'>
+							<div className='mb-3' style={ { width: videoWidth } }>
+								<DrawableVideoPlayer />
+							</div>
+							<div className='mb-3 two-dimensional-video__control-panel'>
+								{ controlPanelUI }
+							</div>
 						</div>
-						<div className='mb-3 two-dimensional-video__control-panel'>
-							{ controlPanelUI }
+						<div className='d-flex justify-content-center pt-3'>
+							{isSubmitted || !isPreviewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
 						</div>
+						<PopupDialog isOpen={ isDialogOpen } title={ dialogTitle } message={ dialogMessage } onToggle={ this.handleDialogToggle } hasCloseButton />
 					</div>
-					<div className='d-flex justify-content-center pt-3'>
-						{isSubmitted || !isPreviewed ? '' : (<div><Button onClick={ this.handleSubmit }>Submit</Button></div>)}
-					</div>
-					<PopupDialog isOpen={ isDialogOpen } title={ dialogTitle } message={ dialogMessage } onToggle={ this.handleDialogToggle } hasCloseButton />
-				</div>
-			</TwoDimensionalVideoContext.Provider>
+				</TwoDimensionalVideoContext.Provider>
+			</I18nextProvider>
 		);
 	}
 }

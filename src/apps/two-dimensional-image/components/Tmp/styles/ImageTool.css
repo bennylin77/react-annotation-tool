@@ -1,26 +1,3 @@
-.mag-toggle{
-	color: #000000 !important;
-	font-family: Courier;
-}
-.mag-toggle:hover, .mag-toggle:active, .mag-toggle:focus{
-	text-decoration: none !important;
-}
-.mag-item{
-	color: #000000;
-	font-family: Courier;
-}
-.mag-item:hover{
-	color: #000000 !important;
-	cursor: pointer;
-}
-.mag-item:active{
-	color: #000000 !important;
-	background: #f8f9fa !important;
-}
-.mag-item:focus{
-	color: #000000 !important;
-	outline: none;
-}
 .label-button{
 	color: #000000 !important;
 }

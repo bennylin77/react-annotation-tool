@@ -46,7 +46,7 @@ const Canvas = ({
 	onDotDragEnd,
 	onDotMouseDown,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('twoDimensionalVideo');
 	const layerItems = [];
 	annotations.slice().reverse().forEach((annotationId) => {
 		const {
