@@ -530,21 +530,3 @@ TwoDimensionalImage.defaultProps = {
 
 
 export default TwoDimensionalImage;
-/*
-<List
-	dynamicOptions={ dynamicOptions }
-	disabledOptionLevels={ disabledOptionLevels }
-	entities={ entities }
-	optionRoot={ optionRoot }
-	annotations={ annotations }
-	focusing={ focusing }
-	height={ annotationHeight }
-	onListItemClick={ this.handleListItemClick }
-	onListItemDelete={ this.handleListItemDelete }
-	onOptionsInputFocus={ this.handleOptionsInputFocus }
-	onOptionsInputBlur={ this.handleOptionsInputBlur }
-	onOptionsAddOption={ this.handleOptionsAddOption }
-	onOptionsSelectOption={ this.handleOptionsSelectOption }
-	onOptionsDeleteOption={ this.handleOptionsDeleteOption }
-/>
-*/
