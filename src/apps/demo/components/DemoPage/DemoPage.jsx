@@ -181,9 +181,15 @@ const DemoPage = () => {
 		<div>
 			<div className='mb-5'>
 				<TwoDimensionalImage
+					hasNextButton
 					onNextClick={ handleSubmit }
+					hasPreviousButton
 					onPreviousClick={ handleSubmit }
+					hasSkipButton
 					onSkipClick={ handleSubmit }
+
+
+
 					annotationWidth={ 500 }
 					menu={ menu }
 					category='Others'

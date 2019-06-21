@@ -1,0 +1,25 @@
+.annotation-item {
+	min-width: 380px;
+	cursor: pointer;
+	margin-bottom: 5px;
+	border-width: 2px;
+	border-left-width: 8px;
+
+	&--highlight {
+		cursor: default;
+	}
+
+	&__object-item-title {
+		min-width: 80px;
+	}
+
+	&__delete-button {
+		padding: 0.375rem 0.3rem;
+		color: #dc3545;
+		font-size: 30px;
+
+		&:hover {
+			color: #c82333;
+		}
+	}
+}

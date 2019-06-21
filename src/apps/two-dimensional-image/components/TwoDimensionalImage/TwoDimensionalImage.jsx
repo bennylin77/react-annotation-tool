@@ -1,13 +1,24 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { I18nextProvider } from 'react-i18next';
 import { normalize, denormalize, schema } from 'normalizr';
 import {
 	Button,
 	ButtonGroup,
 } from 'reactstrap';
+import TwoDimensionalImageContext from './twoDimensionalImageContext';
+import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
-import '../Tmp/styles/ImageTool.css';
+import './twoDimensionalImage.scss';
 
+
+
+
+
+
+
+
+import '../Tmp/styles/ImageTool.css';
 import { MdAdd, MdUndo, MdRedo } from 'react-icons/md';
 import { FaCommentAlt } from 'react-icons/fa';
 import { ImageAnnotation } from 'models/2DImage.js';
@@ -23,9 +34,14 @@ import List from '../Tmp/List';
 const SHORTCUTS = {
 	MAGNIFIER: {
 		'1X': { key: '1', code: 49 },
-		'2X': { key: '2', code: 49 },
-		'3X': { key: '3', code: 49 },
-		'4X': { key: '4', code: 49 },
+		'2X': { key: '2', code: 50 },
+		'3X': { key: '3', code: 51 },
+		'4X': { key: '4', code: 52 },
+	},
+	BUTTON: {
+		PREVIOUS: { key: 's', code: 83 },
+		NEXT: { key: 'd', code: 68 },
+		SKIP: { key: 'a', code: 65 },
 	},
 };
 
@@ -58,7 +74,6 @@ class TwoDimensionalImage extends Component {
 		this.state = {
 			adding: false,
 			focusing: '',
-			magnifyingOpen: false,
 			magnifyingPower: 1,
 			labeled: props.labeled || false,
 			entities,
@@ -82,7 +97,9 @@ class TwoDimensionalImage extends Component {
 	}
 
 	handleKeydown = (e) => {
-		if (this.state.inputFocused) return;
+		const { onPreviousClick, onSkipClick, onNextClick } = this.props;
+		const { inputFocused } = this.state;
+		if (inputFocused) return;
 		switch (e.keyCode) {
 		case 90:
 			this.handleUndo();
@@ -96,25 +113,25 @@ class TwoDimensionalImage extends Component {
 		case 67:
 			this.handleAddClick();
 			break;
-		case 83:
-			if (this.props.onPreviousClick) this.handleSubmit('Previous');
+		case SHORTCUTS.BUTTON.PREVIOUS.code:
+			if (onPreviousClick) this.handleSubmit('Previous');
 			break;
-		case 65:
-			if (this.props.onSkipClick) this.handleSubmit('Skip');
+		case SHORTCUTS.BUTTON.SKIP.code:
+			if (onSkipClick) this.handleSubmit('Skip');
 			break;
-		case 68:
-			if (this.props.onNextClick) this.handleSubmit('Next');
+		case SHORTCUTS.BUTTON.NEXT.code:
+			if (onNextClick) this.handleSubmit('Next');
 			break;
-		case 49:
+		case SHORTCUTS.MAGNIFIER['1X'].code:
 			this.handleMagnifierChange(1);
 			break;
-		case 50:
+		case SHORTCUTS.MAGNIFIER['2X'].code:
 			this.handleMagnifierChange(2);
 			break;
-		case 51:
+		case SHORTCUTS.MAGNIFIER['3X'].code:
 			this.handleMagnifierChange(3);
 			break;
-		case 52:
+		case SHORTCUTS.MAGNIFIER['4X'].code:
 			this.handleMagnifierChange(4);
 			break;
 		default:
@@ -349,68 +366,103 @@ class TwoDimensionalImage extends Component {
 
 	render() {
 		const {
-			adding, focusing, magnifyingOpen, magnifyingPower, labeled, annotationWidth, annotationHeight, annotations, category, entities, optionRoot,
+			adding, focusing, magnifyingPower, labeled, annotationWidth, annotationHeight, annotations, category, entities, optionRoot,
 		} = this.state;
 		const {
-			url, dynamicOptions, disabledOptionLevels = [], categoryOptions = [], imageOnly,
+			url,
+			emptyAnnotationReminderText,
+
+		 dynamicOptions, disabledOptionLevels = [], categoryOptions = [], viewOnly, hasPreviousButton, hasNextButton, hasSkipButton,
 		} = this.props;
+
+
+		const twoDimensionalImageContext = {
+			entities,
+			annotations,
+			height: annotationHeight,
+			focusing,
+			emptyAnnotationReminderText,
+			onAnnotationItemClick: this.handleListItemClick,
+			onAnnotationItemDeleteClick: this.handleListItemDelete,
+
+
+			dynamicOptions,
+			disabledOptionLevels,
+			optionRoot,
+			onOptionsInputFocus: this.handleOptionsInputFocus,
+			onOptionsInputBlur: this.handleOptionsInputBlur,
+			onOptionsAddOption: this.handleOptionsAddOption,
+			onOptionsSelectOption: this.handleOptionsSelectOption,
+			onOptionsDeleteOption: this.handleOptionsDeleteOption,
+
+		};
+
+
 		document.body.style.cursor = adding ? 'crosshair' : 'default';
+
+
+
+		const toggleLabelButtonUI = (
+			<Button color='link' onClick={ this.handleToggleLabel } className='label-button d-flex align-items-center'>
+				<FaCommentAlt className='pr-1' />
+				{labeled ? 'On' : 'Off'}
+				<small className='pl-1'>(shift)</small>
+			</Button>
+		);
+		const previousButtonUI = hasPreviousButton ? (
+			<Button color='secondary' onClick={ () => this.handleSubmit('Previous') }>
+				Previous
+				<small>{`(${SHORTCUTS.BUTTON.PREVIOUS.key})`}</small>
+			</Button>
+		) : '';
+		const nextButtonUI = hasNextButton ? (
+			<Button color='secondary' onClick={ () => this.handleSubmit('Next') }>
+				Next
+				<small>{`(${SHORTCUTS.BUTTON.NEXT.key})`}</small>
+			</Button>
+		) : '';
+		const skipButtonUI = hasSkipButton ? (
+			<Button color='secondary' onClick={ () => this.handleSubmit('Skip') }>
+				Skip
+				<small>{`(${SHORTCUTS.BUTTON.SKIP.key})`}</small>
+			</Button>
+		) : '';
 
 		return (
 			<I18nextProvider i18n={ i18nextInstance }>
-			<div>
-				{ !imageOnly
-				&& (
-					<div className='d-flex justify-content-center pb-3'>
-						<ButtonGroup>
-							{this.props.onPreviousClick && (
-								<Button color='secondary' onClick={ () => this.handleSubmit('Previous') }>
-Previous
+				<TwoDimensionalImageContext.Provider value={ twoDimensionalImageContext }>
 
-
-
-<small>(s)</small>
-								</Button>
-							)}
-							{this.props.onNextClick && (
-								<Button color='secondary' onClick={ () => this.handleSubmit('Next') }>
-Next
-
-
-
-<small>(d)</small>
-								</Button>
-							)}
-						</ButtonGroup>
-					</div>
-				)
-				}
-				<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
-					<div className='mb-3'>
-						{ !imageOnly
-						&& (
-							<div className='mb-3 d-flex'>
-								<div className='d-flex mr-auto'>
-									<Button color='link' onClick={ this.handleToggleLabel } className='label-button d-flex align-items-center'>
-										<FaCommentAlt className='pr-1' />
-										{labeled ? 'On' : 'Off'}
-										<small className='pl-1'>(shift)</small>
-									</Button>
-									<MagnifierDropdown handleChange={ this.handleMagnifierChange } power={ magnifyingPower } shortcuts={ SHORTCUTS.MAGNIFIER } />
+				<div>
+					{ !viewOnly && (
+						<div className='d-flex justify-content-center pb-3'>
+							<ButtonGroup>
+								{ previousButtonUI }
+								{ nextButtonUI }
+							</ButtonGroup>
+						</div>
+					)}
+					<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
+						<div className='mb-3'>
+							{ !viewOnly
+								&& (
+								<div className='mb-3 d-flex'>
+									<div className='d-flex mr-auto'>
+										{toggleLabelButtonUI}
+										<MagnifierDropdown handleChange={ this.handleMagnifierChange } power={ magnifyingPower } shortcuts={ SHORTCUTS.MAGNIFIER } />
+									</div>
+									<ButtonGroup className=''>
+										<Button disabled={ this.UndoRedoState.previous.length == 0 } outline onClick={ this.handleUndo }>
+											<MdUndo />
+											{' '}
+											<small>(z)</small>
+										</Button>
+										<Button disabled={ this.UndoRedoState.next.length == 0 } outline onClick={ this.handleRedo }>
+											<MdRedo />
+											{' '}
+											<small>(x)</small>
+										</Button>
+									</ButtonGroup>
 								</div>
-								<ButtonGroup className=''>
-									<Button disabled={ this.UndoRedoState.previous.length == 0 } outline onClick={ this.handleUndo }>
-										<MdUndo />
-										{' '}
-										<small>(z)</small>
-									</Button>
-									<Button disabled={ this.UndoRedoState.next.length == 0 } outline onClick={ this.handleRedo }>
-										<MdRedo />
-										{' '}
-										<small>(x)</small>
-									</Button>
-								</ButtonGroup>
-							</div>
 						) }
 						<div style={ { position: 'relative' } }>
 							<Canvas
@@ -432,7 +484,7 @@ Next
 							/>
 						</div>
 					</div>
-					{ !imageOnly
+					{ !viewOnly
 					&& (
 						<div className='mb-3'>
 							<div className='d-flex justify-content-between mb-3'>
@@ -446,44 +498,53 @@ Next
 									{ categoryOptions.map(c => <Button outline active={ category == c } color='info' key={ c } onClick={ () => this.handleCategorySelect(c) }>{c}</Button>) }
 								</ButtonGroup>
 							</div>
-							<List
-								dynamicOptions={ dynamicOptions }
-								disabledOptionLevels={ disabledOptionLevels }
-								entities={ entities }
-								optionRoot={ optionRoot }
-								annotations={ annotations }
-					 				focusing={ focusing }
-								height={ annotationHeight }
-								onListItemClick={ this.handleListItemClick }
-								onListItemDelete={ this.handleListItemDelete }
-								onOptionsInputFocus={ this.handleOptionsInputFocus }
-								onOptionsInputBlur={ this.handleOptionsInputBlur }
-								onOptionsAddOption={ this.handleOptionsAddOption }
-								onOptionsSelectOption={ this.handleOptionsSelectOption }
-								onOptionsDeleteOption={ this.handleOptionsDeleteOption }
-							/>
+							<AnnotationList />
 						</div>
 					)
 					}
 				</div>
-				{ !imageOnly
-				&& (
-					<div className='d-flex justify-content-center pt-3'>
-						{this.props.onSkipClick && (
-							<Button color='secondary' onClick={ () => this.handleSubmit('Skip') }>
-Skip
-
-
-
-<small>(a)</small>
-							</Button>
-						)}
-					</div>
-				)
-				}
+					{ !viewOnly && (
+						<div className='d-flex justify-content-center pt-3'>
+							{ skipButtonUI }
+						</div>
+					)}
 			</div>
+				</TwoDimensionalImageContext.Provider>
 			</I18nextProvider>
 		);
 	}
 }
+
+
+
+TwoDimensionalImage.propTypes = {
+	className: PropTypes.string,
+	url: PropTypes.string,
+	emptyAnnotationReminderText: PropTypes.string,
+};
+TwoDimensionalImage.defaultProps = {
+	className: '',
+	url: '',
+	emptyAnnotationReminderText: '',
+};
+
+
 export default TwoDimensionalImage;
+/*
+<List
+	dynamicOptions={ dynamicOptions }
+	disabledOptionLevels={ disabledOptionLevels }
+	entities={ entities }
+	optionRoot={ optionRoot }
+	annotations={ annotations }
+	focusing={ focusing }
+	height={ annotationHeight }
+	onListItemClick={ this.handleListItemClick }
+	onListItemDelete={ this.handleListItemDelete }
+	onOptionsInputFocus={ this.handleOptionsInputFocus }
+	onOptionsInputBlur={ this.handleOptionsInputBlur }
+	onOptionsAddOption={ this.handleOptionsAddOption }
+	onOptionsSelectOption={ this.handleOptionsSelectOption }
+	onOptionsDeleteOption={ this.handleOptionsDeleteOption }
+/>
+*/

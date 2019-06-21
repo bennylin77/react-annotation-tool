@@ -84,20 +84,7 @@ class List extends Component {
 		if (items.length == 0) {
 			return (
 				<div className='d-flex align-items-center justify-content-center' style={ { height } }>
-Click
-
-
-
-<Button disabled outline color='primary' className='d-flex align-items-center explanation-add-button'>
-						<MdAdd />
-						{' '}
-Add Annotation
-
-</Button>
-					{' '}
-above to add an annotation
-
-
+					{emptyAnnotationReminderText}				
 				</div>
 			);
 		}
