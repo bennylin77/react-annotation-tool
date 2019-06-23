@@ -28,15 +28,12 @@ const OptionList = ({
 		const childrenOptionIds = options[optionId].options;
 		const _ancestorIds = ancestorIds.slice();
 		_ancestorIds.push(optionId);
-		let itemStyle = { paddingLeft: 30 * level };
-		if (selectedOptionIds.length > 0 && optionId === selectedOptionIds[selectedOptionIds.length - 1].id) itemStyle = { ...itemStyle, background: '#e4e4e4' };
 		return (
 			<OptionItem
 				level={ level }
 				ancestorIds={ _ancestorIds }
 				optionId={ optionId }
 				childrenOptionIds={ childrenOptionIds }
-				itemStyle={ itemStyle }
 				annotationName={ annotationName }
 				selectedOptionIds={ selectedOptionIds }
 			/>
@@ -47,7 +44,7 @@ const OptionList = ({
 		<ListGroupItem key={ `new-${parentId}` } style={ { paddingLeft: 30 * level } }>
 			<Form inline onSubmit={ (e) => { onOptionCustomizedFormSubmit(e, parentId, value); } }>
 				<Input
-					lassName='mr-sm-2'
+					className='mr-sm-2'
 					type='text'
 					name={ parentId }
 					value={ value }
@@ -73,10 +70,14 @@ OptionList.propTypes = {
 	className: PropTypes.string,
 	annotationName: PropTypes.string,
 	level: PropTypes.number,
+	ancestorIds: PropTypes.arrayOf(PropTypes.string),
+	selectedOptionIds: PropTypes.arrayOf(PropTypes.string),
 };
 OptionList.defaultProps = {
 	className: '',
 	annotationName: '',
 	level: 1,
+	ancestorIds: [],
+	selectedOptionIds: [],
 };
 export default OptionList;

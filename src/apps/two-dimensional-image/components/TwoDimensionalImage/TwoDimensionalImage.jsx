@@ -361,6 +361,7 @@ class TwoDimensionalImage extends Component {
 			adding, focusing, magnifyingPower, labeled, annotationWidth, annotationHeight, annotations, category, entities, optionRoot,
 		} = this.state;
 		const {
+			className,
 			url,
 			emptyAnnotationReminderText,
 			isDynamicOptionsEnable,
@@ -421,12 +422,12 @@ class TwoDimensionalImage extends Component {
 				<small>{`(${SHORTCUTS.BUTTON.SKIP.key})`}</small>
 			</Button>
 		) : '';
+		const rootClassName = `two-dimensional-image${className ? ` ${className}` : ''}`;
 
 		return (
 			<I18nextProvider i18n={ i18nextInstance }>
 				<TwoDimensionalImageContext.Provider value={ twoDimensionalImageContext }>
-
-				<div>
+				<div className={ rootClassName }>
 					{ !viewOnly && (
 						<div className='d-flex justify-content-center pb-3'>
 							<ButtonGroup>

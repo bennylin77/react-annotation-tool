@@ -5,12 +5,3 @@
 }
 .option-list-collapse-button:hover{
 }
-
-.option-item-delete{
-	padding: 0.375rem 0.3rem;
-	color: #dc3545;
-	font-size: 18px;
-}
-.option-item-delete:hover{
-	color: #c82333;
-}

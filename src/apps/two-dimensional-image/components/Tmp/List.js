@@ -10,9 +10,6 @@ import { IoEyeDisabled, IoEye } from 'react-icons/io';
 import { Rounding } from './helper.js';
 import Options from './Options';
 
-
-import './styles/List.css';
-
 class List extends Component {
 	constructor(props) {
 		super(props);
@@ -84,7 +81,7 @@ class List extends Component {
 		if (items.length == 0) {
 			return (
 				<div className='d-flex align-items-center justify-content-center' style={ { height } }>
-					{emptyAnnotationReminderText}				
+					{emptyAnnotationReminderText}
 				</div>
 			);
 		}

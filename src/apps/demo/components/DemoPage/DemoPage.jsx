@@ -196,7 +196,7 @@ const DemoPage = () => {
 					isDynamicOptionsEnable
 
 
-					annotationWidth={ 500 }
+					annotationWidth={ 600 }
 					menu={ menu }
 					category='Others'
 					categoryOptions={ ['No Objects', 'No Image'] }

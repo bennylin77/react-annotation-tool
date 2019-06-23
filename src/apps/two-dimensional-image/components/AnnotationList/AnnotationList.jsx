@@ -28,7 +28,7 @@ const AnnotationList = ({
 	});
 	useEffect(() => {
 		if (focusing) {
-			scroller.scrollTo(focusing, { containerId: 'option-list' });
+			scroller.scrollTo(focusing, { containerId: 'annotation-list' });
 		}
 	}, [focusing]);
 
@@ -47,9 +47,9 @@ const AnnotationList = ({
 			</div>
 		);
 	}
-	const rootClassName = `option-list${className ? ` ${className}` : ''}`;
+	const rootClassName = `annotation-list${className ? ` ${className}` : ''}`;
 	return (
-		<ListGroup className={ rootClassName } id='option-list' style={ { maxHeight: height } }>{itemsUI}</ListGroup>
+		<ListGroup className={ rootClassName } id='annotation-list' style={ { maxHeight: height } }>{itemsUI}</ListGroup>
 	);
 };
 

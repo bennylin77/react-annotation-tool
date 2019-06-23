@@ -11,15 +11,13 @@ import './optionItem.scss';
 
 const OptionItem = ({
 	className,
-    level,
+	level,
 	ancestorIds,
 	optionId,
-    childrenOptionIds,
+	childrenOptionIds,
 	annotationName,
-    itemStyle,
-    selectedOptionIds,
+	selectedOptionIds,
 }) => {
-
 	const [isChildrenOpen, setIsChildrenOpen] = useState(false);
 	const twoDimensionalImageContext = useContext(TwoDimensionalImageContext);
 	const {
@@ -27,17 +25,29 @@ const OptionItem = ({
 		isDynamicOptionsEnable,
 		disabledOptionLevels,
 		onOptionDeleteClick,
-        onOptionSelect,
+		onOptionSelect,
 	} = twoDimensionalImageContext;
 
 	const { options } = entities;
 	const rootClassName = `option-item${className ? ` ${className}` : ''}`;
+
+	let itemStyle = { paddingLeft: 30 * level };
+	itemStyle = selectedOptionIds.length > 0 && optionId === selectedOptionIds[selectedOptionIds.length - 1].id ?
+		{ ...itemStyle, background: '#e4e4e4' } :
+		itemStyle;
+
+	let chevronButtonUI = null;
+	chevronButtonUI = (!isDynamicOptionsEnable && childrenOptionIds.length !== 0 && isChildrenOpen) || (isDynamicOptionsEnable && isChildrenOpen) ?
+		<FaChevronDown /> :
+		<FaChevronRight />;
+
 	return (
 		<Fragment>
 			<ListGroupItem className={ rootClassName } style={ itemStyle }>
 				<div className='d-flex align-items-center'>
 					<Button
-						className='d-flex align-items-center option-list-collapse-button mr-auto'
+						color='link'
+						className='d-flex align-items-center mr-auto pl-0 option-item__button'
 						onClick={
 							() => {
 								setIsChildrenOpen(!isChildrenOpen);
@@ -45,25 +55,17 @@ const OptionItem = ({
 							}
 						}
 					>
-						{
-							!isDynamicOptionsEnable && children.length !== 0 && isChildrenOpen && <FaChevronDown /> ||
-                            isDynamicOptionsEnable && isChildrenOpen && <FaChevronDown />
-						}
-						{
-							!isDynamicOptionsEnable && children.length !== 0 && !isChildrenOpen && <FaChevronRight /> ||
-                            isDynamicOptionsEnable && !isChildrenOpen && <FaChevronRight />}
-						{
-							options[optionId].value
-						}
+						{chevronButtonUI}
+						{options[optionId].value}
 					</Button>
 					{
 						isDynamicOptionsEnable &&
-                        <Button className='option-item-delete' color='link' onClick={ () => onOptionDeleteClick(ancestorIds) }><MdDelete /></Button>
+                        <Button className='option-item__delete-button' color='link' onClick={ () => onOptionDeleteClick(ancestorIds) }><MdDelete /></Button>
 					}
 				</div>
 			</ListGroupItem>
 			<Collapse key={ `collapse-${optionId}` } isOpen={ isChildrenOpen }>
-				<OptionList annotationName={ annotationName } ancestorIds={ ancestorIds } level={ level + 1 } selectedOptionIds={ selectedOptionIds }/>
+				<OptionList annotationName={ annotationName } ancestorIds={ ancestorIds } level={ level + 1 } selectedOptionIds={ selectedOptionIds } />
 			</Collapse>
 		</Fragment>
 	);
@@ -71,8 +73,20 @@ const OptionItem = ({
 
 OptionItem.propTypes = {
 	className: PropTypes.string,
+	annotationName: PropTypes.string,
+	optionId: PropTypes.string,
+	level: PropTypes.number,
+	ancestorIds: PropTypes.arrayOf(PropTypes.string),
+	selectedOptionIds: PropTypes.arrayOf(PropTypes.string),
+	childrenOptionIds: PropTypes.arrayOf(PropTypes.string),
 };
 OptionItem.defaultProps = {
 	className: '',
+	annotationName: '',
+	optionId: '',
+	level: 1,
+	ancestorIds: [],
+	selectedOptionIds: [],
+	childrenOptionIds: [],
 };
 export default OptionItem;
