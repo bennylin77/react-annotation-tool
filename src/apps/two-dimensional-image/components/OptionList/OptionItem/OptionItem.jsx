@@ -5,14 +5,13 @@ import { MdDelete } from 'react-icons/md';
 import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import OptionList from '../OptionList.jsx';
 import TwoDimensionalImageContext from '../../TwoDimensionalImage/twoDimensionalImageContext';
-
 import 'bootstrap/dist/css/bootstrap.css';
 import './optionItem.scss';
 
 const OptionItem = ({
 	className,
 	level,
-	ancestorIds,
+	ancestorOptionIds,
 	optionId,
 	childrenOptionIds,
 	annotationName,
@@ -37,9 +36,9 @@ const OptionItem = ({
 		itemStyle;
 
 	let chevronButtonUI = null;
-	chevronButtonUI = (!isDynamicOptionsEnable && childrenOptionIds.length !== 0 && isChildrenOpen) || (isDynamicOptionsEnable && isChildrenOpen) ?
-		<FaChevronDown /> :
-		<FaChevronRight />;
+	if ((!isDynamicOptionsEnable && childrenOptionIds.length !== 0) || isDynamicOptionsEnable) {
+		chevronButtonUI = isChildrenOpen ? <FaChevronDown /> : <FaChevronRight />;
+	}
 
 	return (
 		<Fragment>
@@ -51,21 +50,29 @@ const OptionItem = ({
 						onClick={
 							() => {
 								setIsChildrenOpen(!isChildrenOpen);
-								if (!disabledOptionLevels.includes(level)) onOptionSelect(annotationName, ancestorIds);
+								if (!disabledOptionLevels.includes(level)) onOptionSelect(annotationName, ancestorOptionIds);
 							}
 						}
 					>
-						{chevronButtonUI}
 						{options[optionId].value}
+						{chevronButtonUI}
 					</Button>
 					{
-						isDynamicOptionsEnable &&
-                        <Button className='option-item__delete-button' color='link' onClick={ () => onOptionDeleteClick(ancestorIds) }><MdDelete /></Button>
+						isDynamicOptionsEnable && (
+							<Button className='option-item__delete-button' color='link' onClick={ () => onOptionDeleteClick(ancestorOptionIds) }>
+								<MdDelete />
+							</Button>
+						)
 					}
 				</div>
 			</ListGroupItem>
 			<Collapse key={ `collapse-${optionId}` } isOpen={ isChildrenOpen }>
-				<OptionList annotationName={ annotationName } ancestorIds={ ancestorIds } level={ level + 1 } selectedOptionIds={ selectedOptionIds } />
+				<OptionList
+					annotationName={ annotationName }
+					ancestorOptionIds={ ancestorOptionIds }
+					level={ level + 1 }
+					selectedOptionIds={ selectedOptionIds }
+				/>
 			</Collapse>
 		</Fragment>
 	);
@@ -76,7 +83,7 @@ OptionItem.propTypes = {
 	annotationName: PropTypes.string,
 	optionId: PropTypes.string,
 	level: PropTypes.number,
-	ancestorIds: PropTypes.arrayOf(PropTypes.string),
+	ancestorOptionIds: PropTypes.arrayOf(PropTypes.string),
 	selectedOptionIds: PropTypes.arrayOf(PropTypes.string),
 	childrenOptionIds: PropTypes.arrayOf(PropTypes.string),
 };
@@ -85,7 +92,7 @@ OptionItem.defaultProps = {
 	annotationName: '',
 	optionId: '',
 	level: 1,
-	ancestorIds: [],
+	ancestorOptionIds: [],
 	selectedOptionIds: [],
 	childrenOptionIds: [],
 };

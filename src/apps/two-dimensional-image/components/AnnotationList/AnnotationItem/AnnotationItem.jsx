@@ -50,7 +50,7 @@ const AnnotationItem = ({
 					<MdDelete />
 				</Button>
 			</div>
-			<OptionList annotationName={ name } ancestorIds={ [optionRoot] } selectedOptionIds={ selectedOptionIds } />
+			<OptionList annotationName={ name } ancestorOptionIds={ [optionRoot] } selectedOptionIds={ selectedOptionIds } />
 		</ListGroupItem>
 	);
 };

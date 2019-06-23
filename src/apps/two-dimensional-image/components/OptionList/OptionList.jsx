@@ -9,7 +9,7 @@ import './optionList.scss';
 const OptionList = ({
 	className,
 	annotationName,
-	ancestorIds,
+	ancestorOptionIds,
 	selectedOptionIds,
 	level,
 }) => {
@@ -23,15 +23,13 @@ const OptionList = ({
 		onOptionCustomizedFormSubmit,
 	} = twoDimensionalImageContext;
 
-	const parentId = ancestorIds[ancestorIds.length - 1];
-	const itemListUI = options[parentId].options.map((optionId) => {
+	const parentOptionId = ancestorOptionIds[ancestorOptionIds.length - 1];
+	const itemListUI = options[parentOptionId].options.map((optionId) => {
 		const childrenOptionIds = options[optionId].options;
-		const _ancestorIds = ancestorIds.slice();
-		_ancestorIds.push(optionId);
 		return (
 			<OptionItem
 				level={ level }
-				ancestorIds={ _ancestorIds }
+				ancestorOptionIds={ [...ancestorOptionIds, optionId] }
 				optionId={ optionId }
 				childrenOptionIds={ childrenOptionIds }
 				annotationName={ annotationName }
@@ -41,12 +39,12 @@ const OptionList = ({
 	});
 
 	const customizedOptionUI = isDynamicOptionsEnable ? (
-		<ListGroupItem key={ `new-${parentId}` } style={ { paddingLeft: 30 * level } }>
-			<Form inline onSubmit={ (e) => { onOptionCustomizedFormSubmit(e, parentId, value); } }>
+		<ListGroupItem key={ `customized-${parentOptionId}` } style={ { paddingLeft: 30 * level } }>
+			<Form inline onSubmit={ (e) => { onOptionCustomizedFormSubmit(e, parentOptionId, value); } }>
 				<Input
 					className='mr-sm-2'
 					type='text'
-					name={ parentId }
+					name={ parentOptionId }
 					value={ value }
 					onFocus={ onOptionCustomizedInputFocus }
 					onBlur={ onOptionCustomizedInputBlur }
@@ -70,14 +68,14 @@ OptionList.propTypes = {
 	className: PropTypes.string,
 	annotationName: PropTypes.string,
 	level: PropTypes.number,
-	ancestorIds: PropTypes.arrayOf(PropTypes.string),
+	ancestorOptionIds: PropTypes.arrayOf(PropTypes.string),
 	selectedOptionIds: PropTypes.arrayOf(PropTypes.string),
 };
 OptionList.defaultProps = {
 	className: '',
 	annotationName: '',
 	level: 1,
-	ancestorIds: [],
+	ancestorOptionIds: [],
 	selectedOptionIds: [],
 };
 export default OptionList;
