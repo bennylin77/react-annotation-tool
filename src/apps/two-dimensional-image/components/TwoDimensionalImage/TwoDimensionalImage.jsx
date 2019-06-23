@@ -10,14 +10,6 @@ import TwoDimensionalImageContext from './twoDimensionalImageContext';
 import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 import './twoDimensionalImage.scss';
-
-
-
-
-
-
-
-
 import '../Tmp/styles/ImageTool.css';
 import { MdAdd, MdUndo, MdRedo } from 'react-icons/md';
 import { FaCommentAlt } from 'react-icons/fa';
@@ -371,8 +363,10 @@ class TwoDimensionalImage extends Component {
 		const {
 			url,
 			emptyAnnotationReminderText,
+			isDynamicOptionsEnable,
+			disabledOptionLevels,
 
-		 dynamicOptions, disabledOptionLevels = [], categoryOptions = [], viewOnly, hasPreviousButton, hasNextButton, hasSkipButton,
+		 dynamicOptions, categoryOptions = [], viewOnly, hasPreviousButton, hasNextButton, hasSkipButton,
 		} = this.props;
 
 
@@ -382,19 +376,19 @@ class TwoDimensionalImage extends Component {
 			height: annotationHeight,
 			focusing,
 			emptyAnnotationReminderText,
-			onAnnotationItemClick: this.handleListItemClick,
-			onAnnotationItemDeleteClick: this.handleListItemDelete,
+			onAnnotationClick: this.handleListItemClick,
+			onAnnotationDeleteClick: this.handleListItemDelete,
+			isDynamicOptionsEnable,
+			disabledOptionLevels,
+			onOptionSelect: this.handleOptionsSelectOption,
+			onOptionDeleteClick: this.handleOptionsDeleteOption,
 
+			onOptionCustomizedInputFocus: this.handleOptionsInputFocus,
+			onOptionCustomizedInputBlur: this.handleOptionsInputBlur,
+			onOptionCustomizedFormSubmit: this.handleOptionsAddOption,
 
 			dynamicOptions,
-			disabledOptionLevels,
 			optionRoot,
-			onOptionsInputFocus: this.handleOptionsInputFocus,
-			onOptionsInputBlur: this.handleOptionsInputBlur,
-			onOptionsAddOption: this.handleOptionsAddOption,
-			onOptionsSelectOption: this.handleOptionsSelectOption,
-			onOptionsDeleteOption: this.handleOptionsDeleteOption,
-
 		};
 
 
@@ -520,11 +514,15 @@ class TwoDimensionalImage extends Component {
 TwoDimensionalImage.propTypes = {
 	className: PropTypes.string,
 	url: PropTypes.string,
+	isDynamicOptionsEnable: PropTypes.bool,
+	disabledOptionLevels: PropTypes.arrayOf(PropTypes.string),
 	emptyAnnotationReminderText: PropTypes.string,
 };
 TwoDimensionalImage.defaultProps = {
 	className: '',
 	url: '',
+	isDynamicOptionsEnable: false,
+	disabledOptionLevels: [],
 	emptyAnnotationReminderText: '',
 };
 

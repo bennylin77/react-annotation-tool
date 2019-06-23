@@ -37,7 +37,13 @@ const DemoPage = () => {
 						id:
                         '1-1',
 						value: 'Face',
-						options: [],
+						options: [
+							{
+								id: '1-1-1',
+								value: 'Smile',
+								options: [],
+							},
+						],
 					},
 					{ id: '1-2', value: 'Face Reflection', options: [] },
 					{ id: '1-3', value: 'Framed Photo', options: [] },
@@ -187,7 +193,7 @@ const DemoPage = () => {
 					onPreviousClick={ handleSubmit }
 					hasSkipButton
 					onSkipClick={ handleSubmit }
-
+					isDynamicOptionsEnable
 
 
 					annotationWidth={ 500 }
