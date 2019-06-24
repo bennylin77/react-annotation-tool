@@ -9,19 +9,20 @@ import {
 import 'bootstrap/dist/css/bootstrap.css';
 import './twoDimensionalImage.scss';
 import '../Tmp/styles/ImageTool.css';
-import { MdAdd, MdUndo, MdRedo } from 'react-icons/md';
+import { MdAdd } from 'react-icons/md';
 import { FaCommentAlt } from 'react-icons/fa';
-import { ImageAnnotation } from 'models/2DImage.js';
 import { UndoRedo } from 'models/UndoRedo.js';
 import { highContrastingColors as colors } from 'shared/utils/colorUtils';
 import { getRandomInt } from 'shared/utils/mathUtils';
+import { Polygon } from '../../models/polygon';
+import { Vertex } from '../../models/vertex';
 import { getUniqueKey } from '../../utils/utils';
 import MagnifierDropdown from '../MagnifierDropdown/MagnifierDropdown.jsx';
 import TwoDimensionalImageContext from './twoDimensionalImageContext';
 import AnnotationList from '../AnnotationList/AnnotationList.jsx';
+import UndoRedoButton from '../UndoRedoButton/UndoRedoButton.jsx';
 import i18nextInstance from './i18n';
 import Canvas from '../Tmp/Canvas';
-
 
 const SHORTCUTS = {
 	MAGNIFIER: {
@@ -37,8 +38,11 @@ const SHORTCUTS = {
 		SKIP: { key: 'a', code: 65 },
 		TOGGLE_LABEL: { key: 'shift', code: 16 },
 	},
+	UNDO_REDO: {
+		UNDO: { key: 'z', code: 90 },
+		REDO: { key: 'x', code: 88 },
+	},
 };
-
 class TwoDimensionalImage extends Component {
 	constructor(props) {
 		super(props);
@@ -101,11 +105,11 @@ class TwoDimensionalImage extends Component {
 		const { customizedOptionInputFocused } = this.state;
 		if (customizedOptionInputFocused) return;
 		switch (e.keyCode) {
-		case 90:
-			this.handleUndo();
+		case SHORTCUTS.UNDO_REDO.UNDO.code:
+			this.handleUndoClick();
 			break;
-		case 88:
-			this.handleRedo();
+		case SHORTCUTS.UNDO_REDO.REDO.code:
+			this.handleRedoClick();
 			break;
 		case SHORTCUTS.BUTTON.TOGGLE_LABEL.code:
 			this.handleToggleLabel();
@@ -152,7 +156,7 @@ class TwoDimensionalImage extends Component {
 	}
 
 	/* ==================== undo/redo ==================== */
-	handleUndo = () => {
+	handleUndoClick = () => {
 		if (this.UndoRedoState.previous.length === 0) return;
 		this.setState((prevState) => {
 			const state = this.UndoRedoState.undo(prevState);
@@ -160,7 +164,7 @@ class TwoDimensionalImage extends Component {
 		});
 	}
 
-	handleRedo = () => {
+	handleRedoClick = () => {
 		if (this.UndoRedoState.next.length === 0) return;
 		this.setState((prevState) => {
 			const state = this.UndoRedoState.redo(prevState);
@@ -177,7 +181,7 @@ class TwoDimensionalImage extends Component {
 
 	handleCanvasStageMouseDown = (e) => {
 		const stage = e.target.getStage();
-		const timeNow = new Date().getTime().toString(36);
+		const uniqueKey = getUniqueKey();
 		const color = colors[getRandomInt(colors.length)];
 		let { x, y } = stage.getPointerPosition();
 		let vertices;
@@ -190,25 +194,25 @@ class TwoDimensionalImage extends Component {
 			x = x < 0 ? 0 : x; x = x > imageWidth ? imageWidth : x;
 			y = y < 0 ? 0 : y; y = y > imageHeight ? imageHeight : y;
 			this.UndoRedoState.save(prevState);
-			// first add
+			// first time adding
 			if (!focusing) {
 				vertices = [];
-				vertices.push({
-					id: `${timeNow}`, name: `${timeNow}`, x, y,
-				});
-				entities.annotations[`${timeNow}`] = new ImageAnnotation({
-					id: `${timeNow}`, name: `${timeNow}`, color, vertices,
+				vertices.push(Vertex({
+					id: `${uniqueKey}`, name: `${uniqueKey}`, x, y,
+				}));
+				entities.annotations[`${uniqueKey}`] = Polygon({
+					id: `${uniqueKey}`, name: `${uniqueKey}`, color, vertices,
 				});
 				return {
-					focusing: `${timeNow}`,
-					annotations: [...annotations, `${timeNow}`],
+					focusing: `${uniqueKey}`,
+					annotations: [...annotations, `${uniqueKey}`],
 					entities: { ...entities, annotations: entities.annotations },
 				};
 			}
-			// continue add vertex
-			entities.annotations[focusing].vertices.push({
-				id: `${timeNow}`, name: `${timeNow}`, x, y,
-			});
+			// continuing adding
+			entities.annotations[focusing].vertices.push(Vertex({
+				id: `${uniqueKey}`, name: `${uniqueKey}`, x, y,
+			}));
 			return { entities: { ...entities, annotations: entities.annotations } };
 		});
 	}
@@ -454,20 +458,14 @@ class TwoDimensionalImage extends Component {
 												shortcuts={ SHORTCUTS.MAGNIFIER }
 											/>
 										</div>
-									<ButtonGroup className=''>
-										<Button disabled={ this.UndoRedoState.previous.length == 0 } outline onClick={ this.handleUndo }>
-											<MdUndo />
-											{' '}
-											<small>(z)</small>
-										</Button>
-										<Button disabled={ this.UndoRedoState.next.length == 0 } outline onClick={ this.handleRedo }>
-											<MdRedo />
-											{' '}
-											<small>(x)</small>
-										</Button>
-									</ButtonGroup>
-								</div>
-						) }
+										<UndoRedoButton
+											undoRedoState={ this.UndoRedoState }
+											onUndoClick={ this.handleUndoClick }
+											onRedoClick={ this.handleRedoClick }
+											shortcuts={ SHORTCUTS.UNDO_REDO }
+										/>
+									</div>
+								)}
 								<div style={ { position: 'relative' } }>
 									<Canvas
 										url={ url }

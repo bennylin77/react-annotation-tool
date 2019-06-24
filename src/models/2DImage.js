@@ -1,6 +1,6 @@
 export class ImageAnnotation {
 	constructor({
-		id, name, type, color, x, y, width, height, vertices, closed = false, selected = [],
+		id, name, color, vertices, closed = false, selected = [],
 	}) {
 		this.id = id;
 		this.name = name;
