@@ -31,22 +31,20 @@ This tool allows to annotate image with polygon. Users could create new taxonomy
 | `annotationWidth`  | Set the width of image|Number|`400`|
 | `dynamicOptions`       | Enable annotators to add/delete menu options |Boolean|`false`|
 | `disabledOptionLevels` | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|`[]`|
-| `category`  | Category of the image |String|
-| `categoryOptions`  |  Options for categories. [Detail](#categoryOptions)| [String]|`[]`|
 | `menu` | A set of options for tagging the image. [Detail](#menu)|Object||
 | `annotations` | Default annotations. [Detail](#annotations)|[Object]|`[]`|
 | `labeled` | Label the annotaions on the image |Boolean|`false`|
+| `onNextClick`    | Called when Next button is clicked |  
+| `onPreviousClick`| Called when Previous button is clicked|        
+| `onSkipClick`    | Called when Skip button is clicked|        
+
 
 #### `disabledOptionLevels`
 Array of Integer. Start from "1". e.g,
 ```js
 [1, 2]
 ```
-#### `categoryOptions`
-Array of String. e.g,
-```js
-["No Objects", "No Image"]
-```
+
 #### `menu`
 Nested array of object. Each object has `id`, `value` and `options` properties. Must start from object with "root" `value`. e.g,
 ```js
@@ -65,7 +63,7 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
    ]}
 ]}
 ```
-#### `annotations`
+#### `defaultAnnotations`
 ```js
 [{id: "jlhbb0cr", name: "jlhbb0cr", color: "rgba(227,0,255,1)", vertices:
     [{id: "jlhbb0cr", name: "jlhbb0cr", x: 228.8125, y: 126}, 
@@ -84,15 +82,6 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
   selected: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
 ]
 ```
-
-### Callback Props
-
-| Prop           | Description   |
-| -------------  | ------------- | 
-| `onNextClick`    | Called when Next button is clicked |  
-| `onPreviousClick`| Called when Previous button is clicked|        
-| `onSkipClick`    | Called when Skip button is clicked|        
-
 
 ### Output
 
