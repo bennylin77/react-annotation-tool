@@ -42,6 +42,12 @@ const SHORTCUTS = {
 class TwoDimensionalImage extends Component {
 	constructor(props) {
 		super(props);
+		const {
+			defaultAnnotations,
+			islabelOn,
+			imageWidth,
+		} = props;
+
 		const entities = { options: {}, annotations: {} };
 		let rootOptionId = '';
 		let annotations = [];
@@ -58,9 +64,9 @@ class TwoDimensionalImage extends Component {
 			entities.options['0'] = { id: '0', value: 'root', options: [] };
 		}
 
-		if (props.annotations && props.annotations.length !== 0) {
+		if (defaultAnnotations && defaultAnnotations.length !== 0) {
 			const annotation = new schema.Entity('annotations');
-			const normalizedAnn = normalize(props.annotations, [annotation]);
+			const normalizedAnn = normalize(defaultAnnotations, [annotation]);
 			entities.annotations = normalizedAnn.entities.annotations;
 			annotations = normalizedAnn.result;
 		}
@@ -69,13 +75,13 @@ class TwoDimensionalImage extends Component {
 			adding: false,
 			focusing: '',
 			magnifyingPower: 1,
-			labeled: props.labeled || false,
+			islabelOn,
 			entities,
 			customizedOptionInputFocused: false,
 			rootOptionId,
-			annotationScaleFactor: 1,
-			annotationHeight: 0,
-			annotationWidth: props.annotationWidth || 400,
+			imageScaleFactor: 1,
+			imageHeight: 0,
+			imageWidth,
 			annotations,
 		};
 		this.UndoRedoState = new UndoRedo();
@@ -138,7 +144,7 @@ class TwoDimensionalImage extends Component {
 	}
 
 	handleToggleLabel = () => {
-		this.setState(prevState => ({ labeled: !prevState.labeled }));
+		this.setState(prevState => ({ islabelOn: !prevState.islabelOn }));
 	}
 
 	handleAddClick = () => {
@@ -164,9 +170,9 @@ class TwoDimensionalImage extends Component {
 
 	/* ==================== canvas ==================== */
 	handleCanvasImgLoad = (e) => {
-		const { annotationWidth } = this.state;
+		const { imageWidth } = this.state;
 		const { target } = e;
-		this.setState({ annotationScaleFactor: annotationWidth / target.naturalWidth, annotationHeight: target.height });
+		this.setState({ imageScaleFactor: imageWidth / target.naturalWidth, imageHeight: target.height });
 	}
 
 	handleCanvasStageMouseDown = (e) => {
@@ -175,14 +181,14 @@ class TwoDimensionalImage extends Component {
 		const color = colors[getRandomInt(colors.length)];
 		let { x, y } = stage.getPointerPosition();
 		let vertices;
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const {
-				adding, focusing, annotations, entities, annotationWidth, annotationHeight,
+				adding, focusing, annotations, entities, imageWidth, imageHeight,
 			} = prevState;
 			if (!adding) return;
 			// prevent x, y exceeding boundary
-			x = x < 0 ? 0 : x; x = x > annotationWidth ? annotationWidth : x;
-			y = y < 0 ? 0 : y; y = y > annotationHeight ? annotationHeight : y;
+			x = x < 0 ? 0 : x; x = x > imageWidth ? imageWidth : x;
+			y = y < 0 ? 0 : y; y = y > imageHeight ? imageHeight : y;
 			this.UndoRedoState.save(prevState);
 			// first add
 			if (!focusing) {
@@ -224,14 +230,12 @@ class TwoDimensionalImage extends Component {
 		});
 	}
 
-	handleCanvasVertexMouseMove = (e) => {}
-
 	handleCanvasVertexDragEnd = (e) => {
 		const activeVertex = e.target;
 		const group = activeVertex.getParent();
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const {
-				adding, entities, annotationWidth, annotationHeight,
+				adding, entities, imageWidth, imageHeight,
 			} = prevState;
 			if (adding) return;
 			const { annotations } = entities;
@@ -239,8 +243,8 @@ class TwoDimensionalImage extends Component {
 				if (v.name !== activeVertex.name()) return v;
 				// prevent x, y exceeding boundary
 				let x = activeVertex.x(); let y = activeVertex.y();
-				x = x < 0 ? 0 : x; x = x > annotationWidth ? annotationWidth : x;
-				y = y < 0 ? 0 : y; y = y > annotationHeight ? annotationHeight : y;
+				x = x < 0 ? 0 : x; x = x > imageWidth ? imageWidth : x;
+				y = y < 0 ? 0 : y; y = y > imageHeight ? imageHeight : y;
 				return { ...v, x, y };
 			});
 			annotations[group.name()].vertices = vertices;
@@ -313,7 +317,7 @@ class TwoDimensionalImage extends Component {
 
 	handleSubmit = (type) => {
 		const {
-			annotationScaleFactor, annotationWidth, annotationHeight, annotations, entities, rootOptionId,
+			imageScaleFactor, imageWidth, imageHeight, annotations, entities, rootOptionId,
 		} = this.state;
 		const { url, onSkipClick, onPreviousClick, onNextClick } = this.props;
 		const annotation = new schema.Entity('annotations');
@@ -325,17 +329,17 @@ class TwoDimensionalImage extends Component {
 		switch (type) {
 		case 'Skip':
 			onSkipClick({
-				url, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
 			});
 			break;
 		case 'Previous':
 			onPreviousClick({
-				url, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
 			});
 			break;
 		case 'Next':
 			onNextClick({
-				url, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
 			});
 			break;
 		default:
@@ -348,9 +352,9 @@ class TwoDimensionalImage extends Component {
 			adding,
 			focusing,
 			magnifyingPower,
-			labeled,
-			annotationWidth,
-			annotationHeight,
+			islabelOn,
+			imageWidth,
+			imageHeight,
 			annotations,
 			entities,
 			rootOptionId,
@@ -369,7 +373,7 @@ class TwoDimensionalImage extends Component {
 		const twoDimensionalImageContext = {
 			entities,
 			annotations,
-			height: annotationHeight,
+			height: imageHeight,
 			focusing,
 			emptyAnnotationReminderText,
 			onAnnotationClick: this.handleAnnotationClick,
@@ -388,7 +392,7 @@ class TwoDimensionalImage extends Component {
 		const toggleLabelButtonUI = (
 			<Button color='link' onClick={ this.handleToggleLabel } className='label-button d-flex align-items-center'>
 				<FaCommentAlt className='pr-1' />
-				{labeled ? 'On' : 'Off'}
+				{islabelOn ? 'On' : 'Off'}
 				<small className='pl-1'>{`(${SHORTCUTS.BUTTON.TOGGLE_LABEL.key})`}</small>
 			</Button>
 		);
@@ -467,14 +471,14 @@ class TwoDimensionalImage extends Component {
 								<div style={ { position: 'relative' } }>
 									<Canvas
 										url={ url }
-										width={ annotationWidth }
-										height={ annotationHeight }
+										width={ imageWidth }
+										height={ imageHeight }
 										adding={ adding }
 										annotations={ annotations }
 										entities={ entities }
 										focusing={ focusing }
 										power={ magnifyingPower }
-										labeled={ labeled }
+										labeled={ islabelOn }
 										onImgLoad={ this.handleCanvasImgLoad }
 										onStageMouseDown={ this.handleCanvasStageMouseDown }
 										onVertexMouseDown={ this.handleCanvasVertexMouseDown }
@@ -503,7 +507,9 @@ class TwoDimensionalImage extends Component {
 
 TwoDimensionalImage.propTypes = {
 	className: PropTypes.string,
+	defaultAnnotations: PropTypes.arrayOf(PropTypes.object),
 	url: PropTypes.string,
+	imageWidth: PropTypes.number,
 	isDynamicOptionsEnable: PropTypes.bool,
 	disabledOptionLevels: PropTypes.arrayOf(PropTypes.string),
 	emptyAnnotationReminderText: PropTypes.string,
@@ -514,11 +520,15 @@ TwoDimensionalImage.propTypes = {
 	onPreviousClick: PropTypes.func,
 	onSkipClick: PropTypes.func,
 	onNextClick: PropTypes.func,
+	islabelOn: PropTypes.bool,
 };
 TwoDimensionalImage.defaultProps = {
 	className: '',
+	defaultAnnotations: [],
 	url: '',
+	imageWidth: 400,
 	isDynamicOptionsEnable: false,
+	islabelOn: false,
 	disabledOptionLevels: [],
 	emptyAnnotationReminderText: '',
 	isViewOnlyMode: false,

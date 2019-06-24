@@ -194,16 +194,14 @@ const DemoPage = () => {
 					hasSkipButton
 					onSkipClick={ handleSubmit }
 					isDynamicOptionsEnable
-
-					annotationWidth={ 600 }
-					menu={ menu }
-					category='Others'
-					categoryOptions={ ['No Objects', 'No Image'] }
-					annotations={ imageAnnotations }
-					disabledOptionLevels={ [] }
-					dynamicOptions
-					labeled
+					defaultAnnotations={ imageAnnotations }
+					islabelOn
 					url='https://www.gtice.is/wp-content/uploads/2015/06/Snaefellsnes_Tour_Kirkjufell_by_KateI.jpg'
+					imageWidth={ 600 }
+
+
+					menu={ menu }
+					disabledOptionLevels={ [] }
 				/>
 			</div>
 			<div className='mb-5'>
