@@ -6,8 +6,6 @@ import {
 	Button,
 	ButtonGroup,
 } from 'reactstrap';
-import TwoDimensionalImageContext from './twoDimensionalImageContext';
-import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 import './twoDimensionalImage.scss';
 import '../Tmp/styles/ImageTool.css';
@@ -15,12 +13,14 @@ import { MdAdd, MdUndo, MdRedo } from 'react-icons/md';
 import { FaCommentAlt } from 'react-icons/fa';
 import { ImageAnnotation } from 'models/2DImage.js';
 import { UndoRedo } from 'models/UndoRedo.js';
+import { highContrastingColors as colors } from 'shared/utils/colorUtils';
+import { getRandomInt } from 'shared/utils/mathUtils';
+import { getUniqueKey } from '../../utils/utils';
 import MagnifierDropdown from '../MagnifierDropdown/MagnifierDropdown.jsx';
-import { colors, getRandomInt } from '../Tmp/helper.js';
+import TwoDimensionalImageContext from './twoDimensionalImageContext';
+import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import i18nextInstance from './i18n';
-
 import Canvas from '../Tmp/Canvas';
-import List from '../Tmp/List';
 
 
 const SHORTCUTS = {
@@ -31,9 +31,11 @@ const SHORTCUTS = {
 		'4X': { key: '4', code: 52 },
 	},
 	BUTTON: {
+		ADD: { key: 'c', code: 67 },
 		PREVIOUS: { key: 's', code: 83 },
 		NEXT: { key: 'd', code: 68 },
 		SKIP: { key: 'a', code: 65 },
+		TOGGLE_LABEL: { key: 'shift', code: 16 },
 	},
 };
 
@@ -41,7 +43,7 @@ class TwoDimensionalImage extends Component {
 	constructor(props) {
 		super(props);
 		const entities = { options: {}, annotations: {} };
-		let optionRoot = '';
+		let rootOptionId = '';
 		let annotations = [];
 		// normalize
 		if (props.menu && Object.keys(props.menu).length !== 0) {
@@ -50,9 +52,9 @@ class TwoDimensionalImage extends Component {
 			option.define({ options });
 			const normalizedMenu = normalize(props.menu, option);
 			entities.options = normalizedMenu.entities.options;
-			optionRoot = normalizedMenu.result;
+			rootOptionId = normalizedMenu.result;
 		} else {
-			optionRoot = '0';
+			rootOptionId = '0';
 			entities.options['0'] = { id: '0', value: 'root', options: [] };
 		}
 
@@ -62,20 +64,19 @@ class TwoDimensionalImage extends Component {
 			entities.annotations = normalizedAnn.entities.annotations;
 			annotations = normalizedAnn.result;
 		}
-		// console.log(annotations)
+
 		this.state = {
 			adding: false,
 			focusing: '',
 			magnifyingPower: 1,
 			labeled: props.labeled || false,
 			entities,
-			inputFocused: false,
-			optionRoot,
-								   annotationScaleFactor: 1,
+			customizedOptionInputFocused: false,
+			rootOptionId,
+			annotationScaleFactor: 1,
 			annotationHeight: 0,
 			annotationWidth: props.annotationWidth || 400,
 			annotations,
-								   category: props.category || '',
 		};
 		this.UndoRedoState = new UndoRedo();
 	}
@@ -88,10 +89,11 @@ class TwoDimensionalImage extends Component {
 		document.removeEventListener('keydown', this.handleKeydown, false);
 	}
 
+	/* ==================== shortkey ==================== */
 	handleKeydown = (e) => {
 		const { onPreviousClick, onSkipClick, onNextClick } = this.props;
-		const { inputFocused } = this.state;
-		if (inputFocused) return;
+		const { customizedOptionInputFocused } = this.state;
+		if (customizedOptionInputFocused) return;
 		switch (e.keyCode) {
 		case 90:
 			this.handleUndo();
@@ -99,10 +101,10 @@ class TwoDimensionalImage extends Component {
 		case 88:
 			this.handleRedo();
 			break;
-		case 16:
+		case SHORTCUTS.BUTTON.TOGGLE_LABEL.code:
 			this.handleToggleLabel();
 			break;
-		case 67:
+		case SHORTCUTS.BUTTON.ADD.code:
 			this.handleAddClick();
 			break;
 		case SHORTCUTS.BUTTON.PREVIOUS.code:
@@ -130,27 +132,23 @@ class TwoDimensionalImage extends Component {
 		}
 	}
 
-	handleMagnifierChange = (p) => {
-		this.setState((prevState, props) => ({ magnifyingPower: p }));
+	/* ==================== control ==================== */
+	handleMagnifierChange = (power) => {
+		this.setState({ magnifyingPower: power });
 	}
 
 	handleToggleLabel = () => {
-		this.setState((prevState, props) => ({ labeled: !prevState.labeled }));
+		this.setState(prevState => ({ labeled: !prevState.labeled }));
 	}
 
 	handleAddClick = () => {
-		this.setState((prevState, props) => ({ adding: !prevState.adding, focusing: '', category: 'Others' }));
-	}
-
-	/* ==================== chose category ==================== */
-	handleCategorySelect = (category) => {
-		this.setState({ category, annotations: [] });
+		this.setState(prevState => ({ adding: !prevState.adding, focusing: '' }));
 	}
 
 	/* ==================== undo/redo ==================== */
 	handleUndo = () => {
 		if (this.UndoRedoState.previous.length === 0) return;
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const state = this.UndoRedoState.undo(prevState);
 			return { ...state };
 		});
@@ -158,7 +156,7 @@ class TwoDimensionalImage extends Component {
 
 	handleRedo = () => {
 		if (this.UndoRedoState.next.length === 0) return;
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const state = this.UndoRedoState.redo(prevState);
 			return { ...state };
 		});
@@ -196,10 +194,9 @@ class TwoDimensionalImage extends Component {
 					id: `${timeNow}`, name: `${timeNow}`, color, vertices,
 				});
 				return {
-					category: 'Others',
-								 focusing: `${timeNow}`,
-								 annotations: [...annotations, `${timeNow}`],
-								 entities: { ...entities, annotations: entities.annotations },
+					focusing: `${timeNow}`,
+					annotations: [...annotations, `${timeNow}`],
+					entities: { ...entities, annotations: entities.annotations },
 				};
 			}
 			// continue add vertex
@@ -259,12 +256,10 @@ class TwoDimensionalImage extends Component {
 		});
 	}
 
-	/* ==================== list ==================== */
-	handleListItemClick = (name) => {
-		this.setState({ focusing: name });
-	}
+	/* ==================== anootation list ==================== */
+	handleAnnotationClick = (name) => { this.setState({ focusing: name }); };
 
-	handleListItemDelete = (name) => {
+	handleAnnotationDeleteClick = (name) => {
 		this.setState((prevState) => {
 			const { entities } = prevState;
 			const { annotations } = entities;
@@ -275,30 +270,24 @@ class TwoDimensionalImage extends Component {
 		});
 	}
 
-	/* ==================== options ==================== */
-	handleOptionsInputFocus = (e) => {
-		this.setState({ inputFocused: true });
-	}
+	/* ==================== option list ==================== */
+	handleOptionCustomizedInputFocus = () => this.setState({ customizedOptionInputFocused: true });
 
-	handleOptionsInputBlur = (e) => {
-		this.setState({ inputFocused: false });
-	}
+	handleOptionCustomizedInputBlur = () => this.setState({ customizedOptionInputFocused: false });
 
-	// new option
-	handleOptionsAddOption = (e, parentId, value) => {
+	handleOptionCustomizedFormSubmit = (e, parentId, value) => {
 		e.preventDefault();
 		this.setState((prevState) => {
 			const { entities } = prevState;
 			const { options } = entities;
-			const id = new Date().getTime().toString(36);
-			options[id] = { id, value, options: [] };
-			options[parentId].options.push(id);
+			const uniqueKey = getUniqueKey();
+			options[uniqueKey] = { id: uniqueKey, value, options: [] };
+			options[parentId].options.push(uniqueKey);
 			return { entities: { ...entities, options } };
 		});
 	}
 
-	// select item
-	handleOptionsSelectOption = (name, selectedIds) => {
+	handleOptionSelect = (name, selectedIds) => {
 		this.setState((prevState) => {
 			const { entities } = prevState;
 			let selected = selectedIds.map(id => entities.options[id]);
@@ -308,8 +297,7 @@ class TwoDimensionalImage extends Component {
 		});
 	}
 
-	// delete item
-	handleOptionsDeleteOption = (deleteIds) => {
+	handleOptionDeleteClick = (deleteIds) => {
 		this.setState((prevState) => {
 			const { entities } = prevState;
 			const { options } = entities;
@@ -325,29 +313,29 @@ class TwoDimensionalImage extends Component {
 
 	handleSubmit = (type) => {
 		const {
-			annotationScaleFactor, annotationWidth, annotationHeight, annotations, category, entities, optionRoot,
+			annotationScaleFactor, annotationWidth, annotationHeight, annotations, entities, rootOptionId,
 		} = this.state;
-		const { url } = this.props;
+		const { url, onSkipClick, onPreviousClick, onNextClick } = this.props;
 		const annotation = new schema.Entity('annotations');
 		const denormalizedAnnotations = denormalize({ annotations }, { annotations: [annotation] }, entities).annotations;
 		const option = new schema.Entity('options');
 		const options = new schema.Array(option);
 		option.define({ options });
-		const denormalizedMenu = denormalize({ menu: optionRoot }, { menu: option }, entities).menu;
+		const denormalizedMenu = denormalize({ menu: rootOptionId }, { menu: option }, entities).menu;
 		switch (type) {
 		case 'Skip':
-			this.props.onSkipClick({
-				url, category, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+			onSkipClick({
+				url, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
 			});
 			break;
 		case 'Previous':
-			this.props.onPreviousClick({
-				url, category, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+			onPreviousClick({
+				url, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
 			});
 			break;
 		case 'Next':
-			this.props.onNextClick({
-				url, category, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+			onNextClick({
+				url, annotationScaleFactor, annotationWidth, annotationHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
 			});
 			break;
 		default:
@@ -355,10 +343,17 @@ class TwoDimensionalImage extends Component {
 		}
 	}
 
-
 	render() {
 		const {
-			adding, focusing, magnifyingPower, labeled, annotationWidth, annotationHeight, annotations, category, entities, optionRoot,
+			adding,
+			focusing,
+			magnifyingPower,
+			labeled,
+			annotationWidth,
+			annotationHeight,
+			annotations,
+			entities,
+			rootOptionId,
 		} = this.state;
 		const {
 			className,
@@ -366,42 +361,35 @@ class TwoDimensionalImage extends Component {
 			emptyAnnotationReminderText,
 			isDynamicOptionsEnable,
 			disabledOptionLevels,
-
-		 dynamicOptions, categoryOptions = [], viewOnly, hasPreviousButton, hasNextButton, hasSkipButton,
+			isViewOnlyMode,
+			hasPreviousButton,
+			hasNextButton,
+			hasSkipButton,
 		} = this.props;
-
-
 		const twoDimensionalImageContext = {
 			entities,
 			annotations,
 			height: annotationHeight,
 			focusing,
 			emptyAnnotationReminderText,
-			onAnnotationClick: this.handleListItemClick,
-			onAnnotationDeleteClick: this.handleListItemDelete,
+			onAnnotationClick: this.handleAnnotationClick,
+			onAnnotationDeleteClick: this.handleAnnotationDeleteClick,
 			isDynamicOptionsEnable,
 			disabledOptionLevels,
-			onOptionSelect: this.handleOptionsSelectOption,
-			onOptionDeleteClick: this.handleOptionsDeleteOption,
-
-			onOptionCustomizedInputFocus: this.handleOptionsInputFocus,
-			onOptionCustomizedInputBlur: this.handleOptionsInputBlur,
-			onOptionCustomizedFormSubmit: this.handleOptionsAddOption,
-
-			dynamicOptions,
-			optionRoot,
+			onOptionSelect: this.handleOptionSelect,
+			onOptionDeleteClick: this.handleOptionDeleteClick,
+			onOptionCustomizedInputFocus: this.handleOptionCustomizedInputFocus,
+			onOptionCustomizedInputBlur: this.handleOptionCustomizedInputBlur,
+			onOptionCustomizedFormSubmit: this.handleOptionCustomizedFormSubmit,
+			rootOptionId,
 		};
-
-
 		document.body.style.cursor = adding ? 'crosshair' : 'default';
-
-
 
 		const toggleLabelButtonUI = (
 			<Button color='link' onClick={ this.handleToggleLabel } className='label-button d-flex align-items-center'>
 				<FaCommentAlt className='pr-1' />
 				{labeled ? 'On' : 'Off'}
-				<small className='pl-1'>(shift)</small>
+				<small className='pl-1'>{`(${SHORTCUTS.BUTTON.TOGGLE_LABEL.key})`}</small>
 			</Button>
 		);
 		const previousButtonUI = hasPreviousButton ? (
@@ -422,29 +410,46 @@ class TwoDimensionalImage extends Component {
 				<small>{`(${SHORTCUTS.BUTTON.SKIP.key})`}</small>
 			</Button>
 		) : '';
+
+		const addButtonUI = (
+			<Button
+				outline
+				className='d-flex align-items-center mb-3 two-dimensional-image__add-button'
+				color='primary'
+				onClick={ () => this.handleAddClick() }
+			>
+				<MdAdd />
+				{adding ? 'Adding Annotation' : 'Add Annotation'}
+				<small>{`(${SHORTCUTS.BUTTON.ADD.key})`}</small>
+			</Button>
+		);
+
 		const rootClassName = `two-dimensional-image${className ? ` ${className}` : ''}`;
 
 		return (
 			<I18nextProvider i18n={ i18nextInstance }>
 				<TwoDimensionalImageContext.Provider value={ twoDimensionalImageContext }>
-				<div className={ rootClassName }>
-					{ !viewOnly && (
-						<div className='d-flex justify-content-center pb-3'>
-							<ButtonGroup>
-								{ previousButtonUI }
-								{ nextButtonUI }
-							</ButtonGroup>
-						</div>
-					)}
-					<div className='d-flex flex-wrap justify-content-around py-3' style={ { background: 'rgb(246, 246, 246)' } }>
-						<div className='mb-3'>
-							{ !viewOnly
-								&& (
-								<div className='mb-3 d-flex'>
-									<div className='d-flex mr-auto'>
-										{toggleLabelButtonUI}
-										<MagnifierDropdown handleChange={ this.handleMagnifierChange } power={ magnifyingPower } shortcuts={ SHORTCUTS.MAGNIFIER } />
-									</div>
+					<div className={ rootClassName }>
+						{ !isViewOnlyMode && (
+							<div className='d-flex justify-content-center pb-3'>
+								<ButtonGroup>
+									{ previousButtonUI }
+									{ nextButtonUI }
+								</ButtonGroup>
+							</div>
+						)}
+						<div className='d-flex flex-wrap justify-content-around py-3 two-dimensional-image__image-canvas-container'>
+							<div className='mb-3'>
+								{ !isViewOnlyMode && (
+									<div className='mb-3 d-flex'>
+										<div className='d-flex mr-auto'>
+											{toggleLabelButtonUI}
+											<MagnifierDropdown
+												handleChange={ this.handleMagnifierChange }
+												power={ magnifyingPower }
+												shortcuts={ SHORTCUTS.MAGNIFIER }
+											/>
+										</div>
 									<ButtonGroup className=''>
 										<Button disabled={ this.UndoRedoState.previous.length == 0 } outline onClick={ this.handleUndo }>
 											<MdUndo />
@@ -459,58 +464,42 @@ class TwoDimensionalImage extends Component {
 									</ButtonGroup>
 								</div>
 						) }
-						<div style={ { position: 'relative' } }>
-							<Canvas
-								url={ url }
-								width={ annotationWidth }
-								height={ annotationHeight }
-								adding={ adding }
-								annotations={ annotations }
-								entities={ entities }
-								focusing={ focusing }
-								power={ magnifyingPower }
-								labeled={ labeled }
-								onImgLoad={ this.handleCanvasImgLoad }
-								onStageMouseDown={ this.handleCanvasStageMouseDown }
-								onVertexMouseDown={ this.handleCanvasVertexMouseDown }
-								onVertexDragEnd={ this.handleCanvasVertexDragEnd }
-								onLabelMouseDown={ this.handleCanvasFocusing }
-								onLineMouseDown={ this.handleCanvasFocusing }
-							/>
-						</div>
-					</div>
-					{ !viewOnly
-					&& (
-						<div className='mb-3'>
-							<div className='d-flex justify-content-between mb-3'>
-								<Button outline color='primary' onClick={ () => this.handleAddClick() } className='d-flex align-items-center mr-2'>
-									<MdAdd />
-									{' '}
-									{adding ? 'Adding Annotation' : 'Add Annotation'}
-									<small style={ { paddingLeft: 5 } }>(c)</small>
-								</Button>
-								<ButtonGroup>
-									{ categoryOptions.map(c => <Button outline active={ category == c } color='info' key={ c } onClick={ () => this.handleCategorySelect(c) }>{c}</Button>) }
-								</ButtonGroup>
+								<div style={ { position: 'relative' } }>
+									<Canvas
+										url={ url }
+										width={ annotationWidth }
+										height={ annotationHeight }
+										adding={ adding }
+										annotations={ annotations }
+										entities={ entities }
+										focusing={ focusing }
+										power={ magnifyingPower }
+										labeled={ labeled }
+										onImgLoad={ this.handleCanvasImgLoad }
+										onStageMouseDown={ this.handleCanvasStageMouseDown }
+										onVertexMouseDown={ this.handleCanvasVertexMouseDown }
+										onVertexDragEnd={ this.handleCanvasVertexDragEnd }
+										onLabelMouseDown={ this.handleCanvasFocusing }
+										onLineMouseDown={ this.handleCanvasFocusing }
+									/>
+								</div>
 							</div>
-							<AnnotationList />
+							{ !isViewOnlyMode && (
+								<div className='mb-3'>
+									{addButtonUI}
+									<AnnotationList />
+								</div>
+							)}
 						</div>
-					)
-					}
-				</div>
-					{ !viewOnly && (
-						<div className='d-flex justify-content-center pt-3'>
-							{ skipButtonUI }
-						</div>
-					)}
-			</div>
+						{ !isViewOnlyMode && (
+							<div className='d-flex justify-content-center pt-3'>{ skipButtonUI }</div>
+						)}
+					</div>
 				</TwoDimensionalImageContext.Provider>
 			</I18nextProvider>
 		);
 	}
 }
-
-
 
 TwoDimensionalImage.propTypes = {
 	className: PropTypes.string,
@@ -518,6 +507,13 @@ TwoDimensionalImage.propTypes = {
 	isDynamicOptionsEnable: PropTypes.bool,
 	disabledOptionLevels: PropTypes.arrayOf(PropTypes.string),
 	emptyAnnotationReminderText: PropTypes.string,
+	isViewOnlyMode: PropTypes.bool,
+	hasPreviousButton: PropTypes.bool,
+	hasNextButton: PropTypes.bool,
+	hasSkipButton: PropTypes.bool,
+	onPreviousClick: PropTypes.func,
+	onSkipClick: PropTypes.func,
+	onNextClick: PropTypes.func,
 };
 TwoDimensionalImage.defaultProps = {
 	className: '',
@@ -525,7 +521,12 @@ TwoDimensionalImage.defaultProps = {
 	isDynamicOptionsEnable: false,
 	disabledOptionLevels: [],
 	emptyAnnotationReminderText: '',
+	isViewOnlyMode: false,
+	hasPreviousButton: false,
+	hasNextButton: false,
+	hasSkipButton: false,
+	onPreviousClick: () => {},
+	onSkipClick: () => {},
+	onNextClick: () => {},
 };
-
-
 export default TwoDimensionalImage;

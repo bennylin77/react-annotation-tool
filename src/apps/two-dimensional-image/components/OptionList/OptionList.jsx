@@ -10,7 +10,7 @@ const OptionList = ({
 	className,
 	annotationName,
 	ancestorOptionIds,
-	selectedOptionIds,
+	selectedOptions,
 	level,
 }) => {
 	const [value, setValue] = useState('');
@@ -28,12 +28,13 @@ const OptionList = ({
 		const childrenOptionIds = options[optionId].options;
 		return (
 			<OptionItem
+				key={ optionId }
 				level={ level }
 				ancestorOptionIds={ [...ancestorOptionIds, optionId] }
 				optionId={ optionId }
 				childrenOptionIds={ childrenOptionIds }
 				annotationName={ annotationName }
-				selectedOptionIds={ selectedOptionIds }
+				selectedOptions={ selectedOptions }
 			/>
 		);
 	});
@@ -69,13 +70,13 @@ OptionList.propTypes = {
 	annotationName: PropTypes.string,
 	level: PropTypes.number,
 	ancestorOptionIds: PropTypes.arrayOf(PropTypes.string),
-	selectedOptionIds: PropTypes.arrayOf(PropTypes.string),
+	selectedOptions: PropTypes.arrayOf(PropTypes.object),
 };
 OptionList.defaultProps = {
 	className: '',
 	annotationName: '',
 	level: 1,
 	ancestorOptionIds: [],
-	selectedOptionIds: [],
+	selectedOptions: [],
 };
 export default OptionList;

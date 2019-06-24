@@ -1,0 +1,11 @@
+.two-dimensional-image .two-dimensional-image {
+    &__add-button {
+        small {
+            padding-left: 5px;
+        }
+    }
+
+    &__image-canvas-container {
+        background: rgb(246, 246, 246);
+    }
+}

@@ -63,7 +63,7 @@ MagnifierDropdown.propTypes = {
 	className: PropTypes.string,
 	size: PropTypes.string,
 	power: PropTypes.number,
-	shortcuts: PropTypes.arrayOf(PropTypes.object),
+	shortcuts: PropTypes.object,
 	handleChange: PropTypes.func,
 };
 MagnifierDropdown.defaultProps = {

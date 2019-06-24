@@ -195,7 +195,6 @@ const DemoPage = () => {
 					onSkipClick={ handleSubmit }
 					isDynamicOptionsEnable
 
-
 					annotationWidth={ 600 }
 					menu={ menu }
 					category='Others'

@@ -5,6 +5,7 @@ const resources = {
 		twoDimensionalImage: {
 			magnifierOff: 'Off',
 			magnifierPower: 'Power',
+			optionNotSelected: 'Not selected',
 		},
 	},
 };

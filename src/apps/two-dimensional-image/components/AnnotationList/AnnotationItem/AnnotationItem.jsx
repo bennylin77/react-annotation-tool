@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { Button, ListGroupItem } from 'reactstrap';
 import { MdDelete } from 'react-icons/md';
 import TwoDimensionalImageContext from '../../TwoDimensionalImage/twoDimensionalImageContext';
@@ -15,14 +16,15 @@ const AnnotationItem = ({
 		focusing,
 		onAnnotationClick,
 		onAnnotationDeleteClick,
-		optionRoot,
+		rootOptionId,
 	} = twoDimensionalImageContext;
 	const {
 		name,
-		selected: selectedOptionIds,
+		selected: selectedOptions,
 		color,
 		closed,
 	} = itemData;
+	const { t } = useTranslation('twoDimensionalImage');
 
 	let rootClassName = `annotation-item${className ? ` ${className}` : ''}`;
 	if (name !== focusing) {
@@ -30,7 +32,7 @@ const AnnotationItem = ({
 			<ListGroupItem className={ rootClassName } name={ name } onClick={ () => onAnnotationClick(name) } action>
 				<div className='d-flex w-100 justify-content-between align-items-center'>
 					<div>
-						{selectedOptionIds.length > 0 ? `${selectedOptionIds[selectedOptionIds.length - 1].value}` : 'Not selected' }
+						{selectedOptions.length > 0 ? `${selectedOptions[selectedOptions.length - 1].value}` : t('optionNotSelected') }
 						<small className='pl-1' style={ { color: '#545454' } }><mark>{closed ? 'polygon' : 'line'}</mark></small>
 					</div>
 				</div>
@@ -43,14 +45,14 @@ const AnnotationItem = ({
 		<ListGroupItem className={ rootClassName } name={ name } style={ { borderColor: color.replace(/,1\)/, ',.3)') } }>
 			<div className='d-flex align-items-center'>
 				<h5 className='annotation-item__title mr-auto'>
-					{selectedOptionIds.length > 0 ? `${selectedOptionIds[selectedOptionIds.length - 1].value}` : 'Not selected' }
+					{selectedOptions.length > 0 ? `${selectedOptions[selectedOptions.length - 1].value}` : t('optionNotSelected') }
 					<small className='pl-1' style={ { color: '#545454' } }><mark>{closed ? 'polygon' : 'line'}</mark></small>
 				</h5>
 				<Button className='d-flex align-items-center annotation-item__delete-button' color='link' onClick={ () => { onAnnotationDeleteClick(name); } }>
 					<MdDelete />
 				</Button>
 			</div>
-			<OptionList annotationName={ name } ancestorOptionIds={ [optionRoot] } selectedOptionIds={ selectedOptionIds } />
+			<OptionList annotationName={ name } ancestorOptionIds={ [rootOptionId] } selectedOptions={ selectedOptions } />
 		</ListGroupItem>
 	);
 };

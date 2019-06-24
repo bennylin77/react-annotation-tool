@@ -15,7 +15,7 @@ const OptionItem = ({
 	optionId,
 	childrenOptionIds,
 	annotationName,
-	selectedOptionIds,
+	selectedOptions,
 }) => {
 	const [isChildrenOpen, setIsChildrenOpen] = useState(false);
 	const twoDimensionalImageContext = useContext(TwoDimensionalImageContext);
@@ -31,7 +31,7 @@ const OptionItem = ({
 	const rootClassName = `option-item${className ? ` ${className}` : ''}`;
 
 	let itemStyle = { paddingLeft: 30 * level };
-	itemStyle = selectedOptionIds.length > 0 && optionId === selectedOptionIds[selectedOptionIds.length - 1].id ?
+	itemStyle = selectedOptions.length > 0 && optionId === selectedOptions[selectedOptions.length - 1].id ?
 		{ ...itemStyle, background: '#e4e4e4' } :
 		itemStyle;
 
@@ -71,7 +71,7 @@ const OptionItem = ({
 					annotationName={ annotationName }
 					ancestorOptionIds={ ancestorOptionIds }
 					level={ level + 1 }
-					selectedOptionIds={ selectedOptionIds }
+					selectedOptions={ selectedOptions }
 				/>
 			</Collapse>
 		</Fragment>
@@ -83,8 +83,8 @@ OptionItem.propTypes = {
 	annotationName: PropTypes.string,
 	optionId: PropTypes.string,
 	level: PropTypes.number,
+	selectedOptions: PropTypes.arrayOf(PropTypes.object),
 	ancestorOptionIds: PropTypes.arrayOf(PropTypes.string),
-	selectedOptionIds: PropTypes.arrayOf(PropTypes.string),
 	childrenOptionIds: PropTypes.arrayOf(PropTypes.string),
 };
 OptionItem.defaultProps = {
@@ -92,8 +92,8 @@ OptionItem.defaultProps = {
 	annotationName: '',
 	optionId: '',
 	level: 1,
+	selectedOptions: [],
 	ancestorOptionIds: [],
-	selectedOptionIds: [],
 	childrenOptionIds: [],
 };
 export default OptionItem;
