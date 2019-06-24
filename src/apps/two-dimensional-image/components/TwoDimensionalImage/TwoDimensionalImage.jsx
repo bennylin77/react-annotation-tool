@@ -48,7 +48,7 @@ class TwoDimensionalImage extends Component {
 		super(props);
 		const {
 			defaultAnnotations,
-			islabelOn,
+			isLabelOn,
 			imageWidth,
 		} = props;
 
@@ -79,7 +79,7 @@ class TwoDimensionalImage extends Component {
 			adding: false,
 			focusing: '',
 			magnifyingPower: 1,
-			islabelOn,
+			isLabelOn,
 			entities,
 			customizedOptionInputFocused: false,
 			rootOptionId,
@@ -148,7 +148,7 @@ class TwoDimensionalImage extends Component {
 	}
 
 	handleToggleLabel = () => {
-		this.setState(prevState => ({ islabelOn: !prevState.islabelOn }));
+		this.setState(prevState => ({ isLabelOn: !prevState.isLabelOn }));
 	}
 
 	handleAddClick = () => {
@@ -356,7 +356,7 @@ class TwoDimensionalImage extends Component {
 			adding,
 			focusing,
 			magnifyingPower,
-			islabelOn,
+			isLabelOn,
 			imageWidth,
 			imageHeight,
 			annotations,
@@ -396,7 +396,7 @@ class TwoDimensionalImage extends Component {
 		const toggleLabelButtonUI = (
 			<Button color='link' onClick={ this.handleToggleLabel } className='label-button d-flex align-items-center'>
 				<FaCommentAlt className='pr-1' />
-				{islabelOn ? 'On' : 'Off'}
+				{isLabelOn ? 'On' : 'Off'}
 				<small className='pl-1'>{`(${SHORTCUTS.BUTTON.TOGGLE_LABEL.key})`}</small>
 			</Button>
 		);
@@ -476,7 +476,7 @@ class TwoDimensionalImage extends Component {
 										entities={ entities }
 										focusing={ focusing }
 										power={ magnifyingPower }
-										labeled={ islabelOn }
+										labeled={ isLabelOn }
 										onImgLoad={ this.handleCanvasImgLoad }
 										onStageMouseDown={ this.handleCanvasStageMouseDown }
 										onVertexMouseDown={ this.handleCanvasVertexMouseDown }
@@ -505,9 +505,9 @@ class TwoDimensionalImage extends Component {
 
 TwoDimensionalImage.propTypes = {
 	className: PropTypes.string,
-	defaultAnnotations: PropTypes.arrayOf(PropTypes.object),
 	url: PropTypes.string,
 	imageWidth: PropTypes.number,
+	defaultAnnotations: PropTypes.arrayOf(PropTypes.object),
 	isDynamicOptionsEnable: PropTypes.bool,
 	disabledOptionLevels: PropTypes.arrayOf(PropTypes.string),
 	emptyAnnotationReminderText: PropTypes.string,
@@ -518,16 +518,16 @@ TwoDimensionalImage.propTypes = {
 	onPreviousClick: PropTypes.func,
 	onSkipClick: PropTypes.func,
 	onNextClick: PropTypes.func,
-	islabelOn: PropTypes.bool,
+	isLabelOn: PropTypes.bool,
 };
 TwoDimensionalImage.defaultProps = {
 	className: '',
-	defaultAnnotations: [],
 	url: '',
 	imageWidth: 400,
+	defaultAnnotations: [],
 	isDynamicOptionsEnable: false,
-	islabelOn: false,
 	disabledOptionLevels: [],
+	isLabelOn: false,
 	emptyAnnotationReminderText: '',
 	isViewOnlyMode: false,
 	hasPreviousButton: false,
