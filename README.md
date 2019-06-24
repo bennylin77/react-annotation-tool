@@ -20,7 +20,7 @@ import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ```
 
 ## Image Annotation Tool
-This tool allows to annotate image with polygon. Users could create new taxonomy if they feel the annotated part of image is not fit into any default options. It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
+This tool allows to annotate images with polygons. Users could create new taxonomy if they feel the annotation does not fit into any default options. It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
 
 
 ### Config Props
