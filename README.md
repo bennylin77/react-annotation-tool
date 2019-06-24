@@ -27,26 +27,29 @@ This tool allows to annotate image with polygon. Users could create new taxonomy
 
 | Prop             | Description   | Format | Default |
 | -------------    | ------------- | ------------- | -------------| 
-| `url`              | Source of annotated image |String||
-| `annotationWidth`  | Set the width of image|Number|`400`|
-| `dynamicOptions`       | Enable annotators to add/delete menu options |Boolean|`false`|
-| `disabledOptionLevels` | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|`[]`|
-| `category`  | Category of the image |String|
-| `categoryOptions`  |  Options for categories. [Detail](#categoryOptions)| [String]|`[]`|
-| `menu` | A set of options for tagging the image. [Detail](#menu)|Object||
-| `annotations` | Default annotations. [Detail](#annotations)|[Object]|`[]`|
-| `labeled` | Label the annotaions on the image |Boolean|`false`|
+| `className`      |               |String         |`''`          |
+| `url`            | Source of annotated image|String|`''`        |
+| `imageWidth`     | Set the width of image|Number |`400`         |
+| `defaultAnnotations` | Default annotations. [Detail](#annotations)|[Object]|`[]`|
+| `menu`           | A set of options for tagging the image. [Detail](#menu)|Object||
+| `isDynamicOptionsEnable` | Enable to add/delete menu options |Boolean|`false`|
+| `disabledOptionLevels`   | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|`[]`|
+| `isLabelOn`        | Enable showing labels of annotaions on the image |Boolean|`false`|
+| `isViewOnlyMode`   | View only|Boolean|`false`|
+| `hasPreviousButton`| Enable Previous button |Boolean|`false`|
+| `onPreviousClick`  | Called when Previous button is clicked|Function|`()=>{}`| 
+| `hasNextButton`  | Enable Next button  |Boolean|`false`|
+| `onNextClick`    | Called when Next button is clicked |Function|`()=>{}`|
+| `hasSkipButton`  | Enable Skip button |Boolean|`false`|`()=>{}`|    
+| `onSkipClick`    | Called when Skip button is clicked|Function|`()=>{}`|       
+
 
 #### `disabledOptionLevels`
 Array of Integer. Start from "1". e.g,
 ```js
 [1, 2]
 ```
-#### `categoryOptions`
-Array of String. e.g,
-```js
-["No Objects", "No Image"]
-```
+
 #### `menu`
 Nested array of object. Each object has `id`, `value` and `options` properties. Must start from object with "root" `value`. e.g,
 ```js
@@ -65,7 +68,7 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
    ]}
 ]}
 ```
-#### `annotations`
+#### `defaultAnnotations`
 ```js
 [{id: "jlhbb0cr", name: "jlhbb0cr", color: "rgba(227,0,255,1)", vertices:
     [{id: "jlhbb0cr", name: "jlhbb0cr", x: 228.8125, y: 126}, 
@@ -85,23 +88,13 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 ]
 ```
 
-### Callback Props
-
-| Prop           | Description   |
-| -------------  | ------------- | 
-| `onNextClick`    | Called when Next button is clicked |  
-| `onPreviousClick`| Called when Previous button is clicked|        
-| `onSkipClick`    | Called when Skip button is clicked|        
-
-
 ### Output
 
 ```js
 {url: "https://images.pexels.com/photos/57750/pexels-photo-57750.jpeg", 
- category: "Others", 
- annotationScaleFactor: 0.26666666666666666, /* annotation width divided by nature width */
- annotationWidth: 500, 
- annotationHeight: 400, 
+ imageScaleFactor: 0.26666666666666666, /* annotation width divided by nature width */
+ imageWidth: 500, 
+ imageHeight: 400, 
  annotations: [{ id: "jluju651", name: "jluju651", color: "rgba(0,4,255,1)", 
                  vertices: [{id:"jluju651", name:"jluju651", x: 124.5625, y: 26}, 
                             {id:"jlujucus", name:"jlujucus", x: 139.296875, y: 22},        
