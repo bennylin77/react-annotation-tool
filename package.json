@@ -8,6 +8,7 @@
     "start": "webpack-dev-server --config ./webpack.dev.js",
     "build": "webpack --max_old_space_size=4096 --config ./webpack.prod.js --progress --profile --colors"
   },
+  "homepage": "https://chi-lin.com/projects/react-annotation-tool",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com:bennylin77/react-annotation-tool.git"
