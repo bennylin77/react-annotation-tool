@@ -8,7 +8,6 @@ import {
 } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import './twoDimensionalImage.scss';
-import '../Tmp/styles/ImageTool.css';
 import { MdAdd } from 'react-icons/md';
 import { FaCommentAlt } from 'react-icons/fa';
 import { UndoRedo } from 'models/UndoRedo.js';
@@ -21,8 +20,8 @@ import MagnifierDropdown from '../MagnifierDropdown/MagnifierDropdown.jsx';
 import TwoDimensionalImageContext from './twoDimensionalImageContext';
 import AnnotationList from '../AnnotationList/AnnotationList.jsx';
 import UndoRedoButton from '../UndoRedoButton/UndoRedoButton.jsx';
+import Canvas from '../Canvas/Canvas.jsx';
 import i18nextInstance from './i18n';
-import Canvas from '../Tmp/Canvas';
 
 const SHORTCUTS = {
 	MAGNIFIER: {
@@ -189,7 +188,7 @@ class TwoDimensionalImage extends Component {
 			const {
 				adding, focusing, annotations, entities, imageWidth, imageHeight,
 			} = prevState;
-			if (!adding) return;
+			if (!adding) return {};
 			// prevent x, y exceeding boundary
 			x = x < 0 ? 0 : x; x = x > imageWidth ? imageWidth : x;
 			y = y < 0 ? 0 : y; y = y > imageHeight ? imageHeight : y;
@@ -220,7 +219,7 @@ class TwoDimensionalImage extends Component {
 	handleCanvasVertexMouseDown = (e) => {
 		const activeVertex = e.target;
 		const group = activeVertex.getParent();
-		this.setState((prevState, props) => {
+		this.setState((prevState) => {
 			const { adding, focusing, entities } = prevState;
 			if (adding) {
 				const { annotations } = entities;
@@ -228,7 +227,7 @@ class TwoDimensionalImage extends Component {
 					annotations[focusing].closed = true;
 					return { adding: false, entities: { ...entities, annotations } };
 				}
-				return;
+				return {};
 			}
 			return { focusing: group.name() };
 		});
@@ -241,7 +240,7 @@ class TwoDimensionalImage extends Component {
 			const {
 				adding, entities, imageWidth, imageHeight,
 			} = prevState;
-			if (adding) return;
+			if (adding) return {};
 			const { annotations } = entities;
 			const vertices = annotations[group.name()].vertices.map((v) => {
 				if (v.name !== activeVertex.name()) return v;
@@ -259,7 +258,7 @@ class TwoDimensionalImage extends Component {
 	handleCanvasFocusing = (e) => {
 		const activeShape = e.target;
 		this.setState((prevState) => {
-			if (prevState.adding) return;
+			if (prevState.adding) return {};
 			return { focusing: activeShape.name() };
 		});
 	}
@@ -375,10 +374,14 @@ class TwoDimensionalImage extends Component {
 			hasSkipButton,
 		} = this.props;
 		const twoDimensionalImageContext = {
+			url,
 			entities,
 			annotations,
 			height: imageHeight,
+			width: imageWidth,
 			focusing,
+			isLabelOn,
+			magnifyingPower,
 			emptyAnnotationReminderText,
 			onAnnotationClick: this.handleAnnotationClick,
 			onAnnotationDeleteClick: this.handleAnnotationDeleteClick,
@@ -389,12 +392,18 @@ class TwoDimensionalImage extends Component {
 			onOptionCustomizedInputFocus: this.handleOptionCustomizedInputFocus,
 			onOptionCustomizedInputBlur: this.handleOptionCustomizedInputBlur,
 			onOptionCustomizedFormSubmit: this.handleOptionCustomizedFormSubmit,
+			onCanvasStageMouseDown: this.handleCanvasStageMouseDown,
+			onCanvasVertexMouseDown: this.handleCanvasVertexMouseDown,
+			onCanvasVertexDragEnd: this.handleCanvasVertexDragEnd,
+			onCanvasLabelMouseDown: this.handleCanvasFocusing,
+			onCanvasLineMouseDown: this.handleCanvasFocusing,
+			handleCanvasImgLoad: this.handleCanvasImgLoad,
 			rootOptionId,
 		};
 		document.body.style.cursor = adding ? 'crosshair' : 'default';
 
 		const toggleLabelButtonUI = (
-			<Button color='link' onClick={ this.handleToggleLabel } className='label-button d-flex align-items-center'>
+			<Button color='link' onClick={ this.handleToggleLabel } className='two-dimensional-image__label-button d-flex align-items-center'>
 				<FaCommentAlt className='pr-1' />
 				{isLabelOn ? 'On' : 'Off'}
 				<small className='pl-1'>{`(${SHORTCUTS.BUTTON.TOGGLE_LABEL.key})`}</small>
@@ -468,21 +477,11 @@ class TwoDimensionalImage extends Component {
 								)}
 								<div style={ { position: 'relative' } }>
 									<Canvas
-										url={ url }
-										width={ imageWidth }
-										height={ imageHeight }
-										adding={ adding }
-										annotations={ annotations }
+										isAdding={ adding }
 										entities={ entities }
-										focusing={ focusing }
+										focusedName={ focusing }
 										power={ magnifyingPower }
-										labeled={ isLabelOn }
-										onImgLoad={ this.handleCanvasImgLoad }
-										onStageMouseDown={ this.handleCanvasStageMouseDown }
-										onVertexMouseDown={ this.handleCanvasVertexMouseDown }
-										onVertexDragEnd={ this.handleCanvasVertexDragEnd }
-										onLabelMouseDown={ this.handleCanvasFocusing }
-										onLineMouseDown={ this.handleCanvasFocusing }
+										isLabelOn={ isLabelOn }
 									/>
 								</div>
 							</div>

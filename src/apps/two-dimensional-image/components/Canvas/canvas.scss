@@ -1,0 +1,11 @@
+.two-dimensional-image .canvas {
+	&__img {
+		visibility: hidden;
+	}
+
+	.konva-wrapper {
+		background: transparent;
+		position: absolute;
+		top: 0;
+	}
+}

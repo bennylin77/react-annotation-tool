@@ -8,4 +8,14 @@
     &__image-canvas-container {
         background: rgb(246, 246, 246);
     }
+
+    &__label-button {
+        color: #000;
+
+        &:hover,
+        &:active,
+        &:focus {
+        	text-decoration: none;
+        }
+    }
 }
