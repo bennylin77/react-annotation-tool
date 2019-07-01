@@ -23,7 +23,7 @@ const DemoPage = () => {
 		}, {
 			id: 'jlyjm7r8', name: 'jlyjm7r8', x: 356.79999923706055, y: 289.8999938964844,
 		}],
-		selected: [{ id: '0', value: 'root' }, { id: '2', value: 'Text' }, { id: '2-15', value: 'Suspicious' }],
+		selectedOptions: [{ id: '0', value: 'root' }, { id: '2', value: 'Text' }, { id: '2-15', value: 'Suspicious' }],
 	}];
 	const options = {
 		id: '0',

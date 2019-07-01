@@ -6,13 +6,13 @@ const Polygon = ({
 	color,
 	isClosed = false,
 	vertices = [],
-	selected = [],
+	selectedOptions = [],
 }) => {
 	const state = {
 		color,
 		isClosed,
 		vertices,
-		selected,
+		selectedOptions,
 	};
 	return Object.assign(state, withBasicIdentities({ id, name }));
 };

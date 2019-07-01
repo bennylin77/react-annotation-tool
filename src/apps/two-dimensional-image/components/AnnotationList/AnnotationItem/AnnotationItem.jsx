@@ -20,7 +20,7 @@ const AnnotationItem = ({
 	} = twoDimensionalImageContext;
 	const {
 		name,
-		selected: selectedOptions,
+		selectedOptions,
 		color,
 		isClosed,
 	} = itemData;

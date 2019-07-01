@@ -297,9 +297,8 @@ class TwoDimensionalImage extends Component {
 	handleOptionSelect = (name, selectedIds) => {
 		this.setState((prevState) => {
 			const { entities } = prevState;
-			let selected = selectedIds.map(id => entities.options[id]);
-			selected = selected.map(s => ({ id: s.id, value: s.value }));
-			const updatedAnn = { ...entities.annotations[name], selected };
+			const selectedOptions = selectedIds.map(id => entities.options[id]).map(s => ({ id: s.id, value: s.value }));
+			const updatedAnn = { ...entities.annotations[name], selectedOptions };
 			return { entities: { ...entities, annotations: { ...entities.annotations, [name]: updatedAnn } } };
 		});
 	}

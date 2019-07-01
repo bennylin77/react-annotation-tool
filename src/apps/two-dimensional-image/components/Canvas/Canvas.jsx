@@ -75,7 +75,7 @@ const Canvas = ({
 	} = twoDimensionalImageContext;
 
 	const annotationsUI = annotations.map((annotationId) => {
-		const { color, name, selected, isClosed, vertices } = entities.annotations[annotationId];
+		const { color, name, selectedOptions, isClosed, vertices } = entities.annotations[annotationId];
 		const colorWithOpacity = color.replace(/,1\)/, ',.15)');
 
 		const verticesUI = [];
@@ -160,7 +160,7 @@ const Canvas = ({
 					name={ name }
 					padding={ 5 }
 					fontFamily='Calibri'
-					text={ selected.length > 0 ? `${selected[selected.length - 1].value}` : 'Not selected' }
+					text={ selectedOptions.length > 0 ? `${selectedOptions[selectedOptions.length - 1].value}` : 'Not selected' }
 					fontSize={ 16 }
 					lineHeight={ 1.2 }
 					fill='#fff'
