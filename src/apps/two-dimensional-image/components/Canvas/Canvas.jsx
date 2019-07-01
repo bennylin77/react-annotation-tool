@@ -53,7 +53,6 @@ const handleVertexDragMove = (e, isAdding, entities) => {
 const Canvas = ({
 	className,
 	focusedName,
-	isAdding,
 }) => {
 	const imgRef = useRef(null);
 	const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
@@ -66,6 +65,7 @@ const Canvas = ({
 		entities,
 		magnifyingPower,
 		isLabelOn,
+		isAdding,
 		handleCanvasImgLoad: onImgLoad,
 		onCanvasStageMouseDown: onStageMouseDown,
 		onCanvasVertexMouseDown: onVertexMouseDown,
