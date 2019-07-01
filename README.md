@@ -20,19 +20,19 @@ import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ```
 
 ## Image Annotation Tool
-This tool allows to annotate image with polygon. Users could create new taxonomy if they feel the annotated part of image is not fit into any default options. It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
+This tool allows to annotate images with polygons. Users could create new taxonomy if they feel the annotation does not fit into any default options. It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
 
 
-### Config Props
+### Props
 
 | Prop             | Description   | Format | Default |
 | -------------    | ------------- | ------------- | -------------| 
 | `className`      |               |String         |`''`          |
 | `url`            | Source of annotated image|String|`''`        |
 | `imageWidth`     | Set the width of image|Number |`400`         |
-| `defaultAnnotations` | Default annotations. [Detail](#annotations)|[Object]|`[]`|
-| `menu`           | A set of options for tagging the image. [Detail](#menu)|Object||
-| `isDynamicOptionsEnable` | Enable to add/delete menu options |Boolean|`false`|
+| `defaultAnnotations` | Default annotations. [Detail](#defaultAnnotations)|[Object]|`[]`|
+| `menu`           | A set of options for classifying annotations. [Detail](#menu)|Object||
+| `isDynamicOptionsEnable` | Enable adding/deleting options of menu |Boolean|`false`|
 | `disabledOptionLevels`   | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|`[]`|
 | `isLabelOn`        | Enable showing labels of annotaions on the image |Boolean|`false`|
 | `isViewOnlyMode`   | View only|Boolean|`false`|
@@ -43,11 +43,24 @@ This tool allows to annotate image with polygon. Users could create new taxonomy
 | `hasSkipButton`  | Enable Skip button |Boolean|`false`|`()=>{}`|    
 | `onSkipClick`    | Called when Skip button is clicked|Function|`()=>{}`|       
 
-
-#### `disabledOptionLevels`
-Array of Integer. Start from "1". e.g,
+#### `defaultAnnotations`
 ```js
-[1, 2]
+[{id: "jlhbb0cr", name: "jlhbb0cr", color: "rgba(227,0,255,1)", vertices:
+    [{id: "jlhbb0cr", name: "jlhbb0cr", x: 228.8125, y: 126}, 
+     {id: "jlhbb0ng", name: "jlhbb0ng", x: 254.5, y: 131}, 
+     {id: "jlhbb0uh", name: "jlhbb0uh", x: 269.5, y: 145}, 
+     {id: "jlhbb11f", name: "jlhbb11f", x: 280.5, y: 173},
+     {id: "jlhbb17w", name: "jlhbb17w", x: 286.5, y: 215}, 
+     {id: "jlhbb1dw", name: "jlhbb1dw", x: 287.5, y: 249},
+     {id: "jlhbb360", name: "jlhbb360", x: 220.5, y: 141}],
+  selected: [{id: "0", value: "root"}, {id: "1", value: "Electronic"}, {id: "1-1", value: "Laptop"}]},
+ {id: "jlhbb6tx", name: "jlhbb6tx", color: "rgba(255,219,0,1)", vertices:    
+    [{id: "jlhbb6tx", name: "jlhbb6tx", x: 103.5, y: 345}, 
+     {id: "jlhbb7hm", name: "jlhbb7hm", x: 354.5, y: 306},   
+     {id: "jlhbb80e", name: "jlhbb80e", x: 385.5, y: 452}, 
+     {id: "jlhbb8st", name: "jlhbb8st", x: 116.5, y: 479}],
+  selected: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
+]
 ```
 
 #### `menu`
@@ -68,24 +81,11 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
    ]}
 ]}
 ```
-#### `defaultAnnotations`
+
+#### `disabledOptionLevels`
+Array of Integer. Start from "1". e.g,
 ```js
-[{id: "jlhbb0cr", name: "jlhbb0cr", color: "rgba(227,0,255,1)", vertices:
-    [{id: "jlhbb0cr", name: "jlhbb0cr", x: 228.8125, y: 126}, 
-     {id: "jlhbb0ng", name: "jlhbb0ng", x: 254.5, y: 131}, 
-     {id: "jlhbb0uh", name: "jlhbb0uh", x: 269.5, y: 145}, 
-     {id: "jlhbb11f", name: "jlhbb11f", x: 280.5, y: 173},
-     {id: "jlhbb17w", name: "jlhbb17w", x: 286.5, y: 215}, 
-     {id: "jlhbb1dw", name: "jlhbb1dw", x: 287.5, y: 249},
-     {id: "jlhbb360", name: "jlhbb360", x: 220.5, y: 141}],
-  selected: [{id: "0", value: "root"}, {id: "1", value: "Electronic"}, {id: "1-1", value: "Laptop"}]},
- {id: "jlhbb6tx", name: "jlhbb6tx", color: "rgba(255,219,0,1)", vertices:    
-    [{id: "jlhbb6tx", name: "jlhbb6tx", x: 103.5, y: 345}, 
-     {id: "jlhbb7hm", name: "jlhbb7hm", x: 354.5, y: 306},   
-     {id: "jlhbb80e", name: "jlhbb80e", x: 385.5, y: 452}, 
-     {id: "jlhbb8st", name: "jlhbb8st", x: 116.5, y: 479}],
-  selected: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
-]
+[1, 2]
 ```
 
 ### Output
@@ -122,33 +122,33 @@ Nested array of object. Each object has `id`, `value` and `options` properties. 
 Vidoe tool allows you to annotate object in videos via bounding box. The tool originally is designed for annotating cell videos. 
 
 ### Data Formats
-| Name             | Description   |
-| -------------    | ------------- |
-|Annotation|The basic unit of the annotation result.|
-|Incident|Each annotation contains mutiple incidents. Each incident records the time and some information (e.g., position, size, status...) when the annotation is manipulate by the users (e.g., split, move, resize...).|
-|Parent(parentName)|If you enable Split functionality, this property store the parent who generates current annotation.|
-|Children(childrenNames)|If you enable Split functionality, this property store the children belong to current annotation.|
+| Name          | Description   |
+| ------------- | ------------- |
+|Annotation     |The basic unit of the annotation result|
+|Incident       |Each annotation contains mutiple incidents. Each incident records the time and some information (e.g., position, size, status...) when the annotation is manipulate by the users (e.g., split, move, resize...)|
+|Parent(parentName)|If you enable Split functionality, this property stores the parent who generates current annotation|
+|Children(childrenNames)|If you enable Split functionality, this property store the children belong to current annotation|
 
 ### Props
 
 | Prop             | Description   | Data Type | Default |
 | -------------    | ------------- | ------------- | -------------| 
-| `className`              | |String|`''`|
-| `url` | Video url |String|`''`|
+| `className`      | |String|`''`|
+| `url`            | Video url |String|`''`|
 | `defaultAnnotations`  | Default annotations. [Detail](#defaultAnnotations)|[Objects]|`[]`|
-| `videoWidth`       | Video width |Number|`400`|
+| `videoWidth`          | Video width |Number|`400`|
 | `isDefaultAnnotationsManipulatable` |Allow users to edit default annotations|Boolean|`false`|
-| `previewHeader`  | Header for preview |String|`''`|
-| `previewNoticeList`  | Content for preview | [String]|`[]`|
-| `isEmptyCheckEnable` | Force users to annotate at least one object|Boolean|`false`|
-| `isSplitEnable` | Enable Split button for each annotation |Boolean|`false`|,
-| `isShowHideEnable` | Enable Delete button for each annotation |Boolean|`false`|,
-| `hasReview` | Enable review after users click submit button |Boolean|`false`|
-| `numAnnotationsToBeAdded` | Number of annotations users can be added |Number|`1000`|
-| `onSubmit` | The callback function to handle submitted result |Function|`()=>{}`|
-| `emptyCheckSubmissionWarningText` | Text for warming empty annotaion |String|`''`|
-| `emptyCheckAnnotationItemWarningText` | Text for warming non-incident anntation |String|`''`|
-| `emptyAnnotationReminderText` | Text for warming empty annotaion on the control panel |String|`''`|
+| `previewHeader`                     | Header for preview |String|`''`|
+| `previewNoticeList`                 | Content for preview | [String]|`[]`|
+| `isEmptyCheckEnable`                | Force users to annotate at least one object|Boolean|`false`|
+| `isSplitEnable`                     | Enable Split button for each annotation |Boolean|`false`|,
+| `isShowHideEnable`                  | Enable Show/Hide button for each annotation |Boolean|`false`|,
+| `hasReview`                         | Enable review after users click submit button |Boolean|`false`|
+| `numAnnotationsToBeAdded`           | Number of annotations users can be added |Number|`1000`|
+| `onSubmit`                          | The callback function to handle submitted result |Function|`()=>{}`|
+| `emptyCheckSubmissionWarningText`   | Text for warming empty annotaion |String|`''`|
+| `emptyCheckAnnotationItemWarningText`  | Text for warming non-incident anntation |String|`''`|
+| `emptyAnnotationReminderText`          | Text for warming empty annotaion on the control panel |String|`''`|
 
 
 #### `defaultAnnotations`
