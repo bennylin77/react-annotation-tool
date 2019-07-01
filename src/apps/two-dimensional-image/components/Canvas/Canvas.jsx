@@ -75,7 +75,7 @@ const Canvas = ({
 	} = twoDimensionalImageContext;
 
 	const annotationsUI = annotations.map((annotationId) => {
-		const { color, name, selected, closed, vertices } = entities.annotations[annotationId];
+		const { color, name, selected, isClosed, vertices } = entities.annotations[annotationId];
 		const colorWithOpacity = color.replace(/,1\)/, ',.15)');
 
 		const verticesUI = [];
@@ -171,7 +171,7 @@ const Canvas = ({
 			<Line
 				name={ name }
 				points={ linePoints }
-				closed={ closed }
+				closed={ isClosed }
 				fill={ focusedName === name ? colorWithOpacity : '' }
 				stroke={ color }
 				strokeWidth={ 1 }

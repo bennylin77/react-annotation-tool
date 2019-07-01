@@ -4,13 +4,13 @@ const Polygon = ({
 	id,
 	name,
 	color,
-	closed = false,
+	isClosed = false,
 	vertices = [],
 	selected = [],
 }) => {
 	const state = {
 		color,
-		closed,
+		isClosed,
 		vertices,
 		selected,
 	};

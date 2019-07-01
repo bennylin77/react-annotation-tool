@@ -22,7 +22,7 @@ const AnnotationItem = ({
 		name,
 		selected: selectedOptions,
 		color,
-		closed,
+		isClosed,
 	} = itemData;
 	const { t } = useTranslation('twoDimensionalImage');
 
@@ -33,7 +33,7 @@ const AnnotationItem = ({
 				<div className='d-flex w-100 justify-content-between align-items-center'>
 					<div>
 						{selectedOptions.length > 0 ? `${selectedOptions[selectedOptions.length - 1].value}` : t('optionNotSelected') }
-						<small className='pl-1' style={ { color: '#545454' } }><mark>{closed ? 'polygon' : 'line'}</mark></small>
+						<small className='pl-1' style={ { color: '#545454' } }><mark>{isClosed ? 'polygon' : 'line'}</mark></small>
 					</div>
 				</div>
 			</ListGroupItem>
@@ -46,7 +46,7 @@ const AnnotationItem = ({
 			<div className='d-flex align-items-center'>
 				<h5 className='annotation-item__title mr-auto'>
 					{selectedOptions.length > 0 ? `${selectedOptions[selectedOptions.length - 1].value}` : t('optionNotSelected') }
-					<small className='pl-1' style={ { color: '#545454' } }><mark>{closed ? 'polygon' : 'line'}</mark></small>
+					<small className='pl-1' style={ { color: '#545454' } }><mark>{isClosed ? 'polygon' : 'line'}</mark></small>
 				</h5>
 				<Button className='d-flex align-items-center annotation-item__delete-button' color='link' onClick={ () => { onAnnotationDeleteClick(name); } }>
 					<MdDelete />

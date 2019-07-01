@@ -224,7 +224,7 @@ class TwoDimensionalImage extends Component {
 			if (isAdding) {
 				const { annotations } = entities;
 				if (group.name() === focusedName && annotations[focusedName].vertices[0].name === activeVertex.name()) {
-					annotations[focusedName].closed = true;
+					annotations[focusedName].isClosed = true;
 					return { isAdding: false, entities: { ...entities, annotations } };
 				}
 				return {};
