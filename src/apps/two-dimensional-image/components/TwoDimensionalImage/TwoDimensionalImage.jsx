@@ -57,14 +57,14 @@ class TwoDimensionalImage extends Component {
 		// normalize
 		if (props.options && Object.keys(props.options).length !== 0) {
 			const option = new schema.Entity('options');
-			const options = new schema.Array(option);
-			option.define({ options });
+			const children = new schema.Array(option);
+			option.define({ children });
 			const normalizedOptions = normalize(props.options, option);
 			entities.options = normalizedOptions.entities.options;
 			rootOptionId = normalizedOptions.result;
 		} else {
 			rootOptionId = '0';
-			entities.options['0'] = { id: '0', value: 'root', options: [] };
+			entities.options['0'] = { id: '0', value: 'root', children: [] };
 		}
 
 		if (defaultAnnotations && defaultAnnotations.length !== 0) {
@@ -288,8 +288,8 @@ class TwoDimensionalImage extends Component {
 			const { entities } = prevState;
 			const { options } = entities;
 			const uniqueKey = getUniqueKey();
-			options[uniqueKey] = { id: uniqueKey, value, options: [] };
-			options[parentId].options.push(uniqueKey);
+			options[uniqueKey] = { id: uniqueKey, value, children: [] };
+			options[parentId].children.push(uniqueKey);
 			return { entities: { ...entities, options } };
 		});
 	}
@@ -308,8 +308,8 @@ class TwoDimensionalImage extends Component {
 			const { entities } = prevState;
 			const { options } = entities;
 			delete options[deleteIds[deleteIds.length - 1]];
-			const i = options[deleteIds[deleteIds.length - 2]].options.indexOf(deleteIds[deleteIds.length - 1]);
-			options[deleteIds[deleteIds.length - 2]].options.splice(i, 1);
+			const i = options[deleteIds[deleteIds.length - 2]].children.indexOf(deleteIds[deleteIds.length - 1]);
+			options[deleteIds[deleteIds.length - 2]].children.splice(i, 1);
 			return { entities: { ...entities, options } };
 		});
 	}
@@ -325,8 +325,8 @@ class TwoDimensionalImage extends Component {
 		const annotation = new schema.Entity('annotations');
 		const denormalizedAnnotations = denormalize({ annotations }, { annotations: [annotation] }, entities).annotations;
 		const option = new schema.Entity('options');
-		const options = new schema.Array(option);
-		option.define({ options });
+		const children = new schema.Array(option);
+		option.define({ children });
 		const denormalizedOptions = denormalize({ options: rootOptionId }, { options: option }, entities).options;
 		switch (type) {
 		case 'Skip':
@@ -517,6 +517,11 @@ TwoDimensionalImage.propTypes = {
 	onSkipClick: PropTypes.func,
 	onNextClick: PropTypes.func,
 	isLabelOn: PropTypes.bool,
+	options: PropTypes.shape({
+		id: PropTypes.string,
+		value: PropTypes.string,
+		children: PropTypes.array,
+	}),
 };
 TwoDimensionalImage.defaultProps = {
 	className: '',
@@ -534,5 +539,6 @@ TwoDimensionalImage.defaultProps = {
 	onPreviousClick: () => {},
 	onSkipClick: () => {},
 	onNextClick: () => {},
+	options: {},
 };
 export default TwoDimensionalImage;

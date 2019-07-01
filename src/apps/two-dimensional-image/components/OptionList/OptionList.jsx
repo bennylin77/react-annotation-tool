@@ -24,8 +24,8 @@ const OptionList = ({
 	} = twoDimensionalImageContext;
 
 	const parentOptionId = ancestorOptionIds[ancestorOptionIds.length - 1];
-	const itemListUI = options[parentOptionId].options.map((optionId) => {
-		const childrenOptionIds = options[optionId].options;
+	const itemListUI = options[parentOptionId].children.map((optionId) => {
+		const childrenOptionIds = options[optionId].children;
 		return (
 			<OptionItem
 				key={ optionId }
