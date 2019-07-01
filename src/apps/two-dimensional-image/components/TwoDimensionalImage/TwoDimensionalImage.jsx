@@ -76,7 +76,7 @@ class TwoDimensionalImage extends Component {
 
 		this.state = {
 			isAdding: false,
-			focusing: '',
+			focusedName: '',
 			magnifyingPower: 1,
 			isLabelOn,
 			entities,
@@ -151,7 +151,7 @@ class TwoDimensionalImage extends Component {
 	}
 
 	handleAddClick = () => {
-		this.setState(prevState => ({ isAdding: !prevState.isAdding, focusing: '' }));
+		this.setState(prevState => ({ isAdding: !prevState.isAdding, focusedName: '' }));
 	}
 
 	/* ==================== undo/redo ==================== */
@@ -186,7 +186,7 @@ class TwoDimensionalImage extends Component {
 		let vertices;
 		this.setState((prevState) => {
 			const {
-				isAdding, focusing, annotations, entities, imageWidth, imageHeight,
+				isAdding, focusedName, annotations, entities, imageWidth, imageHeight,
 			} = prevState;
 			if (!isAdding) return {};
 			// prevent x, y exceeding boundary
@@ -194,7 +194,7 @@ class TwoDimensionalImage extends Component {
 			y = y < 0 ? 0 : y; y = y > imageHeight ? imageHeight : y;
 			this.UndoRedoState.save(prevState);
 			// first time adding
-			if (!focusing) {
+			if (!focusedName) {
 				vertices = [];
 				vertices.push(Vertex({
 					id: `${uniqueKey}`, name: `${uniqueKey}`, x, y,
@@ -203,13 +203,13 @@ class TwoDimensionalImage extends Component {
 					id: `${uniqueKey}`, name: `${uniqueKey}`, color, vertices,
 				});
 				return {
-					focusing: `${uniqueKey}`,
+					focusedName: `${uniqueKey}`,
 					annotations: [...annotations, `${uniqueKey}`],
 					entities: { ...entities, annotations: entities.annotations },
 				};
 			}
 			// continuing adding
-			entities.annotations[focusing].vertices.push(Vertex({
+			entities.annotations[focusedName].vertices.push(Vertex({
 				id: `${uniqueKey}`, name: `${uniqueKey}`, x, y,
 			}));
 			return { entities: { ...entities, annotations: entities.annotations } };
@@ -220,16 +220,16 @@ class TwoDimensionalImage extends Component {
 		const activeVertex = e.target;
 		const group = activeVertex.getParent();
 		this.setState((prevState) => {
-			const { isAdding, focusing, entities } = prevState;
+			const { isAdding, focusedName, entities } = prevState;
 			if (isAdding) {
 				const { annotations } = entities;
-				if (group.name() === focusing && annotations[focusing].vertices[0].name === activeVertex.name()) {
-					annotations[focusing].closed = true;
+				if (group.name() === focusedName && annotations[focusedName].vertices[0].name === activeVertex.name()) {
+					annotations[focusedName].closed = true;
 					return { isAdding: false, entities: { ...entities, annotations } };
 				}
 				return {};
 			}
-			return { focusing: group.name() };
+			return { focusedName: group.name() };
 		});
 	}
 
@@ -259,12 +259,12 @@ class TwoDimensionalImage extends Component {
 		const activeShape = e.target;
 		this.setState((prevState) => {
 			if (prevState.isAdding) return {};
-			return { focusing: activeShape.name() };
+			return { focusedName: activeShape.name() };
 		});
 	}
 
 	/* ==================== anootation list ==================== */
-	handleAnnotationClick = (name) => { this.setState({ focusing: name }); };
+	handleAnnotationClick = (name) => { this.setState({ focusedName: name }); };
 
 	handleAnnotationDeleteClick = (name) => {
 		this.setState((prevState) => {
@@ -353,7 +353,7 @@ class TwoDimensionalImage extends Component {
 	render() {
 		const {
 			isAdding,
-			focusing,
+			focusedName,
 			magnifyingPower,
 			isLabelOn,
 			imageWidth,
@@ -380,7 +380,7 @@ class TwoDimensionalImage extends Component {
 			annotations,
 			height: imageHeight,
 			width: imageWidth,
-			focusing,
+			focusedName,
 			isLabelOn,
 			magnifyingPower,
 			emptyAnnotationReminderText,
@@ -479,7 +479,7 @@ class TwoDimensionalImage extends Component {
 								<div style={ { position: 'relative' } }>
 									<Canvas
 										entities={ entities }
-										focusedName={ focusing }
+										focusedName={ focusedName }
 										power={ magnifyingPower }
 										isLabelOn={ isLabelOn }
 									/>

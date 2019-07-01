@@ -13,7 +13,7 @@ const AnnotationItem = ({
 }) => {
 	const twoDimensionalImageContext = useContext(TwoDimensionalImageContext);
 	const {
-		focusing,
+		focusedName,
 		onAnnotationClick,
 		onAnnotationDeleteClick,
 		rootOptionId,
@@ -27,7 +27,7 @@ const AnnotationItem = ({
 	const { t } = useTranslation('twoDimensionalImage');
 
 	let rootClassName = `annotation-item${className ? ` ${className}` : ''}`;
-	if (name !== focusing) {
+	if (name !== focusedName) {
 		return (
 			<ListGroupItem className={ rootClassName } name={ name } onClick={ () => onAnnotationClick(name) } action>
 				<div className='d-flex w-100 justify-content-between align-items-center'>

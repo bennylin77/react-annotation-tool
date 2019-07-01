@@ -14,7 +14,7 @@ const AnnotationList = ({
 		entities,
 		annotations,
 		height,
-		focusing,
+		focusedName,
 		emptyAnnotationReminderText,
 	} = twoDimensionalImageContext;
 	useEffect(() => {
@@ -27,10 +27,10 @@ const AnnotationList = ({
 		};
 	});
 	useEffect(() => {
-		if (focusing) {
-			scroller.scrollTo(focusing, { containerId: 'annotation-list' });
+		if (focusedName) {
+			scroller.scrollTo(focusedName, { containerId: 'annotation-list' });
 		}
-	}, [focusing]);
+	}, [focusedName]);
 
 
 	const itemsUI = annotations.map(ann => (
