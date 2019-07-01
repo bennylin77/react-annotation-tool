@@ -55,13 +55,13 @@ class TwoDimensionalImage extends Component {
 		let rootOptionId = '';
 		let annotations = [];
 		// normalize
-		if (props.menu && Object.keys(props.menu).length !== 0) {
+		if (props.options && Object.keys(props.options).length !== 0) {
 			const option = new schema.Entity('options');
 			const options = new schema.Array(option);
 			option.define({ options });
-			const normalizedMenu = normalize(props.menu, option);
-			entities.options = normalizedMenu.entities.options;
-			rootOptionId = normalizedMenu.result;
+			const normalizedOptions = normalize(props.options, option);
+			entities.options = normalizedOptions.entities.options;
+			rootOptionId = normalizedOptions.result;
 		} else {
 			rootOptionId = '0';
 			entities.options['0'] = { id: '0', value: 'root', options: [] };
@@ -328,21 +328,21 @@ class TwoDimensionalImage extends Component {
 		const option = new schema.Entity('options');
 		const options = new schema.Array(option);
 		option.define({ options });
-		const denormalizedMenu = denormalize({ menu: rootOptionId }, { menu: option }, entities).menu;
+		const denormalizedOptions = denormalize({ options: rootOptionId }, { options: option }, entities).options;
 		switch (type) {
 		case 'Skip':
 			onSkipClick({
-				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, options: denormalizedOptions,
 			});
 			break;
 		case 'Previous':
 			onPreviousClick({
-				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, options: denormalizedOptions,
 			});
 			break;
 		case 'Next':
 			onNextClick({
-				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, menu: denormalizedMenu,
+				url, imageScaleFactor, imageWidth, imageHeight, annotations: denormalizedAnnotations, options: denormalizedOptions,
 			});
 			break;
 		default:

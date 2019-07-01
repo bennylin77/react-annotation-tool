@@ -25,7 +25,7 @@ const DemoPage = () => {
 		}],
 		selected: [{ id: '0', value: 'root' }, { id: '2', value: 'Text' }, { id: '2-15', value: 'Suspicious' }],
 	}];
-	const menu = {
+	const options = {
 		id: '0',
 		value: 'root',
 		options: [
@@ -200,7 +200,7 @@ const DemoPage = () => {
 					imageWidth={ 600 }
 
 
-					menu={ menu }
+					options={ options }
 					disabledOptionLevels={ [] }
 				/>
 			</div>
