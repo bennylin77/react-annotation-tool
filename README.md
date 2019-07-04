@@ -65,7 +65,7 @@ This tool allows to annotate images with polygons. Users could create new taxono
      {id: "jlhbb7hm", name: "jlhbb7hm", x: 354.5, y: 306},   
      {id: "jlhbb80e", name: "jlhbb80e", x: 385.5, y: 452}, 
      {id: "jlhbb8st", name: "jlhbb8st", x: 116.5, y: 479}],
-  selected: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
+  selectedOptions: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
 ]
 ```
 
