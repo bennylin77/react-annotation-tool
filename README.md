@@ -51,21 +51,41 @@ This tool allows to annotate images with polygons. Users could create new taxono
 
 #### `defaultAnnotations`
 ```js
-[{id: "jlhbb0cr", name: "jlhbb0cr", color: "rgba(227,0,255,1)", vertices:
-    [{id: "jlhbb0cr", name: "jlhbb0cr", x: 228.8125, y: 126}, 
-     {id: "jlhbb0ng", name: "jlhbb0ng", x: 254.5, y: 131}, 
-     {id: "jlhbb0uh", name: "jlhbb0uh", x: 269.5, y: 145}, 
-     {id: "jlhbb11f", name: "jlhbb11f", x: 280.5, y: 173},
-     {id: "jlhbb17w", name: "jlhbb17w", x: 286.5, y: 215}, 
-     {id: "jlhbb1dw", name: "jlhbb1dw", x: 287.5, y: 249},
-     {id: "jlhbb360", name: "jlhbb360", x: 220.5, y: 141}],
-  selected: [{id: "0", value: "root"}, {id: "1", value: "Electronic"}, {id: "1-1", value: "Laptop"}]},
- {id: "jlhbb6tx", name: "jlhbb6tx", color: "rgba(255,219,0,1)", vertices:    
-    [{id: "jlhbb6tx", name: "jlhbb6tx", x: 103.5, y: 345}, 
-     {id: "jlhbb7hm", name: "jlhbb7hm", x: 354.5, y: 306},   
-     {id: "jlhbb80e", name: "jlhbb80e", x: 385.5, y: 452}, 
-     {id: "jlhbb8st", name: "jlhbb8st", x: 116.5, y: 479}],
-  selectedOptions: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
+[
+  { id: "jlvnw6az", name: "jlvnw6az", color: "rgba(227,0,255,1)", isClosed: true,
+			 vertices: [ 
+      { id: "jlvnw6az", name: "jlvnw6az", x: 189.5625, y: 201 },
+						{ id: "jlvnw8qs", name: "jlvnw8qs", x: 309.25, y: 200 },
+						{ id: "jlvnw9vp", name: "jlvnw9vp", x: 313.25, y: 203 },
+						{ id: "jlvnwbvk", name: "jlvnwbvk", x: 316.25, y: 288 },
+						{ id: "jlvnwczb", name: "jlvnwczb", x: 310.25, y: 292 },
+						{ id: "jlvnwfhm", name: "jlvnwfhm", x: 187.25, y: 294 },
+						{ id: "jlvnwgoe", name: "jlvnwgoe", x: 181.25, y: 290 },
+						{ id: "jlvnwidd", name: "jlvnwidd", x: 183.25, y: 205 }
+				],
+			 selectedOptions: [ 
+      { id: "0", value: "root" }, 
+      { id: "1", value: "Electronic" }, 
+      { id: "1-1", value: "Laptop" }, 
+      { id: "1-1-1", value: "Apple" } 
+    ],
+	 },
+		{ id: "jlvnxa79", name: "jlvnxa79", color: "rgba(0,255,81,1)", isClosed: true,
+			 vertices: [ 
+      { id: "jlvnxa79", name: "jlvnxa79", x: 369.25, y: 350.5 },
+			  	{ id: "jlvnxbct", name: "jlvnxbct", x: 372.25, y: 343.5 },
+			  	{ id: "jlvnxcg6", name: "jlvnxcg6", x: 387.25, y: 341 },
+			  	{ id: "jlvnxdic", name: "jlvnxdic", x: 393.25, y: 343 },
+			  	{ id: "jlvnxfp2", name: "jlvnxfp2", x: 424.25, y: 342 },
+			  	{ id: "jlvnxgfx", name: "jlvnxgfx", x: 426.25, y: 347 },
+						{ id: "jlvnxjd8", name: "jlvnxjd8", x: 381.25, y: 350 } 
+    ],
+			 selectedOptions: [ 
+      { id: "0", value: "root" }, 
+      { id: "2", value: "Stationery" }, 
+      { id: "2-1", value: "Pen" } 
+    ]
+		},
 ]
 ```
 
