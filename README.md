@@ -22,21 +22,27 @@ import {TwoDimensionalImage, TwoDimensionalVideo} from "react-annotation-tool"
 ## Image Annotation Tool
 This tool allows to annotate images with polygons. Users could create new taxonomy if they feel the annotation does not fit into any default options. It is adopted by a CVPR 2019 paper, [VizWiz-Priv: A Dataset for Recognizing the Presence and Purpose of Private Visual Information in Images Taken by Blind People](https://www.cs.cmu.edu/~jbigham/pubs/pdfs/2019/vizwiz-priv.pdf). 
 
+### Data Formats
+| Name          | Description   |
+| ------------- | ------------- |
+| Annotation    |The basic unit of the annotation result|
+| Vertex        |Each annotation contains mutiple vertices.|
 
 ### Props
 
 | Prop             | Description   | Format | Default |
 | -------------    | ------------- | ------------- | -------------| 
 | `className`      |               |String         |`''`          |
-| `url`            | Source of annotated image|String|`''`        |
-| `imageWidth`     | Set the width of image|Number |`400`         |
+| `url`            | Image url     |String         |`''`          |
+| `imageWidth`     | Image width   |Number         |`400`         |
 | `defaultAnnotations` | Default annotations. [Detail](#defaultAnnotations)|[Object]|`[]`|
-| `menu`           | A set of options for classifying annotations. [Detail](#menu)|Object||
-| `isDynamicOptionsEnable` | Enable adding/deleting options of menu |Boolean|`false`|
+| `options`            | A set of options for classifying annotations. [Detail](#options)|Object|`{}`|
+| `isDynamicOptionsEnable` | Enable users to add/delete options |Boolean|`false`|
 | `disabledOptionLevels`   | The levels which can't be selected. Start from "1". [Detail](#disabledOptionLevels)|[String]|`[]`|
-| `isLabelOn`        | Enable showing labels of annotaions on the image |Boolean|`false`|
-| `isViewOnlyMode`   | View only|Boolean|`false`|
-| `hasPreviousButton`| Enable Previous button |Boolean|`false`|
+| `isLabelOn`        | Show labels of annotaions on the image |Boolean|`false`|
+| `isViewOnlyMode`   | View only                              |Boolean|`false`|
+| `emptyAnnotationReminderText`| Text for warming empty annotaion on the control panel |String|`''`|
+| `hasPreviousButton`| Enable Previous button                 |Boolean|`false`|
 | `onPreviousClick`  | Called when Previous button is clicked|Function|`()=>{}`| 
 | `hasNextButton`  | Enable Next button  |Boolean|`false`|
 | `onNextClick`    | Called when Next button is clicked |Function|`()=>{}`|
@@ -59,25 +65,25 @@ This tool allows to annotate images with polygons. Users could create new taxono
      {id: "jlhbb7hm", name: "jlhbb7hm", x: 354.5, y: 306},   
      {id: "jlhbb80e", name: "jlhbb80e", x: 385.5, y: 452}, 
      {id: "jlhbb8st", name: "jlhbb8st", x: 116.5, y: 479}],
-  selected: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
+  selectedOptions: [{id: "2", value: "Stationery"}, {id: "2-1", value: "Pen"}]}
 ]
 ```
 
-#### `menu`
-Nested array of object. Each object has `id`, `value` and `options` properties. Must start from object with "root" `value`. e.g,
+#### `options`
+Nested array of object. Each object has `id`, `value` and `children` properties. Must start from object with `value`: "root". e.g,
 ```js
-{id: "0", value: "root", options: [
-   {id: "1", value: "Electronic", options: [
-      {id: "1-1", value: "Laptop", options: [
-         {id: "1-1-1", value: "Apple", options: []},         
-         {id: "1-1-2", value: "Asus", options: []}  
+{id: "0", value: "root", children: [
+   {id: "1", value: "Electronic", children: [
+      {id: "1-1", value: "Laptop", children: [
+         {id: "1-1-1", value: "Apple", children: []},         
+         {id: "1-1-2", value: "Asus", children: []}  
       ]}, 
-      {id: "1-2", value: "Charger", options: []},
-      {id: "1-3", value: "Watch", options: []}
+      {id: "1-2", value: "Charger", children: []},
+      {id: "1-3", value: "Watch", children: []}
    ]},
-   {id: "2", value: "Stationery", options: [
-      {id: "2-1", value: "Pen", options: []},
-      {id: "2-2", value: "Eraser", options: []}
+   {id: "2", value: "Stationery", children: [
+      {id: "2-1", value: "Pen", children: []},
+      {id: "2-2", value: "Eraser", children: []}
    ]}
 ]}
 ```
@@ -88,35 +94,8 @@ Array of Integer. Start from "1". e.g,
 [1, 2]
 ```
 
-### Output
-
-```js
-{url: "https://images.pexels.com/photos/57750/pexels-photo-57750.jpeg", 
- imageScaleFactor: 0.26666666666666666, /* annotation width divided by nature width */
- imageWidth: 500, 
- imageHeight: 400, 
- annotations: [{ id: "jluju651", name: "jluju651", color: "rgba(0,4,255,1)", 
-                 vertices: [{id:"jluju651", name:"jluju651", x: 124.5625, y: 26}, 
-                            {id:"jlujucus", name:"jlujucus", x: 139.296875, y: 22},        
-                            {id:"jlujuf07", name:"jlujuf07", x: 148.296875, y: 21},
-                            {id:"jlujugpw", name:"jlujugpw", x: 154.296875, y: 11}
-                            ...],
-                 selected: []},
-               { id: "jlujvoym", name: "jlujvoym", color: "rgba(255,219,0,1)", 
-                 vertices: [{id:"jlujvoym", name:"jlujvoym", x: 183.25, y: 202},
-                            {id:"jlujvrw7", name:"jlujvrw7", x: 314.296875, y: 200.5},
-                            {id:"jlujvtwu", name:"jlujvtwu", x: 316.296875, y: 290},
-                            {id:"jlujvvhw", name:"jlujvvhw", x: 181.796875, y: 292.5}],
-                 selected: [{id: "0", value: "root"}, {id: "1", value: "Electronic"}, {id: "1-1", value: "Laptop"}]}
-              ],
- menu: { /*same as menu property*/ }
-}
-```
-
-
 ### TODO
-- [ ] Refactorize all components.
-
+- [x] Refactorize all components.
 
 ## Video Annotation Tool
 Vidoe tool allows you to annotate object in videos via bounding box. The tool originally is designed for annotating cell videos. 
@@ -133,8 +112,8 @@ Vidoe tool allows you to annotate object in videos via bounding box. The tool or
 
 | Prop             | Description   | Data Type | Default |
 | -------------    | ------------- | ------------- | -------------| 
-| `className`      | |String|`''`|
-| `url`            | Video url |String|`''`|
+| `className`      |               |String         |`''`|
+| `url`            | Video url     |String         |`''`|
 | `defaultAnnotations`  | Default annotations. [Detail](#defaultAnnotations)|[Objects]|`[]`|
 | `videoWidth`          | Video width |Number|`400`|
 | `isDefaultAnnotationsManipulatable` |Allow users to edit default annotations|Boolean|`false`|
