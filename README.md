@@ -26,7 +26,7 @@ This tool allows to annotate images with polygons. Users could create new taxono
 | Name          | Description   |
 | ------------- | ------------- |
 | Annotation    |The basic unit of the annotation result|
-| Vertices      |Each annotation contains mutiple vertices.|
+| Vertex        |Each annotation contains mutiple vertices.|
 
 ### Props
 
