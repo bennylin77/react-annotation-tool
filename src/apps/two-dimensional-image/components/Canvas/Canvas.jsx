@@ -66,7 +66,7 @@ const Canvas = ({
 		isLabelOn,
 		isAdding,
 		focusedName,
-		handleCanvasImgLoad: onImgLoad,
+		onCanvasImgLoad: onImgLoad,
 		onCanvasStageMouseDown: onStageMouseDown,
 		onCanvasVertexMouseDown: onVertexMouseDown,
 		onCanvasVertexDragEnd: onVertexDragEnd,

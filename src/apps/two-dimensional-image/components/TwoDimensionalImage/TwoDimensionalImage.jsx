@@ -397,7 +397,7 @@ class TwoDimensionalImage extends Component {
 			onCanvasVertexDragEnd: this.handleCanvasVertexDragEnd,
 			onCanvasLabelMouseDown: this.handleCanvasFocusing,
 			onCanvasLineMouseDown: this.handleCanvasFocusing,
-			handleCanvasImgLoad: this.handleCanvasImgLoad,
+			onCanvasImgLoad: this.handleCanvasImgLoad,
 			rootOptionId,
 		};
 		document.body.style.cursor = isAdding ? 'crosshair' : 'default';
@@ -528,17 +528,17 @@ TwoDimensionalImage.defaultProps = {
 	url: '',
 	imageWidth: 400,
 	defaultAnnotations: [],
+	options: {},
 	isDynamicOptionsEnable: false,
 	disabledOptionLevels: [],
 	isLabelOn: false,
-	emptyAnnotationReminderText: '',
 	isViewOnlyMode: false,
+	emptyAnnotationReminderText: '',
 	hasPreviousButton: false,
 	hasNextButton: false,
 	hasSkipButton: false,
 	onPreviousClick: () => {},
 	onSkipClick: () => {},
 	onNextClick: () => {},
-	options: {},
 };
 export default TwoDimensionalImage;
