@@ -53,39 +53,39 @@ This tool allows to annotate images with polygons. Users could create new taxono
 ```js
 [
   { id: "jlvnw6az", name: "jlvnw6az", color: "rgba(227,0,255,1)", isClosed: true,
-			 vertices: [ 
+    vertices: [ 
       { id: "jlvnw6az", name: "jlvnw6az", x: 189.5625, y: 201 },
-						{ id: "jlvnw8qs", name: "jlvnw8qs", x: 309.25, y: 200 },
-						{ id: "jlvnw9vp", name: "jlvnw9vp", x: 313.25, y: 203 },
-						{ id: "jlvnwbvk", name: "jlvnwbvk", x: 316.25, y: 288 },
-						{ id: "jlvnwczb", name: "jlvnwczb", x: 310.25, y: 292 },
-						{ id: "jlvnwfhm", name: "jlvnwfhm", x: 187.25, y: 294 },
-						{ id: "jlvnwgoe", name: "jlvnwgoe", x: 181.25, y: 290 },
-						{ id: "jlvnwidd", name: "jlvnwidd", x: 183.25, y: 205 }
-				],
-			 selectedOptions: [ 
+      { id: "jlvnw8qs", name: "jlvnw8qs", x: 309.25, y: 200 },
+      { id: "jlvnw9vp", name: "jlvnw9vp", x: 313.25, y: 203 },
+      { id: "jlvnwbvk", name: "jlvnwbvk", x: 316.25, y: 288 },
+      { id: "jlvnwczb", name: "jlvnwczb", x: 310.25, y: 292 },
+      { id: "jlvnwfhm", name: "jlvnwfhm", x: 187.25, y: 294 },
+      { id: "jlvnwgoe", name: "jlvnwgoe", x: 181.25, y: 290 },
+      { id: "jlvnwidd", name: "jlvnwidd", x: 183.25, y: 205 },
+    ],
+    selectedOptions: [ 
       { id: "0", value: "root" }, 
       { id: "1", value: "Electronic" }, 
       { id: "1-1", value: "Laptop" }, 
       { id: "1-1-1", value: "Apple" } 
     ],
-	 },
-		{ id: "jlvnxa79", name: "jlvnxa79", color: "rgba(0,255,81,1)", isClosed: true,
-			 vertices: [ 
+  },
+  { id: "jlvnxa79", name: "jlvnxa79", color: "rgba(0,255,81,1)", isClosed: true,
+    vertices: [ 
       { id: "jlvnxa79", name: "jlvnxa79", x: 369.25, y: 350.5 },
-			  	{ id: "jlvnxbct", name: "jlvnxbct", x: 372.25, y: 343.5 },
-			  	{ id: "jlvnxcg6", name: "jlvnxcg6", x: 387.25, y: 341 },
-			  	{ id: "jlvnxdic", name: "jlvnxdic", x: 393.25, y: 343 },
-			  	{ id: "jlvnxfp2", name: "jlvnxfp2", x: 424.25, y: 342 },
-			  	{ id: "jlvnxgfx", name: "jlvnxgfx", x: 426.25, y: 347 },
-						{ id: "jlvnxjd8", name: "jlvnxjd8", x: 381.25, y: 350 } 
+      { id: "jlvnxbct", name: "jlvnxbct", x: 372.25, y: 343.5 },
+      { id: "jlvnxcg6", name: "jlvnxcg6", x: 387.25, y: 341 },
+      { id: "jlvnxdic", name: "jlvnxdic", x: 393.25, y: 343 },
+      { id: "jlvnxfp2", name: "jlvnxfp2", x: 424.25, y: 342 },
+      { id: "jlvnxgfx", name: "jlvnxgfx", x: 426.25, y: 347 },
+      { id: "jlvnxjd8", name: "jlvnxjd8", x: 381.25, y: 350 },
     ],
-			 selectedOptions: [ 
+    selectedOptions: [ 
       { id: "0", value: "root" }, 
       { id: "2", value: "Stationery" }, 
       { id: "2-1", value: "Pen" } 
     ]
-		},
+  },
 ]
 ```
 
