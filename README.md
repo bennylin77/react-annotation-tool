@@ -26,7 +26,7 @@ This tool allows to annotate images with polygons. Users could create new taxono
 | Name          | Description   |
 | ------------- | ------------- |
 | Annotation    |The basic unit of the annotation result|
-| Vertex        |Each annotation contains mutiple vertices.|
+| Vertex        |Each annotation contains mutiple vertices|
 
 ### Props
 
@@ -90,7 +90,7 @@ This tool allows to annotate images with polygons. Users could create new taxono
 ```
 
 #### `options`
-Nested array of object. Each object has `id`, `value` and `children` properties. Must start from object with `value`: "root". e.g,
+Nested array of object. Each object has `id`, `value` and `children` properties. Must start from object with `value`: "root". e.g.,
 ```js
 {id: "0", value: "root", children: [
    {id: "1", value: "Electronic", children: [
@@ -109,7 +109,7 @@ Nested array of object. Each object has `id`, `value` and `children` properties.
 ```
 
 #### `disabledOptionLevels`
-Array of Integer. Start from "1". e.g,
+Array of Integer. Start from "1". e.g.,
 ```js
 [1, 2]
 ```
